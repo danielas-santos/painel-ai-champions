@@ -522,8 +522,8 @@ tr:hover td{background:#fdf5f8;}
 // ══════════════════════════════════════════════════════════
 //  SUPABASE
 // ══════════════════════════════════════════════════════════
-const SUPA_URL = 'https://fotjzrkxrfpsirvlxvhq.supabase.co';
-const SUPA_KEY = 'sb_publishable_ych8CsaJQ-seuyLxPGRvlQ_1Fg3-GvZ';
+const SUPA_URL = 'https://swoytlxivrkvyzqwlmqs.supabase.co/rest/v1/';
+const SUPA_KEY = 'sb_publishable_rdOxO5Uw4Z98jxCJiLSOaQ_zQrIpFQ6';
 const supa = window.supabase.createClient(SUPA_URL, SUPA_KEY);
 
 // ══════════════════════════════════════════════════════════
