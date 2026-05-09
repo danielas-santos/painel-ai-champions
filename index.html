@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Creators · Iniciativas de IA · RH · 2026 · v1.2</title>
+<title>Creators · Iniciativas de IA · RH · 2026 · v1.3</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
 <link href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -296,7 +296,7 @@ tr:hover td{background:#fdf5f8;}
   <div class="logo">
     <div class="logo-mark">⚡</div>
     <div>
-      <div class="logo-text">Creators · Iniciativas de IA <span class="logo-sub">RH · 2026 · v1.2</span></div>
+      <div class="logo-text">Creators · Iniciativas de IA <span class="logo-sub">RH · 2026 · v1.3</span></div>
     </div>
   </div>
   <div class="hright">
@@ -1031,7 +1031,11 @@ function updMDDBtn(key) {
   else{btn.textContent=s.size+' selecionados ▾';btn.classList.add('sel');}
 }
 function clearAreaSet(key){const cfg=mddConfigs[key];if(!cfg)return;cfg.set.clear();updMDDBtn(key);rebuildMDD(key);cfg.render();}
-document.addEventListener('click',e=>{if(!e.target.closest('.mdd-wrap'))document.querySelectorAll('.mdd').forEach(d=>d.classList.remove('open'));});
+document.addEventListener('click',e=>{
+  if(!e.target.closest('.mdd-wrap') && !e.target.closest('#ia-chips-wrap')){
+    document.querySelectorAll('.mdd').forEach(d=>d.classList.remove('open'));
+  }
+});
 
 // ══════════════════════════════════════════════════════════
 //  PREVIEW POPUP
@@ -1106,7 +1110,7 @@ function buildFormFields(data) {
     </div>
     <div class="fi full" id="ia-chips-wrap">
       <label>Categoria de IA <span class="req">*</span></label>
-      <div class="chips-wrap" id="ia-chips" onclick="openIADropdown()"></div>
+      <div class="chips-wrap" id="ia-chips" onclick="openIADropdown(event)"></div>
       <div class="mdd" id="ia-dd" style="position:relative;top:0;left:0;margin-top:4px;">
         <div class="mdd-list" id="ia-dd-list"></div>
       </div>
@@ -1207,7 +1211,8 @@ function removeIAChip(c, e) {
   renderIAChips();
   buildIADropdown();
 }
-function openIADropdown() {
+function openIADropdown(e) {
+  if(e) e.stopPropagation();
   const dd = document.getElementById('ia-dd');
   if (dd) dd.classList.toggle('open');
 }
