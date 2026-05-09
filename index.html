@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Creators · Iniciativas de IA · RH · 2026 · v1.2</title>
-<meta name="description" content="Painel de cadastro e gestão das iniciativas do programa AI Champions.">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
 <link href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -522,9 +521,11 @@ tr:hover td{background:#fdf5f8;}
 // ══════════════════════════════════════════════════════════
 //  SUPABASE
 // ══════════════════════════════════════════════════════════
-const SUPA_URL = 'https://swoytlxivrkvyzqwlmqs.supabase.co/rest/v1/';
+const SUPA_URL = 'https://swoytlxivrkvyzqwlmqs.supabase.co';
 const SUPA_KEY = 'sb_publishable_rdOxO5Uw4Z98jxCJiLSOaQ_zQrIpFQ6';
-const supa = window.supabase.createClient(SUPA_URL, SUPA_KEY);
+const SUPABASE_CONFIGURED = SUPA_URL.startsWith('https://') && !SUPA_URL.includes('COLE_AQUI') && !SUPA_KEY.includes('COLE_AQUI');
+const supa = SUPABASE_CONFIGURED ? window.supabase.createClient(SUPA_URL, SUPA_KEY) : null;
+console.log('Supabase configured:', SUPABASE_CONFIGURED);
 
 // ══════════════════════════════════════════════════════════
 //  CONSTANTS
@@ -590,7 +591,7 @@ function classifyScore(score) {
 
 // ── Filter state ─────────────────────────────────────────
 const fSets = { g: new Set(), a: new Set(), ia: new Set(), cls: new Set() };
-const kSets = { kg: new Set(), ka: new Set(), kcls: new Set(), kst: new Set() };
+const kSets = { kg: new Set(), ka: new Set() };
 const sortState = { i: { col: null, dir: 1 } };
 let editId = null;
 let donutIA = null, donutCls = null;
@@ -736,7 +737,7 @@ function renderIniciativas() {
   const sorted = applySortI(rows);
   const tbody = document.getElementById('tb-init');
   if (!sorted.length) {
-    tbody.innerHTML = `<tr><td colspan="12"><div class="empty"><strong>Nenhum resultado</strong>Ajuste os filtros ou adicione uma iniciativa.</div></td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="11"><div class="empty"><strong>Nenhum resultado</strong>Ajuste os filtros ou adicione uma iniciativa.</div></td></tr>`;
     return;
   }
   tbody.innerHTML = sorted.map((item, idx) => {
@@ -843,8 +844,6 @@ function renderKanban() {
     if (sk && !i.nome?.toLowerCase().includes(sk)) return false;
     if (kSets.kg.size && !kSets.kg.has(i.gerencia)) return false;
     if (kSets.ka.size && !kSets.ka.has(i.area)) return false;
-    if (kSets.kcls.size && !kSets.kcls.has(classifyScore(calcScore(i)))) return false;
-    if (kSets.kst.size && !kSets.kst.has(i.status || 'Não iniciado')) return false;
     return true;
   });
   const cols = {Q1:{label:'Q1',color:Q_COLORS.Q1},Q2:{label:'Q2',color:Q_COLORS.Q2},Q3:{label:'Q3',color:Q_COLORS.Q3},Q4:{label:'Q4',color:Q_COLORS.Q4},TBD:{label:'Não definido',color:Q_COLORS.TBD}};
@@ -1001,8 +1000,6 @@ const mddConfigs = {
   ia: { listId:'mdd-list-ia', btnId:'mdd-btn-ia', set:fSets.ia, items:()=>CAT_IA, render:renderIniciativas },
   kg: { listId:'mdd-list-kg', btnId:'mdd-btn-kg', set:kSets.kg, items:()=>GERENCIAS, render:renderKanban },
   ka: { listId:'mdd-list-ka', btnId:'mdd-btn-ka', set:kSets.ka, items:()=>AREAS, render:renderKanban },
-  kcls: { listId:'mdd-list-kcls', btnId:'mdd-btn-kcls', set:kSets.kcls, items:()=>CLS_LABELS, render:renderKanban },
-  kst: { listId:'mdd-list-kst', btnId:'mdd-btn-kst', set:kSets.kst, items:()=>STATUS_LIST, render:renderKanban },
 };
 
 function openMDD(key) {
@@ -1028,13 +1025,12 @@ function updMDDBtn(key) {
   const cfg=mddConfigs[key];if(!cfg)return;
   const btn=document.getElementById(cfg.btnId);if(!btn)return;
   const s=cfg.set,items=cfg.items();
-  const label={g:'Gerência',a:'Área',ia:'Categoria de IA',kg:'Gerência',ka:'Área',kcls:'Classificação',kst:'Status'}[key]||key;
+  const label={g:'Gerência',a:'Área',ia:'Categoria de IA',kg:'Gerência',ka:'Área'}[key]||key;
   if(s.size===0){btn.textContent=label+' ▾';btn.classList.remove('sel');}
   else if(s.size===1){btn.textContent=[...s][0].slice(0,14)+(([...s][0].length>14)?'…':'')+' ▾';btn.classList.add('sel');}
   else{btn.textContent=s.size+' selecionados ▾';btn.classList.add('sel');}
 }
 function clearAreaSet(key){const cfg=mddConfigs[key];if(!cfg)return;cfg.set.clear();updMDDBtn(key);rebuildMDD(key);cfg.render();}
-function clearMDD(key){ clearAreaSet(key); }
 document.addEventListener('click',e=>{if(!e.target.closest('.mdd-wrap'))document.querySelectorAll('.mdd').forEach(d=>d.classList.remove('open'));});
 
 // ══════════════════════════════════════════════════════════
@@ -1249,6 +1245,7 @@ async function saveIniciativa() {
     creator: document.getElementById('f-creator').value.trim(),
     gerencia:  document.getElementById('f-gerencia').value,
     area:      document.getElementById('f-area').value,
+    status:    document.getElementById('f-status').value,
     q_inicio:  document.getElementById('f-qi').value,
     q_entrega: document.getElementById('f-qe').value,
     nome:      document.getElementById('f-nome').value.trim(),
@@ -1261,19 +1258,22 @@ async function saveIniciativa() {
     gut_u:     +(document.getElementById('f-u').value),
     gut_t:     +(document.getElementById('f-t').value),
     complexidade: +(document.getElementById('f-c').value),
-    status: document.getElementById('f-status').value,
   };
-  if (editId) {
-    Object.assign(iniciativas.find(x=>x.id===editId), data);
-    await saveItemDB(data, editId);
-    toast('Iniciativa atualizada.');
-  } else {
-    const newId = await saveItemDB(data, null);
-    iniciativas.push({id: newId||nextId++, ...data});
-    toast('Iniciativa adicionada!');
+  try {
+    if (editId) {
+      await saveItemDB(data, editId);
+      Object.assign(iniciativas.find(x=>x.id===editId), data);
+      toast('Iniciativa atualizada.');
+    } else {
+      const newId = await saveItemDB(data, null);
+      iniciativas.push({id: newId||nextId++, ...data});
+      toast('Iniciativa adicionada!');
+    }
+    closeMo('mo');
+    renderAll();
+  } catch (err) {
+    console.error('Erro ao salvar iniciativa:', err);
   }
-  closeMo('mo');
-  renderAll();
 }
 
 function delFromModal() { confirmDel(editId); closeMo('mo'); }
@@ -1296,18 +1296,33 @@ function closeConfirm(){document.getElementById('confirm-overlay').classList.rem
 async function aiImprove(field) {
   const isDesc = field==='desc';
   const inputId = isDesc?'f-desc':'f-benef';
+  const btnId   = isDesc?'ai-desc-btn':'ai-benef-btn';
   const sugId   = isDesc?'ai-desc-sug':'ai-benef-sug';
   const text=(document.getElementById(inputId)?.value||'').trim();
   if(!text){toast('Escreva algo primeiro.');return;}
-  const nome=(document.getElementById('f-nome')?.value||'').trim();
-  const desc=(document.getElementById('f-desc')?.value||text).trim();
-  const suggestion = isDesc
-    ? `${nome ? nome + ': ' : ''}${text.replace(/\s+/g,' ').trim()}`
-    : `Benefício esperado: redução de retrabalho, maior rastreabilidade e ganho de produtividade para a área, com base na iniciativa ${nome || 'informada'}.`;
+  const btn=document.getElementById(btnId);
+  btn.classList.add('loading');btn.textContent='…';
   const sug=document.getElementById(sugId);
-  sug.innerHTML=`<div style="margin-bottom:6px;line-height:1.55">${esc(suggestion)}</div>
-    <div class="ai-acts"><button class="ai-use" onclick="useAI('${inputId}','${sugId}')">Usar</button><button class="ai-disc" onclick="document.getElementById('${sugId}').classList.remove('show')">Descartar</button></div>`;
-  sug.classList.add('show');
+  sug.classList.remove('show');sug.innerHTML='';
+  const nome=(document.getElementById('f-nome')?.value||'').trim();
+  const prompt=isDesc
+    ?`Você é especialista em gestão de iniciativas de IA em RH. Reescreva a descrição abaixo de forma mais clara e objetiva para um painel de iniciativas de IA. Máximo 3 frases. Responda APENAS com a descrição melhorada.\n\nIniciativa: ${nome}\nDescrição: ${text}`
+    :`Você é especialista em gestão de iniciativas de IA em RH. Sugira o benefício esperado com base na descrição. Máximo 2 frases. Responda APENAS com o benefício.\n\nIniciativa: ${nome}\nDescrição: ${document.getElementById('f-desc')?.value||''}\nBenefício atual: ${text}`;
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:300,messages:[{role:'user',content:prompt}]})});
+    if(!res.ok)throw new Error('err');
+    const data=await res.json();
+    const improved=(data.content?.[0]?.text||'').trim();
+    if(improved){
+      sug.innerHTML=`<div style="margin-bottom:6px;line-height:1.55">${esc(improved)}</div>
+        <div class="ai-acts"><button class="ai-use" onclick="useAI('${inputId}','${sugId}')">Usar</button><button class="ai-disc" onclick="document.getElementById('${sugId}').classList.remove('show')">Descartar</button></div>`;
+      sug.classList.add('show');
+    }
+  }catch(e){
+    sug.innerHTML=`<div style="font-size:11px;color:var(--text3)">A IA está disponível quando aberto dentro do Claude.ai.</div>`;
+    sug.classList.add('show');
+  }
+  btn.classList.remove('loading');btn.textContent='✦';
 }
 function useAI(inputId,sugId){const s=document.getElementById(sugId);document.getElementById(inputId).value=s.querySelector('div')?.textContent||'';s.classList.remove('show');}
 
@@ -1325,18 +1340,18 @@ function csvDownload(filename,headers,rows,sep=';'){
 }
 
 function exportCSV(){
-  const headers=['id','creator','gerencia','area','q_inicio','q_entrega','nome','cat_ia','descricao','poc','beneficio','riscos','gut_g','gut_u','gut_t','complexidade','score','classificacao','status'];
+  const headers=['id','creator','gerencia','area','status','q_inicio','q_entrega','nome','cat_ia','descricao','poc','beneficio','riscos','gut_g','gut_u','gut_t','complexidade','score','classificacao'];
   const rows=iniciativas.map(i=>{
     const score=calcScore(i);
-    return[i.id,i.creator,i.gerencia,i.area,i.q_inicio,i.q_entrega,i.nome,(i.cat_ia||[]).join(' | '),i.descricao,i.poc,i.beneficio,i.riscos,i.gut_g,i.gut_u,i.gut_t,i.complexidade,score,classifyScore(score),i.status||'Não iniciado'];
+    return[i.id,i.creator,i.gerencia,i.area,i.status,i.q_inicio,i.q_entrega,i.nome,(i.cat_ia||[]).join(' | '),i.descricao,i.poc,i.beneficio,i.riscos,i.gut_g,i.gut_u,i.gut_t,i.complexidade,score,classifyScore(score)];
   });
   csvDownload('creators-iniciativas-'+new Date().toISOString().slice(0,10)+'.csv',headers,rows);
   toast('Exportado com sucesso.');
 }
 
 function downloadTemplate(){
-  const headers=['creator','gerencia','area','q_inicio','q_entrega','nome','cat_ia','descricao','poc','beneficio','riscos','gut_g','gut_u','gut_t','complexidade','status'];
-  const ex=[['Ex: João Silva','Talent & Employer Branding','R&S','Q2','Q3','Triagem automática de currículos com IA','IA Generativa | Machine Learning','Sistema que usa IA para triagem inicial de currículos, classificando candidatos por aderência ao perfil.','Alto volume manual de triagem de currículos, consumindo tempo de analistas de R&S.','Redução de 60% no tempo de triagem. Analistas focam apenas nos candidatos mais aderentes.','Qualidade das triagens da IA precisa de calibração contínua.','5','3','3','2','Não iniciado']];
+  const headers=['creator','gerencia','area','status','q_inicio','q_entrega','nome','cat_ia','descricao','poc','beneficio','riscos','gut_g','gut_u','gut_t','complexidade'];
+  const ex=[['Ex: João Silva','Talent & Employer Branding','R&S','Não iniciado','Q2','Q3','Triagem automática de currículos com IA','IA Generativa | Machine Learning','Sistema que usa IA para triagem inicial de currículos, classificando candidatos por aderência ao perfil.','Alto volume manual de triagem de currículos, consumindo tempo de analistas de R&S.','Redução de 60% no tempo de triagem. Analistas focam apenas nos candidatos mais aderentes.','Qualidade das triagens da IA precisa de calibração contínua.','5','3','3','2']];
   csvDownload('template-creators-iniciativas.csv',headers,ex);
   toast('Template baixado!');
 }
@@ -1411,14 +1426,14 @@ async function executeImport(){
       const cat_ia=iaRaw?iaRaw.split('|').map(s=>s.trim()).filter(Boolean):[];
       const data={
         creator:get(row,'creator'),gerencia:get(row,'gerencia'),area:get(row,'area'),
+        status:get(row,'status')||'Não iniciado',
         q_inicio:get(row,'q_inicio')||'TBD',q_entrega:get(row,'q_entrega')||'TBD',
         nome,cat_ia,descricao:get(row,'descricao'),poc:get(row,'poc'),
         beneficio:get(row,'beneficio'),riscos:get(row,'riscos'),
         gut_g:parseInt(get(row,'gut_g'))||1,gut_u:parseInt(get(row,'gut_u'))||1,
         gut_t:parseInt(get(row,'gut_t'))||1,complexidade:parseInt(get(row,'complexidade'))||3,
-        status:get(row,'status')||'Não iniciado',
       };
-      if(item.existing){Object.assign(item.existing,data);await saveItemDB(data,item.existing.id);updated++;}
+      if(item.existing){await saveItemDB(data,item.existing.id);Object.assign(item.existing,data);updated++;}
       else{const nid=await saveItemDB(data,null);iniciativas.push({id:nid||nextId++,...data});added++;}
     }catch(err){console.error(err);errors++;}
   }
@@ -1446,42 +1461,43 @@ function showTab(id,btn){
 // ══════════════════════════════════════════════════════════
 async function loadAllData(){
   try{
-    const{data,error}=await supa.from('creators_iniciativas').select('*').order('id');
-    if(error)throw error;
-    if(data&&data.length>0){
-      iniciativas=data.map(r=>({
-        id:r.id,creator:r.creator||'',gerencia:r.gerencia||'',area:r.area||'',
-        q_inicio:r.q_inicio||'TBD',q_entrega:r.q_entrega||'TBD',
-        nome:r.nome||'',cat_ia:r.cat_ia||[],descricao:r.descricao||'',
-        poc:r.poc||'',beneficio:r.beneficio||'',riscos:r.riscos||'',
-        gut_g:r.gut_g||1,gut_u:r.gut_u||1,gut_t:r.gut_t||1,complexidade:r.complexidade||3,
-        status:r.status||'Não iniciado',
-      }));
-    } else {
-      // Seed example data if empty
-      seedExampleData();
+    if(!supa){
+      console.warn('Supabase não configurado. Preencha SUPA_URL e SUPA_KEY.');
+      iniciativas = [];
+      toast('Supabase não configurado. Cole URL e chave pública no HTML.');
+      renderAll();
+      return;
     }
+    const {data,error}=await supa.from('creators_iniciativas').select('*').order('id');
+    if(error) throw error;
+    iniciativas=(data||[]).map(r=>({
+      id:r.id,creator:r.creator||'',gerencia:r.gerencia||'',area:r.area||'',
+      status:r.status||'Não iniciado',
+      q_inicio:r.q_inicio||'TBD',q_entrega:r.q_entrega||'TBD',
+      nome:r.nome||'',cat_ia:r.cat_ia||[],descricao:r.descricao||'',
+      poc:r.poc||'',beneficio:r.beneficio||'',riscos:r.riscos||'',
+      gut_g:r.gut_g||1,gut_u:r.gut_u||1,gut_t:r.gut_t||1,complexidade:r.complexidade||3,
+    }));
   }catch(err){
-    console.error('DB error:',err);
-    toast('Dados locais (banco indisponível).');
-    seedExampleData();
+    console.error('DB load error:',err);
+    iniciativas=[];
+    toast('Erro ao carregar Supabase: '+(err.message||JSON.stringify(err)));
   }
   renderAll();
 }
 
 function seedExampleData(){
-  iniciativas=[
-    {id:1,status:'Não iniciado',creator:'Ana Lima',gerencia:'Atendimento & Employee Experience',area:'Atendimento',q_inicio:'Q1',q_entrega:'Q2',nome:'Atualização automática do catálogo MeuRH',cat_ia:['Agente de IA','IA Generativa','Automação'],descricao:'Fluxo automatizado para gestão do catálogo de serviços do MeuRH, substituindo operação manual feita em planilhas.',poc:'Atualização manual gera defasagem entre comunicados de RH e respostas do bot.',beneficio:'Redução do tempo operacional na manutenção. Maior assertividade do MeuRH.',riscos:'Dependência da qualidade da base atual.',gut_g:5,gut_u:3,gut_t:3,complexidade:2},
-    {id:2,status:'Não iniciado',creator:'Carlos Souza',gerencia:'Remuneração, Benefícios & People Analytics',area:'Remuneração',q_inicio:'Q2',q_entrega:'Q3',nome:'Automação de cartas de remuneração',cat_ia:['IA Generativa','Automação'],descricao:'Geração automática de cartas de remuneração personalizadas via portal do colaborador.',poc:'Processo atual é manual e sujeito a erros de formatação e versão.',beneficio:'Eliminação de processo manual. Redução de erros e rastreabilidade garantida.',riscos:'Integração com sistemas legados pode ser complexa.',gut_g:3,gut_u:3,gut_t:3,complexidade:2},
-    {id:3,status:'Não iniciado',creator:'Mariana Telles',gerencia:'Talent & Employer Branding',area:'R&S',q_inicio:'Q1',q_entrega:'Q2',nome:'Triagem inteligente de currículos',cat_ia:['Machine Learning','NLP'],descricao:'Modelo de ML para triagem inicial de currículos, classificando candidatos por aderência ao perfil.',poc:'Alto volume de currículos e tempo excessivo de analistas em triagem manual.',beneficio:'Redução de 60% no tempo de triagem. Foco dos analistas em entrevistas.',riscos:'Bias nos dados de treinamento do modelo.',gut_g:5,gut_u:5,gut_t:5,complexidade:1},
-    {id:4,status:'Não iniciado',creator:'Pedro Alves',gerencia:'DHO & DEI',area:'DHO',q_inicio:'Q2',q_entrega:'Q4',nome:'Painel preditivo de engajamento',cat_ia:['Analytics / IA Analítica'],descricao:'Dashboard preditivo que antecipa riscos de desengajamento com base em dados de clima e performance.',poc:'Gestores percebem queda no engajamento somente quando o colaborador já está desengajado.',beneficio:'Ações preventivas de retenção com 3 meses de antecedência.',riscos:'Qualidade dos dados de clima precisa ser consistente.',gut_g:5,gut_u:3,gut_t:5,complexidade:1},
-    {id:5,status:'Não iniciado',creator:'Renata Costa',gerencia:'Administração de Pessoal & SST',area:'Admissão e Cadastro',q_inicio:'Q3',q_entrega:'Q4',nome:'RPA para atualização cadastral de terceiros',cat_ia:['RPA','Automação'],descricao:'Bot que automatiza a atualização de dados cadastrais de terceiros via integração com fornecedores.',poc:'Processo manual consome ~8h/semana e tem taxa de erro de 12%.',beneficio:'Eliminação de retrabalho e redução do tempo operacional em 80%.',riscos:'Dependência de API dos fornecedores.',gut_g:3,gut_u:3,gut_t:3,complexidade:3},
-    {id:6,status:'Não iniciado',creator:'Juliana Melo',gerencia:'Comunicação Interna & Work Life Balance',area:'Comunicação Interna',q_inicio:'Q2',q_entrega:'Q3',nome:'Chatbot de comunicados internos',cat_ia:['Agente de IA','IA Generativa','NLP'],descricao:'Agente de IA que responde dúvidas sobre comunicados internos e políticas de RH em linguagem natural.',poc:'Alto volume de perguntas repetitivas ao RH sobre políticas e benefícios.',beneficio:'Redução de 40% nos chamados ao RH. Disponibilidade 24/7 para colaboradores.',riscos:'Necessidade de manutenção contínua da base de conhecimento.',gut_g:3,gut_u:3,gut_t:3,complexidade:2},
-  ];
+  // Mantido apenas para referência. A v1.2 não carrega dados locais automaticamente.
+  iniciativas=[];
   nextId=100;
 }
 
 async function saveItemDB(data,id){
+  if(!supa){
+    const msg='Supabase não configurado. Preencha SUPA_URL e SUPA_KEY no HTML.';
+    toast(msg);
+    throw new Error(msg);
+  }
   const row={
     creator:data.creator,gerencia:data.gerencia,area:data.area,status:data.status||'Não iniciado',
     q_inicio:data.q_inicio,q_entrega:data.q_entrega,nome:data.nome,
@@ -1490,13 +1506,20 @@ async function saveItemDB(data,id){
     gut_g:data.gut_g,gut_u:data.gut_u,gut_t:data.gut_t,complexidade:data.complexidade,
     updated_at:new Date().toISOString(),
   };
-  try{
-    if(id){await supa.from('creators_iniciativas').update(row).eq('id',id);}
-    else{const{data:ins}=await supa.from('creators_iniciativas').insert(row).select().single();return ins?.id;}
-  }catch(e){console.warn('DB save error:',e);}
+  if(id){
+    const {error}=await supa.from('creators_iniciativas').update(row).eq('id',id);
+    if(error){console.error('DB update error:',error);toast('Erro ao atualizar: '+error.message);throw error;}
+    return id;
+  } else {
+    const {data:ins,error}=await supa.from('creators_iniciativas').insert(row).select('id').single();
+    if(error){console.error('DB insert error:',error);toast('Erro ao salvar: '+error.message);throw error;}
+    return ins?.id;
+  }
 }
 async function deleteItemDB(id){
-  try{await supa.from('creators_iniciativas').delete().eq('id',id);}catch(e){console.warn(e);}
+  if(!supa){toast('Supabase não configurado.');throw new Error('Supabase não configurado.');}
+  const {error}=await supa.from('creators_iniciativas').delete().eq('id',id);
+  if(error){console.error('DB delete error:',error);toast('Erro ao excluir: '+error.message);throw error;}
 }
 async function updateItemDB(item){
   await saveItemDB(item,item.id);
