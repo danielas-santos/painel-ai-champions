@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Creators · Iniciativas de IA · RH · 2026 · v1.8</title>
+<title>Creators · Iniciativas de IA · RH · 2026 · v1.9</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -286,7 +286,7 @@ tr:hover td{background:#fdf5f8;}
   <div class="logo">
     <div class="logo-mark">⚡</div>
     <div>
-      <div class="logo-text">Creators · Iniciativas de IA <span class="logo-sub">RH · 2026 · v1.8</span></div>
+      <div class="logo-text">Creators · Iniciativas de IA <span class="logo-sub">RH · 2026 · v1.9</span></div>
     </div>
   </div>
   <div class="hright">
@@ -655,7 +655,7 @@ function classifyScore(score) {
 
 // ── Filter state ─────────────────────────────────────────
 const fSets = { g: new Set(), a: new Set(), ia: new Set(), cls: new Set() };
-const kSets = { kg: new Set(), ka: new Set() };
+const kSets = { kg: new Set(), ka: new Set(), kcls: new Set(), kst: new Set() };
 const sortState = { i: { col: null, dir: 1 } };
 let prioFilter = null;
 let editId = null;
@@ -915,6 +915,8 @@ function renderKanban() {
     if (sk && !i.nome?.toLowerCase().includes(sk)) return false;
     if (kSets.kg.size && !kSets.kg.has(i.gerencia)) return false;
     if (kSets.ka.size && !kSets.ka.has(i.area)) return false;
+    if (kSets.kcls.size && !kSets.kcls.has(classifyScore(calcScore(i)))) return false;
+    if (kSets.kst.size && !kSets.kst.has(i.status || 'Não iniciado')) return false;
     return true;
   });
   const cols = {Q1:{label:'Q1',color:Q_COLORS.Q1},Q2:{label:'Q2',color:Q_COLORS.Q2},Q3:{label:'Q3',color:Q_COLORS.Q3},Q4:{label:'Q4',color:Q_COLORS.Q4},TBD:{label:'Não definido',color:Q_COLORS.TBD}};
@@ -1061,6 +1063,8 @@ const mddConfigs = {
   ia: { listId:'mdd-list-ia', btnId:'mdd-btn-ia', set:fSets.ia, items:()=>CAT_IA, render:renderIniciativas },
   kg: { listId:'mdd-list-kg', btnId:'mdd-btn-kg', set:kSets.kg, items:()=>GERENCIAS, render:renderKanban },
   ka: { listId:'mdd-list-ka', btnId:'mdd-btn-ka', set:kSets.ka, items:()=>AREAS, render:renderKanban },
+  kcls: { listId:'mdd-list-kcls', btnId:'mdd-btn-kcls', set:kSets.kcls, items:()=>CLS_LABELS, render:renderKanban },
+  kst: { listId:'mdd-list-kst', btnId:'mdd-btn-kst', set:kSets.kst, items:()=>STATUS_LIST, render:renderKanban },
 };
 
 function openMDD(key) {
@@ -1086,12 +1090,13 @@ function updMDDBtn(key) {
   const cfg=mddConfigs[key];if(!cfg)return;
   const btn=document.getElementById(cfg.btnId);if(!btn)return;
   const s=cfg.set,items=cfg.items();
-  const label={g:'Gerência',a:'Área',ia:'Categoria de IA',kg:'Gerência',ka:'Área'}[key]||key;
+  const label={g:'Gerência',a:'Área',ia:'Categoria de IA',kg:'Gerência',ka:'Área',kcls:'Classificação',kst:'Status'}[key]||key;
   if(s.size===0){btn.textContent=label+' ▾';btn.classList.remove('sel');}
   else if(s.size===1){btn.textContent=[...s][0].slice(0,14)+(([...s][0].length>14)?'…':'')+' ▾';btn.classList.add('sel');}
   else{btn.textContent=s.size+' selecionados ▾';btn.classList.add('sel');}
 }
 function clearAreaSet(key){const cfg=mddConfigs[key];if(!cfg)return;cfg.set.clear();updMDDBtn(key);rebuildMDD(key);cfg.render();}
+function clearMDD(key){clearAreaSet(key);}
 document.addEventListener('click',e=>{
   if(!e.target.closest('.mdd-wrap') && !e.target.closest('#ia-chips-wrap')){
     document.querySelectorAll('.mdd').forEach(d=>d.classList.remove('open'));
@@ -1546,7 +1551,7 @@ async function loadAllData(){
 }
 
 function seedExampleData(){
-  // Mantido apenas para referência. A v1.2 não carrega dados locais automaticamente.
+  // Mantido apenas para referência. A v1.9 não carrega dados locais automaticamente.
   iniciativas=[];
   nextId=100;
 }
