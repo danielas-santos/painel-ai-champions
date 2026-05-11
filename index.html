@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Creators · Iniciativas de IA · RH · 2026 · v2.1</title>
+<title>Creators · Iniciativas de IA · RH · 2026 · v2.2</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -286,7 +286,7 @@ tr:hover td{background:#fdf5f8;}
   <div class="logo">
     <div class="logo-mark">⚡</div>
     <div>
-      <div class="logo-text">Creators · Iniciativas de IA <span class="logo-sub">RH · 2026 · v2.1</span></div>
+      <div class="logo-text">Creators · Iniciativas de IA <span class="logo-sub">RH · 2026 · v2.2</span></div>
     </div>
   </div>
   <div class="hright">
@@ -401,41 +401,35 @@ tr:hover td{background:#fdf5f8;}
 <!-- ── PRIORIZAÇÃO ──────────────────────────────────────── -->
 <div class="sec" id="tab-priorizacao">
   <div class="pband-grid" id="prio-bands"></div>
-
-  <div class="filter-bar" style="margin-top:4px;">
+  <div class="filter-bar" id="prio-filter-bar">
     <div class="mdd-wrap">
       <button class="fbtn" id="mdd-btn-pg" onclick="openMDD('pg')">Gerência ▾</button>
-      <div class="mdd" id="mdd-pg"><div class="mdd-list" id="mdd-list-pg"></div><div class="mdd-clear" onclick="clearMDD('pg')">Limpar</div></div>
+      <div class="mdd" id="mdd-pg"><div class="mdd-list" id="mdd-list-pg"></div><div class="mdd-clear" onclick="clearAreaSet('pg')">Limpar</div></div>
+    </div>
+    <div class="mdd-wrap">
+      <button class="fbtn" id="mdd-btn-pcreator" onclick="openMDD('pcreator')">Creator ▾</button>
+      <div class="mdd" id="mdd-pcreator"><div class="mdd-list" id="mdd-list-pcreator"></div><div class="mdd-clear" onclick="clearAreaSet('pcreator')">Limpar</div></div>
     </div>
     <div class="mdd-wrap">
       <button class="fbtn" id="mdd-btn-pa" onclick="openMDD('pa')">Área ▾</button>
-      <div class="mdd" id="mdd-pa"><div class="mdd-list" id="mdd-list-pa"></div><div class="mdd-clear" onclick="clearMDD('pa')">Limpar</div></div>
-    </div>
-    <div class="mdd-wrap">
-      <button class="fbtn" id="mdd-btn-pcr" onclick="openMDD('pcr')">Creator ▾</button>
-      <div class="mdd" id="mdd-pcr"><div class="mdd-list" id="mdd-list-pcr"></div><div class="mdd-clear" onclick="clearMDD('pcr')">Limpar</div></div>
+      <div class="mdd" id="mdd-pa"><div class="mdd-list" id="mdd-list-pa"></div><div class="mdd-clear" onclick="clearAreaSet('pa')">Limpar</div></div>
     </div>
     <div class="mdd-wrap">
       <button class="fbtn" id="mdd-btn-pia" onclick="openMDD('pia')">Categoria de IA ▾</button>
-      <div class="mdd" id="mdd-pia"><div class="mdd-list" id="mdd-list-pia"></div><div class="mdd-clear" onclick="clearMDD('pia')">Limpar</div></div>
-    </div>
-    <div class="mdd-wrap">
-      <button class="fbtn" id="mdd-btn-pcls" onclick="openMDD('pcls')">Classificação ▾</button>
-      <div class="mdd" id="mdd-pcls"><div class="mdd-list" id="mdd-list-pcls"></div><div class="mdd-clear" onclick="clearMDD('pcls')">Limpar</div></div>
+      <div class="mdd" id="mdd-pia"><div class="mdd-list" id="mdd-list-pia"></div><div class="mdd-clear" onclick="clearAreaSet('pia')">Limpar</div></div>
     </div>
     <div class="f-sep"></div>
-    <button class="fbtn" data-pfc="Crítico" onclick="togglePrioClsBtn(this)">Crítico</button>
-    <button class="fbtn" data-pfc="Importante" onclick="togglePrioClsBtn(this)">Importante</button>
-    <button class="fbtn" data-pfc="Postergável" onclick="togglePrioClsBtn(this)">Postergável</button>
-    <button class="fbtn" data-pfc="Diferir" onclick="togglePrioClsBtn(this)">Diferir</button>
+    <button class="fbtn" data-pc="Crítico" onclick="togglePCls(this)">Crítico</button>
+    <button class="fbtn" data-pc="Importante" onclick="togglePCls(this)">Importante</button>
+    <button class="fbtn" data-pc="Postergável" onclick="togglePCls(this)">Postergável</button>
+    <button class="fbtn" data-pc="Diferir" onclick="togglePCls(this)">Diferir</button>
     <div class="f-sep"></div>
     <div class="sw">
       <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/></svg>
-      <input type="text" id="sprio" placeholder="Buscar iniciativa ou creator…" oninput="renderPriorizacao()">
+      <input type="text" id="sp-prio" placeholder="Buscar iniciativa…" oninput="renderPriorizacao()">
     </div>
     <button class="fbtn clr" onclick="clearPrioFilters()">✕ Limpar</button>
   </div>
-
   <div class="sec-title">Ranking por Score GUT + Complexidade · Classificação automática</div>
   <div id="prank"></div>
 </div>
@@ -451,6 +445,9 @@ tr:hover td{background:#fdf5f8;}
       <button class="fbtn" id="mdd-btn-ka" onclick="openMDD('ka')">Área ▾</button>
       <div class="mdd" id="mdd-ka"><div class="mdd-list" id="mdd-list-ka"></div><div class="mdd-clear" onclick="clearAreaSet('ka')">Limpar</div></div>
     </div>
+    <div class="mdd-wrap">
+      <button class="fbtn" id="mdd-btn-kcls" onclick="openMDD('kcls')">Classificação ▾</button>
+      <div class="mdd" id="mdd-kcls"><div class="mdd-list" id="mdd-list-kcls"></div><div class="mdd-clear" onclick="clearMDD('kcls')">Limpar</div></div>
     </div>
     <div class="mdd-wrap">
       <button class="fbtn" id="mdd-btn-kst" onclick="openMDD('kst')">Status ▾</button>
@@ -688,8 +685,10 @@ function classifyScore(score) {
 // ── Filter state ─────────────────────────────────────────
 const fSets = { g: new Set(), a: new Set(), ia: new Set(), cls: new Set() };
 const kSets = { kg: new Set(), ka: new Set(), kcls: new Set(), kst: new Set() };
-const sortState = { i: { col: null, dir: 1 }, p: { col: 'score', dir: -1 } };
-const pSets = { pg: new Set(), pa: new Set(), pcr: new Set(), pia: new Set(), pcls: new Set() };
+const pSets = { pg: new Set(), pcreator: new Set(), pa: new Set(), pia: new Set(), cls: new Set() };
+const sortState = { i: { col: null, dir: 1 } };
+const prioSortState = { col: 'score', dir: -1 };
+let prioFilter = null;
 let editId = null;
 let donutIA = null, donutCls = null;
 let _iaSelection = [];
@@ -876,107 +875,101 @@ function sortTable(key, col) {
 // ══════════════════════════════════════════════════════════
 //  PRIORIZAÇÃO TAB
 // ══════════════════════════════════════════════════════════
-function setPrioFilter(cls){
-  pSets.pcls.clear();
-  if(!document.querySelector(`[data-pfc="${cls}"]`)?.classList.contains('sel')) pSets.pcls.add(cls);
-  syncPrioClsButtons();
-  updMDDBtn('pcls');
-  rebuildMDD('pcls');
-  renderPriorizacao();
+function getPrioSearch(){
+  return (document.getElementById('sp-prio')?.value||'').toLowerCase();
 }
-function togglePrioClsBtn(btn){
-  const val = btn.dataset.pfc;
-  if (pSets.pcls.has(val)) pSets.pcls.delete(val);
-  else pSets.pcls.add(val);
-  syncPrioClsButtons();
-  updMDDBtn('pcls');
-  rebuildMDD('pcls');
-  renderPriorizacao();
-}
-function syncPrioClsButtons(){
-  document.querySelectorAll('[data-pfc]').forEach(b=>b.classList.toggle('sel', pSets.pcls.has(b.dataset.pfc)));
-}
-function clearPrioFilters(){
-  ['pg','pa','pcr','pia','pcls'].forEach(k=>{ pSets[k].clear(); updMDDBtn(k); rebuildMDD(k); });
-  const sp=document.getElementById('sprio'); if(sp) sp.value='';
-  syncPrioClsButtons();
-  renderPriorizacao();
-}
-function matchesPrioFilters(item, includeClass=true){
+function matchesPrioFilters(item, includeCls=true){
   if (pSets.pg.size && !pSets.pg.has(item.gerencia)) return false;
+  if (pSets.pcreator.size && !pSets.pcreator.has(item.creator)) return false;
   if (pSets.pa.size && !pSets.pa.has(item.area)) return false;
-  if (pSets.pcr.size && !pSets.pcr.has(item.creator)) return false;
   if (pSets.pia.size && !(item.cat_ia||[]).some(c=>pSets.pia.has(c))) return false;
-  if (includeClass && pSets.pcls.size && !pSets.pcls.has(item.cls)) return false;
-  const s=(document.getElementById('sprio')?.value||'').toLowerCase();
-  if(s && !String(item.nome||'').toLowerCase().includes(s) && !String(item.creator||'').toLowerCase().includes(s) && !String(item.area||'').toLowerCase().includes(s)) return false;
+  if (includeCls && pSets.cls.size) {
+    const cls = classifyScore(calcScore(item));
+    if (!pSets.cls.has(cls)) return false;
+  }
+  const s = getPrioSearch();
+  if (s && !item.nome?.toLowerCase().includes(s) && !item.creator?.toLowerCase().includes(s) && !item.area?.toLowerCase().includes(s) && !item.gerencia?.toLowerCase().includes(s)) return false;
   return true;
 }
-function sortPrio(col){
-  const st=sortState.p;
-  st.col===col ? (st.dir*=-1) : (st.col=col, st.dir=(col==='score'?-1:1));
+function setPrioFilter(cls){
+  pSets.cls.clear();
+  if (![...document.querySelectorAll('[data-pc].sel')].some(b=>b.dataset.pc===cls)) {
+    pSets.cls.add(cls);
+  }
+  document.querySelectorAll('[data-pc]').forEach(b=>b.classList.toggle('sel', pSets.cls.has(b.dataset.pc)));
   renderPriorizacao();
 }
-function applySortPrio(rows){
-  const {col,dir}=sortState.p;
-  const order={'Crítico':0,'Importante':1,'Postergável':2,'Diferir':3};
+function togglePCls(btn){
+  const val = btn.dataset.pc;
+  if (pSets.cls.has(val)) { pSets.cls.delete(val); btn.classList.remove('sel'); }
+  else { pSets.cls.add(val); btn.classList.add('sel'); }
+  renderPriorizacao();
+}
+function clearPrioFilters(){
+  ['pg','pcreator','pa','pia','cls'].forEach(k=>pSets[k].clear());
+  document.querySelectorAll('[data-pc]').forEach(b=>b.classList.remove('sel'));
+  const sp=document.getElementById('sp-prio'); if(sp) sp.value='';
+  ['pg','pcreator','pa','pia'].forEach(updMDDBtn);
+  renderPriorizacao();
+}
+function sortPrio(col){
+  if(prioSortState.col===col) prioSortState.dir *= -1;
+  else { prioSortState.col=col; prioSortState.dir = col==='score' ? -1 : 1; }
+  renderPriorizacao();
+}
+function prioSortMark(col){
+  return prioSortState.col===col ? (prioSortState.dir===1?' ↑':' ↓') : ' ↕';
+}
+function applyPrioSort(rows){
+  const {col,dir}=prioSortState;
   return [...rows].sort((a,b)=>{
     if(col==='score') return (a.score-b.score)*dir;
-    if(col==='cls') return ((order[a.cls]??9)-(order[b.cls]??9))*dir;
-    if(col==='status') return String(a.status||'').localeCompare(String(b.status||''),'pt-BR')*dir;
-    if(col==='analysis'){
-      const ar=a.beneficio||a.poc||a.descricao||'';
-      const br=b.beneficio||b.poc||b.descricao||'';
-      return String(ar).localeCompare(String(br),'pt-BR')*dir;
+    if(col==='cls'){
+      const o={'Crítico':0,'Importante':1,'Postergável':2,'Diferir':3};
+      return ((o[a.cls]??9)-(o[b.cls]??9))*dir;
     }
+    if(col==='status') return String(a.status||'').localeCompare(String(b.status||''),'pt-BR')*dir;
     return String(a[col]||'').localeCompare(String(b[col]||''),'pt-BR')*dir;
   });
 }
-function prioTh(label,col,extra=''){
-  const st=sortState.p;
-  const arrow=st.col===col ? (st.dir===1?' ↑':' ↓') : ' ↕';
-  return `<div onclick="sortPrio('${col}')" style="padding:8px;font-weight:600;cursor:pointer;user-select:none;${extra}">${label}${arrow}</div>`;
-}
 
 function renderPriorizacao() {
-  const allRanked = [...iniciativas].map(i=>({...i,score:calcScore(i),cls:classifyScore(calcScore(i))}));
-  const baseForCards = allRanked.filter(i=>matchesPrioFilters(i,false));
+  const allRanked = iniciativas.map(i=>({...i,score:calcScore(i),cls:classifyScore(calcScore(i))}));
+  const countBase = allRanked.filter(i=>matchesPrioFilters(i,false));
   const counts = { 'Crítico':0, 'Importante':0, 'Postergável':0, 'Diferir':0 };
-  baseForCards.forEach(i=>{ counts[i.cls]=(counts[i.cls]||0)+1; });
+  countBase.forEach(i=>{ counts[i.cls]=(counts[i.cls]||0)+1; });
   const reads = { 'Crítico':'Score ≥ 75', 'Importante':'Score 40–74', 'Postergável':'Score 15–39', 'Diferir':'Score < 15' };
   const band_cls = { 'Crítico':'crit', 'Importante':'imp', 'Postergável':'post', 'Diferir':'dif' };
   document.getElementById('prio-bands').innerHTML = CLS_LABELS.map(l=>`
-    <div class="pband ${band_cls[l]}" onclick="setPrioFilter('${l}')" style="cursor:pointer;${pSets.pcls.has(l)?'box-shadow:0 0 0 2px var(--rosa);transform:translateY(-1px);':''}">
+    <div class="pband ${band_cls[l]}" onclick="setPrioFilter('${l}')" style="cursor:pointer;${pSets.cls.has(l)?'box-shadow:0 0 0 2px var(--rosa);transform:translateY(-1px);':''}">
       <span class="hint">filtrar ↓</span>
       <div class="pv">${counts[l]||0}</div>
       <div class="pl">${l}</div>
       <div class="ps">${reads[l]}</div>
     </div>`).join('');
 
-  syncPrioClsButtons();
-  ['pg','pa','pcr','pia','pcls'].forEach(updMDDBtn);
-  const ranked = applySortPrio(allRanked.filter(i=>matchesPrioFilters(i,true)));
+  const ranked = applyPrioSort(allRanked.filter(i=>matchesPrioFilters(i,true)));
   if (!ranked.length) {
-    document.getElementById('prank').innerHTML='<p style="font-size:12px;color:var(--text3);text-align:center;padding:24px">Nenhuma iniciativa encontrada para os filtros selecionados.</p>';
+    document.getElementById('prank').innerHTML='<p style="font-size:12px;color:var(--text3);text-align:center;padding:24px">Nenhuma iniciativa encontrada para os filtros aplicados.</p>';
     return;
   }
   document.getElementById('prank').innerHTML = `
     <div style="border:1px solid var(--border);border-radius:var(--r);overflow:auto;background:#fff;">
-      <div style="display:grid;grid-template-columns:34px minmax(220px,1.5fr) 145px 190px 80px 120px 130px minmax(240px,1fr) 86px;gap:0;font-size:10px;background:var(--bordo);color:#fff;min-width:1240px;">
+      <div style="display:grid;grid-template-columns:34px minmax(220px,1.5fr) 150px 190px 80px 120px 120px minmax(240px,1fr) 86px;gap:0;font-size:10px;background:var(--bordo);color:#fff;min-width:1240px;">
         <div style="padding:8px;text-align:center;">#</div>
-        ${prioTh('Iniciativa','nome')}
-        ${prioTh('Área','area')}
-        ${prioTh('Gerência','gerencia')}
-        ${prioTh('Score','score','text-align:center;')}
-        ${prioTh('Status','status')}
-        ${prioTh('Classificação automática','cls')}
-        ${prioTh('Análise para priorização','analysis')}
+        <div onclick="sortPrio('nome')" style="padding:8px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;cursor:pointer;">Iniciativa${prioSortMark('nome')}</div>
+        <div onclick="sortPrio('area')" style="padding:8px;font-weight:600;cursor:pointer;">Área${prioSortMark('area')}</div>
+        <div onclick="sortPrio('gerencia')" style="padding:8px;font-weight:600;cursor:pointer;">Gerência${prioSortMark('gerencia')}</div>
+        <div onclick="sortPrio('score')" style="padding:8px;font-weight:600;text-align:center;cursor:pointer;">Score${prioSortMark('score')}</div>
+        <div onclick="sortPrio('status')" style="padding:8px;font-weight:600;cursor:pointer;">Status${prioSortMark('status')}</div>
+        <div onclick="sortPrio('cls')" style="padding:8px;font-weight:600;cursor:pointer;">Classificação automática${prioSortMark('cls')}</div>
+        <div style="padding:8px;font-weight:600;">Análise para priorização</div>
         <div style="padding:8px;font-weight:600;text-align:center;">Ações</div>
       </div>
       ${ranked.map((item,i)=>{
         const bg=i%2===0?'#fff':'#fafafa';
         const resumo = item.beneficio || item.poc || item.descricao || 'Sem resumo informado.';
-        return `<div style="display:grid;grid-template-columns:34px minmax(220px,1.5fr) 145px 190px 80px 120px 130px minmax(240px,1fr) 86px;gap:0;border-top:1px solid var(--border);background:${bg};font-size:12px;min-width:1240px;align-items:center;">
+        return `<div style="display:grid;grid-template-columns:34px minmax(220px,1.5fr) 150px 190px 80px 120px 120px minmax(240px,1fr) 86px;gap:0;border-top:1px solid var(--border);background:${bg};font-size:12px;min-width:1240px;align-items:center;">
           <div style="padding:9px;text-align:center;color:var(--text3);font-size:11px;">${i+1}</div>
           <div style="padding:9px;font-weight:500;line-height:1.35;">${esc(item.nome)}</div>
           <div style="padding:9px;font-size:11px;color:var(--text2);">${esc(item.area||'—')}</div>
@@ -1152,12 +1145,12 @@ const mddConfigs = {
   ia: { listId:'mdd-list-ia', btnId:'mdd-btn-ia', set:fSets.ia, items:()=>CAT_IA, render:renderIniciativas },
   kg: { listId:'mdd-list-kg', btnId:'mdd-btn-kg', set:kSets.kg, items:()=>GERENCIAS, render:renderKanban },
   ka: { listId:'mdd-list-ka', btnId:'mdd-btn-ka', set:kSets.ka, items:()=>AREAS, render:renderKanban },
+  kcls: { listId:'mdd-list-kcls', btnId:'mdd-btn-kcls', set:kSets.kcls, items:()=>CLS_LABELS, render:renderKanban },
   kst: { listId:'mdd-list-kst', btnId:'mdd-btn-kst', set:kSets.kst, items:()=>STATUS_LIST, render:renderKanban },
   pg: { listId:'mdd-list-pg', btnId:'mdd-btn-pg', set:pSets.pg, items:()=>GERENCIAS, render:renderPriorizacao },
+  pcreator: { listId:'mdd-list-pcreator', btnId:'mdd-btn-pcreator', set:pSets.pcreator, items:()=>[...new Set(iniciativas.map(i=>i.creator).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'pt-BR')), render:renderPriorizacao },
   pa: { listId:'mdd-list-pa', btnId:'mdd-btn-pa', set:pSets.pa, items:()=>AREAS, render:renderPriorizacao },
-  pcr: { listId:'mdd-list-pcr', btnId:'mdd-btn-pcr', set:pSets.pcr, items:()=>[...new Set(iniciativas.map(i=>i.creator).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'pt-BR')), render:renderPriorizacao },
   pia: { listId:'mdd-list-pia', btnId:'mdd-btn-pia', set:pSets.pia, items:()=>CAT_IA, render:renderPriorizacao },
-  pcls: { listId:'mdd-list-pcls', btnId:'mdd-btn-pcls', set:pSets.pcls, items:()=>CLS_LABELS, render:renderPriorizacao },
 };
 
 function openMDD(key) {
@@ -1183,7 +1176,7 @@ function updMDDBtn(key) {
   const cfg=mddConfigs[key];if(!cfg)return;
   const btn=document.getElementById(cfg.btnId);if(!btn)return;
   const s=cfg.set,items=cfg.items();
-  const label={g:'Gerência',a:'Área',ia:'Categoria de IA',kg:'Gerência',ka:'Área',kcls:'Classificação',kst:'Status',pg:'Gerência',pa:'Área',pcr:'Creator',pia:'Categoria de IA',pcls:'Classificação'}[key]||key;
+  const label={g:'Gerência',a:'Área',ia:'Categoria de IA',kg:'Gerência',ka:'Área',kcls:'Classificação',kst:'Status',pg:'Gerência',pcreator:'Creator',pa:'Área',pia:'Categoria de IA'}[key]||key;
   if(s.size===0){btn.textContent=label+' ▾';btn.classList.remove('sel');}
   else if(s.size===1){btn.textContent=[...s][0].slice(0,14)+(([...s][0].length>14)?'…':'')+' ▾';btn.classList.add('sel');}
   else{btn.textContent=s.size+' selecionados ▾';btn.classList.add('sel');}
@@ -1644,7 +1637,7 @@ async function loadAllData(){
 }
 
 function seedExampleData(){
-  // Mantido apenas para referência. A v2.1 não carrega dados locais automaticamente.
+  // Mantido apenas para referência. A v2.2 não carrega dados locais automaticamente.
   iniciativas=[];
   nextId=100;
 }
