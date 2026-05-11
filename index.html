@@ -3,9 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Creators · Iniciativas de IA · RH · 2026 · v1.7</title>
+<title>Creators · Iniciativas de IA · RH · 2026 · v1.8</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -64,7 +65,7 @@ main{max-width:1380px;margin:0 auto;padding:16px 14px 80px;}
 
 /* Horizontal bars */
 .brow{display:flex;align-items:center;gap:8px;margin-bottom:7px;font-size:12px;}
-.blbl{min-width:170px;color:var(--text2);font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.blbl{min-width:240px;color:var(--text2);font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .btrk{flex:1;height:18px;background:#f2f2f2;border-radius:4px;overflow:hidden;}
 .bfill{height:100%;border-radius:4px;display:flex;align-items:center;padding-left:6px;min-width:24px;transition:width .4s;}
 .bfill span{font-size:10px;font-weight:600;color:#fff;white-space:nowrap;}
@@ -208,17 +209,6 @@ tr:hover td{background:#fdf5f8;}
 .tip-wrap:hover .tip-box{opacity:1;}
 .tip-box::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:var(--bordo);}
 
-/* AI assist */
-
-
-
-
-
-
-.ai-acts{display:flex;gap:8px;margin-top:8px;}
-.ai-use{padding:4px 12px;background:var(--bordo);color:#fff;border:none;border-radius:var(--r);font-size:11px;cursor:pointer;font-family:var(--font);}
-.ai-disc{padding:4px 12px;background:transparent;border:1px solid var(--border2);color:var(--text3);border-radius:var(--r);font-size:11px;cursor:pointer;font-family:var(--font);}
-
 /* ── PREVIEW POPUP ── */
 #preview-popup{display:none;position:fixed;z-index:500;background:var(--surface);border:1px solid var(--border2);border-radius:var(--rl);padding:14px;width:320px;box-shadow:0 8px 30px rgba(0,0,0,.18);pointer-events:none;}
 .preview-row{display:flex;gap:8px;margin-bottom:7px;font-size:12px;}
@@ -260,7 +250,7 @@ tr:hover td{background:#fdf5f8;}
 .carga-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
 @media(max-width:760px){.carga-grid{grid-template-columns:1fr;}}
 .srow{display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:11px;}
-.slbl{min-width:170px;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.slbl{min-width:240px;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .strk{flex:1;display:flex;height:16px;border-radius:4px;overflow:hidden;background:#f2f2f2;}
 .sseg{height:100%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:#fff;}
 .stot{min-width:24px;text-align:right;font-weight:600;color:var(--text2);}
@@ -296,7 +286,7 @@ tr:hover td{background:#fdf5f8;}
   <div class="logo">
     <div class="logo-mark">⚡</div>
     <div>
-      <div class="logo-text">Creators · Iniciativas de IA <span class="logo-sub">RH · 2026 · v1.7</span></div>
+      <div class="logo-text">Creators · Iniciativas de IA <span class="logo-sub">RH · 2026 · v1.8</span></div>
     </div>
   </div>
   <div class="hright">
@@ -310,7 +300,7 @@ tr:hover td{background:#fdf5f8;}
     </div>
     <label class="hbtn" style="cursor:pointer;" title="Importar CSV">
       📂 Importar
-      <input type="file" accept=".csv" style="display:none" onchange="importCSV(event)">
+      <input type="file" accept=".csv,.xlsx,.xls" style="display:none" onchange="importCSV(event)">
     </label>
     <button class="hbtn primary" onclick="openModal(null)">+ Nova Iniciativa</button>
   </div>
@@ -411,7 +401,7 @@ tr:hover td{background:#fdf5f8;}
 <!-- ── PRIORIZAÇÃO ──────────────────────────────────────── -->
 <div class="sec" id="tab-priorizacao">
   <div class="pband-grid" id="prio-bands"></div>
-  <div class="sec-title">Ranking por Score GUT + Complexidade</div>
+  <div class="sec-title">Ranking por Score GUT + Complexidade · Classificação automática</div>
   <div id="prank"></div>
 </div>
 
@@ -532,17 +522,18 @@ console.log('Supabase configured:', SUPABASE_CONFIGURED);
 // ══════════════════════════════════════════════════════════
 const GERENCIAS = [
   'Atendimento & Employee Experience',
-  'Remuneração & People Analytics',
-  'Talent & Employer Branding',
-  'DHO & DEI',
   'Administração de Pessoal & SST',
-  'Comunicação Interna & Work Life Balance',
   'Benefícios',
+  'DHO & DEI',
+  'Comunicação Interna & Work-Life Balance',
+  'Talent & Employer Branding',
+  'Remuneração & People Analytics',
+  'Soluções & Inovação',
 ];
 const AREAS = [
-  'Acessos e Sistemas','Admissão e Cadastro','Afastamentos e Licenças','Atendimento',
+  'Acessos e Sistemas','Admissão e Cadastro','Afastamento e Licenças','Atendimento',
   'Benefícios','Business Partner','Comunicação Interna','DEI&P','Desligamento',
-  'DHO','Férias','Folha de Pagamento','Gestão de Ponto','R&S','Remuneração','SST',
+  'DHO','Férias','Folha de Pagamento','Gestão de Ponto','R&S','Remuneração','SST','Projetos',
 ];
 const CAT_IA = ['Agente de IA','IA Generativa','Analytics / IA Analítica','Automação','Machine Learning','NLP','RPA'];
 const CAT_IA_COLORS = ['#2E101E','#662046','#BF144A','#D4729A','#FF7DAF','#8C3058','#F0B8CE'];
@@ -554,6 +545,84 @@ const CLS_BADGE  = {'Crítico':'b-crit','Importante':'b-imp','Postergável':'b-p
 const COMPL_LABEL = {3:'Baixa',2:'Média',1:'Alta'};
 const COMPL_COLORS = {3:'#FF7DAF',2:'#662046',1:'#2E101E'};
 const Q_COLORS   = {Q1:'#2E101E',Q2:'#662046',Q3:'#BF144A',Q4:'#FF7DAF',TBD:'#BDBDBD'};
+
+const AREA_TO_GERENCIA = {
+  'Acessos e Sistemas':'Atendimento & Employee Experience',
+  'Admissão e Cadastro':'Administração de Pessoal & SST',
+  'Afastamento e Licenças':'Administração de Pessoal & SST',
+  'Afastamentos e Licenças':'Administração de Pessoal & SST',
+  'Atendimento':'Atendimento & Employee Experience',
+  'Benefícios':'Benefícios',
+  'Business Partner':'DHO & DEI',
+  'Comunicação Interna':'Comunicação Interna & Work-Life Balance',
+  'DEI&P':'DHO & DEI',
+  'Desligamento':'Administração de Pessoal & SST',
+  'DHO':'DHO & DEI',
+  'Férias':'Administração de Pessoal & SST',
+  'Folha de Pagamento':'Administração de Pessoal & SST',
+  'Gestão de Ponto':'Administração de Pessoal & SST',
+  'R&S':'Talent & Employer Branding',
+  'Remuneração':'Remuneração & People Analytics',
+  'SST':'Administração de Pessoal & SST',
+  'Projetos':'Soluções & Inovação',
+};
+
+function normalizeTxt(v){
+  return String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
+}
+function normalizeHeader(h){
+  const x=normalizeTxt(h).replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'');
+  const map={
+    'nome_do_creator':'creator','creator':'creator','criador':'creator',
+    'area':'area','gerencia':'gerencia','status':'status',
+    'q_inicio':'q_inicio','quarter_inicio':'q_inicio','inicio':'q_inicio',
+    'q_entrega':'q_entrega','quarter_entrega':'q_entrega','entrega':'q_entrega',
+    'nome':'nome','iniciativa':'nome','nome_da_iniciativa':'nome',
+    'categoria_de_ia':'cat_ia','categoria_ia':'cat_ia','cat_ia':'cat_ia','tipo_de_ia':'cat_ia',
+    'descricao':'descricao','poc':'poc','problema_oportunidade':'poc','problema':'poc',
+    'beneficio':'beneficio','beneficio_potencial':'beneficio','riscos':'riscos','riscos_identificados':'riscos',
+    'gravidade':'gut_g','gut_g':'gut_g','urgencia':'gut_u','gut_u':'gut_u','tendencia':'gut_t','gut_t':'gut_t',
+    'complexidade':'complexidade','complexidade_de_desenvolvimento':'complexidade'
+  };
+  return map[x]||x;
+}
+function normalizeScoreValue(v, fallback=1){
+  const s=normalizeTxt(v);
+  if(!s) return fallback;
+  const m=s.match(/[1352]/);
+  if(m) return parseInt(m[0],10);
+  if(s.includes('alta')) return 5;
+  if(s.includes('media')) return 3;
+  if(s.includes('baixa')) return 1;
+  return fallback;
+}
+function normalizeComplexityValue(v){
+  const s=normalizeTxt(v);
+  if(!s) return 3;
+  const m=s.match(/[123]/);
+  if(m) return parseInt(m[0],10);
+  if(s.includes('alta')) return 1;
+  if(s.includes('media')) return 2;
+  if(s.includes('baixa')) return 3;
+  return 3;
+}
+function canonicalCatIA(raw){
+  const parts=String(raw||'').split('|').map(s=>s.trim()).filter(Boolean);
+  return parts.map(p=>{
+    const n=normalizeTxt(p);
+    if(n==='analytics' || n.includes('analitica')) return 'Analytics / IA Analítica';
+    if(n.includes('generativa') || n==='genai') return 'IA Generativa';
+    if(n.includes('agente')) return 'Agente de IA';
+    if(n.includes('automacao') || n.includes('power automate')) return 'Automação';
+    if(n.includes('machine') || n==='ml') return 'Machine Learning';
+    if(n.includes('nlp')) return 'NLP';
+    if(n.includes('rpa')) return 'RPA';
+    return p;
+  });
+}
+function inferGerencia(area, explicitGerencia=''){
+  return AREA_TO_GERENCIA[area] || explicitGerencia || '';
+}
 
 // ══════════════════════════════════════════════════════════
 //  DATA
@@ -571,21 +640,16 @@ function calcScore(item) {
 }
 
 function classifyScore(score) {
-  // Dynamic thresholds on current data
-  const scores = iniciativas.map(i => calcScore(i));
-  if (!scores.length) {
-    if (score >= 126) return 'Crítico';
-    if (score >= 76)  return 'Importante';
-    if (score >= 26)  return 'Postergável';
-    return 'Diferir';
-  }
-  const sorted = [...scores].sort((a,b) => b-a);
-  const p75 = sorted[Math.floor(sorted.length * 0.25)] || 76;
-  const p50 = sorted[Math.floor(sorted.length * 0.50)] || 51;
-  const p25 = sorted[Math.floor(sorted.length * 0.75)] || 26;
-  if (score >= p75) return 'Crítico';
-  if (score >= p50) return 'Importante';
-  if (score >= p25) return 'Postergável';
+  // Regra fixa para evitar distorção quando várias iniciativas têm pontuações parecidas.
+  // Score = (Gravidade × Urgência × Tendência) + Complexidade.
+  // Score máximo: 128 = (5 × 5 × 5) + 3.
+  // Crítico: cenário de alto impacto e alta urgência/tendência (ex.: 5×5×3 ou 5×5×5).
+  // Importante: alto impacto, mas com urgência/tendência intermediária (ex.: 5×3×3).
+  // Postergável: impacto e tendência moderados (ex.: 3×3×3).
+  // Diferir: baixa relevância/urgência/tendência no momento.
+  if (score >= 75) return 'Crítico';
+  if (score >= 40) return 'Importante';
+  if (score >= 15) return 'Postergável';
   return 'Diferir';
 }
 
@@ -593,6 +657,7 @@ function classifyScore(score) {
 const fSets = { g: new Set(), a: new Set(), ia: new Set(), cls: new Set() };
 const kSets = { kg: new Set(), ka: new Set() };
 const sortState = { i: { col: null, dir: 1 } };
+let prioFilter = null;
 let editId = null;
 let donutIA = null, donutCls = null;
 let _iaSelection = [];
@@ -665,18 +730,8 @@ function renderChartsVG() {
   iniciativas.forEach(i=>{ const g=i.gerencia||'Sem Gerência'; gerCounts[g]=(gerCounts[g]||0)+1; });
   const gerSorted = Object.entries(gerCounts).sort((a,b)=>b[1]-a[1]);
   const maxG = Math.max(1,...gerSorted.map(([,v])=>v));
-  // Short names
-  const SHORT = {
-    'Comunicação Interna & Work Life Balance':'Com. Interna & WB',
-    'Talent & Employer Branding':'Talent & EB',
-    'Remuneração & People Analytics':'Rem. & PA',
-    'DHO & DEI':'DHO & DEI',
-    'Benefícios':'Benefícios',
-    'Administração de Pessoal & SST':'AP & SST',
-    'Atendimento & Employee Experience':'Atend. & EX',
-  };
   document.getElementById('ch-gerencia').innerHTML = gerSorted.map(([g,v])=>`
-    <div class="brow"><div class="blbl" title="${g}">${esc(SHORT[g]||g)}</div>
+    <div class="brow"><div class="blbl" title="${esc(g)}">${esc(g)}</div>
     <div class="btrk"><div class="bfill" style="width:${Math.round(v/maxG*100)}%;background:var(--bordo-luz)"><span>${v}</span></div></div></div>`).join('') || '<p style="font-size:12px;color:var(--text3)">Sem dados</p>';
 
   // By Area
@@ -789,47 +844,63 @@ function sortTable(key, col) {
 // ══════════════════════════════════════════════════════════
 //  PRIORIZAÇÃO TAB
 // ══════════════════════════════════════════════════════════
+function setPrioFilter(cls){
+  prioFilter = (prioFilter === cls) ? null : cls;
+  renderPriorizacao();
+}
+
 function renderPriorizacao() {
-  // Bands
+  const allRanked = [...iniciativas].map(i=>({...i,score:calcScore(i),cls:classifyScore(calcScore(i))}))
+    .sort((a,b)=>b.score-a.score);
   const counts = { 'Crítico':0, 'Importante':0, 'Postergável':0, 'Diferir':0 };
-  iniciativas.forEach(i=>{ const c=classifyScore(calcScore(i)); counts[c]=(counts[c]||0)+1; });
-  const reads = { 'Crítico':'Fazer agora', 'Importante':'Alto valor — mais preparo', 'Postergável':'Quando houver janela', 'Diferir':'Não priorizar agora' };
+  allRanked.forEach(i=>{ counts[i.cls]=(counts[i.cls]||0)+1; });
+  const reads = { 'Crítico':'Score ≥ 75', 'Importante':'Score 40–74', 'Postergável':'Score 15–39', 'Diferir':'Score < 15' };
   const band_cls = { 'Crítico':'crit', 'Importante':'imp', 'Postergável':'post', 'Diferir':'dif' };
   document.getElementById('prio-bands').innerHTML = CLS_LABELS.map(l=>`
-    <div class="pband ${band_cls[l]}">
+    <div class="pband ${band_cls[l]}" onclick="setPrioFilter('${l}')" style="cursor:pointer;${prioFilter===l?'box-shadow:0 0 0 2px var(--rosa);transform:translateY(-1px);':''}">
+      <span class="hint">filtrar ↓</span>
       <div class="pv">${counts[l]||0}</div>
       <div class="pl">${l}</div>
       <div class="ps">${reads[l]}</div>
     </div>`).join('');
 
-  // Ranking
-  const ranked = [...iniciativas].map(i=>({...i,score:calcScore(i),cls:classifyScore(calcScore(i))}))
-    .sort((a,b)=>b.score-a.score);
+  const ranked = prioFilter ? allRanked.filter(i=>i.cls===prioFilter) : allRanked;
   if (!ranked.length) {
-    document.getElementById('prank').innerHTML='<p style="font-size:12px;color:var(--text3);text-align:center;padding:24px">Nenhuma iniciativa cadastrada.</p>';
+    document.getElementById('prank').innerHTML='<p style="font-size:12px;color:var(--text3);text-align:center;padding:24px">Nenhuma iniciativa nesta classificação.</p>';
     return;
   }
+  const clearBtn = prioFilter ? `<button class="fbtn clr" onclick="prioFilter=null;renderPriorizacao()">✕ Limpar filtro: ${prioFilter}</button>` : '';
   document.getElementById('prank').innerHTML = `
-    <div style="border:1px solid var(--border);border-radius:var(--r);overflow:hidden;">
-      <div style="display:grid;grid-template-columns:28px 1fr 130px 80px 80px 110px;gap:0;font-size:10px;background:var(--bordo);color:#fff;">
-        <div style="padding:7px 8px;text-align:center;">#</div>
-        <div style="padding:7px 8px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;">Iniciativa</div>
-        <div style="padding:7px 8px;font-weight:600;">Creator</div>
-        <div style="padding:7px 8px;font-weight:600;text-align:center;">Score</div>
-        <div style="padding:7px 8px;font-weight:600;text-align:center;">GUT</div>
-        <div style="padding:7px 8px;font-weight:600;">Classificação</div>
+    <div style="margin-bottom:8px;display:flex;justify-content:flex-end;">${clearBtn}</div>
+    <div style="border:1px solid var(--border);border-radius:var(--r);overflow:auto;background:#fff;">
+      <div style="display:grid;grid-template-columns:34px minmax(220px,1.5fr) 150px 190px 80px 120px 110px minmax(240px,1fr) 86px;gap:0;font-size:10px;background:var(--bordo);color:#fff;min-width:1230px;">
+        <div style="padding:8px;text-align:center;">#</div>
+        <div style="padding:8px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;">Iniciativa</div>
+        <div style="padding:8px;font-weight:600;">Área</div>
+        <div style="padding:8px;font-weight:600;">Gerência</div>
+        <div style="padding:8px;font-weight:600;text-align:center;">Score</div>
+        <div style="padding:8px;font-weight:600;">Status</div>
+        <div style="padding:8px;font-weight:600;">Classificação automática</div>
+        <div style="padding:8px;font-weight:600;">Análise para priorização</div>
+        <div style="padding:8px;font-weight:600;text-align:center;">Ações</div>
       </div>
       ${ranked.map((item,i)=>{
-        const g=item.gut_g||1,u=item.gut_u||1,t_=item.gut_t||1;
-        const gut=g*u*t_;
         const bg=i%2===0?'#fff':'#fafafa';
-        return `<div style="display:grid;grid-template-columns:28px 1fr 130px 80px 80px 110px;gap:0;border-top:1px solid var(--border);background:${bg};font-size:12px;">
-          <div style="padding:8px;text-align:center;color:var(--text3);font-size:11px;">${i+1}</div>
-          <div style="padding:8px;font-weight:500;line-height:1.3;">${esc(item.nome)}</div>
-          <div style="padding:8px;font-size:11px;color:var(--text3);">${esc(item.creator||'—')}</div>
-          <div style="padding:8px;text-align:center;"><span class="score-pill">${item.score}</span></div>
-          <div style="padding:8px;text-align:center;font-size:11px;color:var(--text3);">${gut}</div>
-          <div style="padding:8px;">${clsBadge(item.cls)}</div>
+        const resumo = item.beneficio || item.poc || item.descricao || 'Sem resumo informado.';
+        return `<div style="display:grid;grid-template-columns:34px minmax(220px,1.5fr) 150px 190px 80px 120px 110px minmax(240px,1fr) 86px;gap:0;border-top:1px solid var(--border);background:${bg};font-size:12px;min-width:1230px;align-items:center;">
+          <div style="padding:9px;text-align:center;color:var(--text3);font-size:11px;">${i+1}</div>
+          <div style="padding:9px;font-weight:500;line-height:1.35;">${esc(item.nome)}</div>
+          <div style="padding:9px;font-size:11px;color:var(--text2);">${esc(item.area||'—')}</div>
+          <div style="padding:9px;font-size:11px;color:var(--text2);">${esc(item.gerencia||'—')}</div>
+          <div style="padding:9px;text-align:center;"><span class="score-pill">${item.score}</span></div>
+          <div style="padding:9px;font-size:11px;color:var(--text2);line-height:1.5;">${statusDot(item.status)}</div>
+          <div style="padding:9px;">${clsBadge(item.cls)}</div>
+          <div style="padding:9px;font-size:11px;color:var(--text2);line-height:1.45;">${esc(resumo).slice(0,200)}${String(resumo).length>200?'…':''}</div>
+          <div style="padding:9px;"><div class="ract" style="justify-content:center;">
+            <button class="ibtn" onmouseenter="showPreview(${item.id},event)" onmouseleave="hidePreview()" onclick="showPreview(${item.id},event)" title="Visualizar">👁</button>
+            <button class="ibtn" onclick="openModal(${item.id})" title="Editar">✎</button>
+            <button class="ibtn d" onclick="confirmDel(${item.id})" title="Excluir">✕</button>
+          </div></div>
         </div>`;
       }).join('')}
     </div>`;
@@ -914,16 +985,6 @@ function initTouchDrag(){
 //  CARGA
 // ══════════════════════════════════════════════════════════
 function renderCarga(){
-  const SHORT={
-    'Atendimento & Employee Experience':'Atend. & EX',
-    'Remuneração & People Analytics':'Rem. & PA',
-    'Talent & Employer Branding':'Talent & EB',
-    'DHO & DEI':'DHO & DEI',
-    'Administração de Pessoal & SST':'AP & SST',
-    'Comunicação Interna & Work Life Balance':'Com. Interna & WLB',
-    'Benefícios':'Benefícios',
-  };
-
   // Volume por Gerência
   const gc={};
   iniciativas.forEach(i=>{const g=i.gerencia||'Sem Gerência';gc[g]=(gc[g]||0)+1;});
@@ -931,7 +992,7 @@ function renderCarga(){
   const maxG=Math.max(1,...gSorted.map(([,v])=>v));
   const elGer=document.getElementById('ch-carga-ger');
   if(elGer) elGer.innerHTML=gSorted.map(([g,v])=>`
-    <div class="brow"><div class="blbl" title="${esc(g)}">${esc(SHORT[g]||g)}</div>
+    <div class="brow"><div class="blbl" title="${esc(g)}">${esc(g)}</div>
     <div class="btrk"><div class="bfill" style="width:${Math.round(v/maxG*100)}%;background:var(--bordo)"><span>${v}</span></div></div></div>`).join('')
     ||'<p style="font-size:12px;color:var(--text3)">Sem dados</p>';
 
@@ -956,7 +1017,7 @@ function renderCarga(){
         const pct=Math.round(cv[c]/maxGC*100);
         return`<div class="sseg" title="${COMPL_L[c]}: ${cv[c]}" style="width:${pct}%;background:${COMPL_C[c]};min-width:${cv[c]?'4px':'0'}">${pct>8?cv[c]:''}</div>`;
       }).join('');
-      return`<div class="srow"><div class="slbl" title="${esc(g)}">${esc(SHORT[g]||g)}</div><div class="strk">${segs}</div><div class="stot">${total}</div></div>`;
+      return`<div class="srow"><div class="slbl" title="${esc(g)}">${esc(g)}</div><div class="strk">${segs}</div><div class="stot">${total}</div></div>`;
     }).join('')||'<p style="font-size:12px;color:var(--text3)">Sem dados</p>';
     elCompl.insertAdjacentHTML('beforeend',
       `<div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:10px">${[3,2,1].map(c=>
@@ -1095,7 +1156,7 @@ function buildFormFields(data) {
     <div class="fsec">Identificação</div>
     <div class="fi"><label>Creator <span class="req">*</span></label><input type="text" id="f-creator" value="${esc(d.creator||'')}"></div>
     <div class="fi"><label>Gerência <span class="req">*</span></label><select id="f-gerencia">${gOpts}</select></div>
-    <div class="fi"><label>Área <span class="req">*</span></label><select id="f-area">${aOpts}</select></div>
+    <div class="fi"><label>Área <span class="req">*</span></label><select id="f-area" onchange="syncGerenciaFromArea()">${aOpts}</select></div>
     <div class="fi"><label>Status <span class="req">*</span></label><select id="f-status">${['Não iniciado','Em andamento','Em risco','Stand-by','Concluído'].map(s=>`<option value="${s}" ${(d.status||'Não iniciado')===s?'selected':''}>${s}</option>`).join('')}</select></div>
     <div class="fi"><label>Q Início</label><select id="f-qi">${qIniOpts}</select></div>
     <div class="fi"><label>Q Entrega (previsão)</label><select id="f-qe">${qOpts}</select></div>
@@ -1117,18 +1178,14 @@ function buildFormFields(data) {
     </div>
 
     <div class="fsec">Descrição</div>
-    <div class="fi full ai-wrap"><label>Descrição <span class="req">*</span></label>
+    <div class="fi full"><label>Descrição <span class="req">*</span></label>
       <textarea id="f-desc" rows="3">${esc(d.descricao||'')}</textarea>
-      
-      
     </div>
     <div class="fi full"><label>POC: Problema / Oportunidade <span class="req">*</span></label>
       <textarea id="f-poc" rows="2">${esc(d.poc||'')}</textarea>
     </div>
-    <div class="fi full ai-wrap"><label>Benefício Potencial</label>
+    <div class="fi full"><label>Benefício Potencial</label>
       <textarea id="f-benef" rows="2">${esc(d.beneficio||'')}</textarea>
-      
-      
     </div>
     <div class="fi full"><label>Riscos Identificados</label>
       <textarea id="f-riscos" rows="2">${esc(d.riscos||'')}</textarea>
@@ -1191,9 +1248,16 @@ function buildFormFields(data) {
       </div>
     </div>`;
 
+  syncGerenciaFromArea();
   renderIAChips();
   buildIADropdown();
   updateScorePreview();
+}
+
+function syncGerenciaFromArea(){
+  const area=document.getElementById('f-area')?.value || '';
+  const ger=document.getElementById('f-gerencia');
+  if(ger && AREA_TO_GERENCIA[area]) ger.value=AREA_TO_GERENCIA[area];
 }
 
 function renderIAChips() {
@@ -1296,34 +1360,6 @@ function confirmDel(id) {
 function closeConfirm(){document.getElementById('confirm-overlay').classList.remove('open');}
 
 // ══════════════════════════════════════════════════════════
-//  AI ASSIST
-// ══════════════════════════════════════════════════════════
-async   const btn=document.getElementById(btnId);
-  btn.classList.add('loading');btn.textContent='…';
-  const sug=document.getElementById(sugId);
-  sug.classList.remove('show');sug.innerHTML='';
-  const nome=(document.getElementById('f-nome')?.value||'').trim();
-  const prompt=isDesc
-    ?`Você é especialista em gestão de iniciativas de IA em RH. Reescreva a descrição abaixo de forma mais clara e objetiva para um painel de iniciativas de IA. Máximo 3 frases. Responda APENAS com a descrição melhorada.\n\nIniciativa: ${nome}\nDescrição: ${text}`
-    :`Você é especialista em gestão de iniciativas de IA em RH. Sugira o benefício esperado com base na descrição. Máximo 2 frases. Responda APENAS com o benefício.\n\nIniciativa: ${nome}\nDescrição: ${document.getElementById('f-desc')?.value||''}\nBenefício atual: ${text}`;
-  try{
-    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:300,messages:[{role:'user',content:prompt}]})});
-    if(!res.ok)throw new Error('err');
-    const data=await res.json();
-    const improved=(data.content?.[0]?.text||'').trim();
-    if(improved){
-      sug.innerHTML=`<div style="margin-bottom:6px;line-height:1.55">${esc(improved)}</div>
-        <div class="ai-acts"><button class="ai-use" onclick="useAI('${inputId}','${sugId}')">Usar</button><button class="ai-disc" onclick="document.getElementById('${sugId}').classList.remove('show')">Descartar</button></div>`;
-      sug.classList.add('show');
-    }
-  }catch(e){
-    sug.innerHTML=`<div style="font-size:11px;color:var(--text3)">A IA está disponível quando aberto dentro do Claude.ai.</div>`;
-    sug.classList.add('show');
-  }
-  btn.classList.remove('loading');btn.textContent='✦';
-}
-
-// ══════════════════════════════════════════════════════════
 //  EXPORT / IMPORT
 // ══════════════════════════════════════════════════════════
 function toggleExportMenu(){const m=document.getElementById('export-menu');m.classList.toggle('open');}
@@ -1347,11 +1383,17 @@ function exportCSV(){
 }
 
 function downloadTemplate(){
-  const headers=['creator','gerencia','area','status','q_inicio','q_entrega','nome','cat_ia','descricao','poc','beneficio','riscos','gut_g','gut_u','gut_t','complexidade'];
-  const ex=[['Ex: João Silva','Talent & Employer Branding','R&S','Não iniciado','Q2','Q3','Triagem automática de currículos com IA','IA Generativa | Machine Learning','Sistema que usa IA para triagem inicial de currículos, classificando candidatos por aderência ao perfil.','Alto volume manual de triagem de currículos, consumindo tempo de analistas de R&S.','Redução de 60% no tempo de triagem. Analistas focam apenas nos candidatos mais aderentes.','Qualidade das triagens da IA precisa de calibração contínua.','5','3','3','2']];
-  csvDownload('template-creators-iniciativas.csv',headers,ex);
-  toast('Template baixado!');
+  // Template Excel simples gerado no navegador. A versão completa com validações também está disponível como arquivo .xlsx.
+  const wb = XLSX.utils.book_new();
+  const headers=['Nome do creator','Área','Status','Q início','Q entrega','Nome','Categoria de IA','Descrição','POC','Benefício','Riscos','Gravidade','Urgência','Tendência','Complexidade'];
+  const example=[['Ex: João Silva','R&S','Não iniciado','Q2','Q3','Triagem automática de currículos com IA','IA Generativa | Machine Learning','Sistema que usa IA para triagem inicial de currículos.','Alto volume manual de triagem de currículos.','Redução do tempo de triagem.','Qualidade das triagens precisa de calibração.','5 - Alta','3 - Média','3 - Média','2 - Média']];
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([headers,...example]), 'Importacao');
+  const apoio=[['Área','Gerência'],...Object.entries(AREA_TO_GERENCIA),[],['Campo','Orientação'],['Gravidade','1 - Baixa | 3 - Média | 5 - Alta'],['Urgência','1 - Baixa | 3 - Média | 5 - Alta'],['Tendência','1 - Baixa | 3 - Média | 5 - Alta'],['Complexidade','1 - Alta | 2 - Média | 3 - Baixa'],[],['Categoria de IA','Descrição'],['Agente de IA','Executa ações automaticamente dentro de um processo'],['IA Generativa','Gera ou melhora textos, resumos, respostas e conteúdos'],['Analytics / IA Analítica','Analisa dados para identificar padrões e apoiar decisões'],['Automação','Fluxos baseados em regras, como Power Automate'],['Machine Learning','Modelos preditivos ou classificatórios'],['NLP','Entendimento e processamento de linguagem natural'],['RPA','Automação robótica de tarefas repetitivas']];
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(apoio), 'Apoio');
+  XLSX.writeFile(wb, 'template-creators-iniciativas.xlsx');
+  toast('Template Excel baixado!');
 }
+
 
 function parseCSV(text,sep=';'){
   const rows=[];let r=[],field='',inQ=false,i=0;const n=text.length;
@@ -1364,50 +1406,69 @@ function parseCSV(text,sep=';'){
 }
 
 let _importParsed=null;
+function rowsFromWorksheet(ws){
+  return XLSX.utils.sheet_to_json(ws,{header:1,defval:''}).filter(r=>r.some(c=>String(c||'').trim()));
+}
+function processImportRows(allRows,fileName){
+  if(allRows.length<2){toast('Arquivo vazio ou inválido.');return;}
+  const hdrs=allRows[0].map(normalizeHeader);
+  const get=(row,key)=>{const i=hdrs.indexOf(key);return i>=0?(row[i]||'').toString().trim():'';};
+  const nomeIdx=hdrs.indexOf('nome');
+  const dataRows=allRows.slice(1).filter(r=>{const nm=(nomeIdx>=0?r[nomeIdx]:r[0]||'').toString().trim();return nm&&!nm.startsWith('##')&&!nm.toLowerCase().startsWith('ex:');});
+  const toAdd=[],toUpdate=[];
+  for(const row of dataRows){
+    const nome=get(row,'nome');if(!nome)continue;
+    const ex=iniciativas.find(b=>b.nome.trim().toLowerCase()===nome.toLowerCase());
+    ex?toUpdate.push({row,existing:ex}):toAdd.push({row,nome});
+  }
+  _importParsed={hdrs,get,toAdd,toUpdate};
+  const preview=[...toAdd,...toUpdate].slice(0,10).map(item=>{
+    const nm=item.nome||item.existing?.nome;
+    const tag=item.existing?`<span style="font-size:10px;background:#e8f4ee;color:#1E7A4A;padding:1px 7px;border-radius:8px;margin-left:6px;">atualizar</span>`:`<span style="font-size:10px;background:#e8eef8;color:#1a3a6e;padding:1px 7px;border-radius:8px;margin-left:6px;">novo</span>`;
+    return `<div style="padding:6px 0;border-bottom:1px solid #f5f5f5;font-size:12px;display:flex;align-items:center;">${esc(nm)}${tag}</div>`;
+  }).join('');
+  const more=toAdd.length+toUpdate.length-10;
+  document.getElementById('import-modal').innerHTML=`
+    <div style="background:#fff;border-radius:12px;padding:24px;width:500px;max-width:96vw;max-height:88vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,.18);">
+      <h3 style="margin:0 0 4px;font-size:15px;color:var(--bordo);">📂 Prévia da importação</h3>
+      <p style="font-size:12px;color:var(--text3);margin:0 0 16px;">${esc(fileName)}</p>
+      <div style="display:flex;gap:10px;margin-bottom:16px;">
+        <div style="flex:1;background:#e8f4ee;border-radius:8px;padding:10px;text-align:center;"><div style="font-size:22px;font-weight:700;color:#1E7A4A;">${toAdd.length}</div><div style="font-size:11px;color:#1E7A4A;">novos</div></div>
+        <div style="flex:1;background:#fff8e1;border-radius:8px;padding:10px;text-align:center;"><div style="font-size:22px;font-weight:700;color:#C47D00;">${toUpdate.length}</div><div style="font-size:11px;color:#C47D00;">a atualizar</div></div>
+      </div>
+      <div style="border:1px solid #eee;border-radius:8px;padding:8px 12px;max-height:220px;overflow-y:auto;margin-bottom:12px;">${preview}${more>0?`<div style="font-size:11px;color:var(--text3);padding:6px 0;">...e mais ${more}</div>`:''}</div>
+      <div style="background:#fff8e1;border-radius:8px;padding:10px 14px;font-size:12px;color:#7a5000;margin-bottom:16px;">⚠️ Iniciativas com o mesmo nome serão <strong>atualizadas</strong>. A gerência será preenchida automaticamente pela área.</div>
+      <div style="display:flex;gap:10px;justify-content:flex-end;">
+        <button onclick="closeImportModal()" style="padding:8px 18px;border:1px solid #ccc;border-radius:8px;background:#fff;cursor:pointer;font-family:inherit;font-size:13px;">Cancelar</button>
+        <button id="btn-confirm-import" onclick="executeImport()" style="padding:8px 22px;background:var(--magenta);color:#fff;border:none;border-radius:8px;cursor:pointer;font-family:inherit;font-size:13px;font-weight:600;">Confirmar importação</button>
+      </div>
+    </div>`;
+  document.getElementById('import-modal').style.display='flex';
+}
 function importCSV(event){
   const file=event.target.files[0];if(!file)return;
-  const reader=new FileReader();
-  reader.onload=e=>{
-    let text=e.target.result.replace(/^\uFEFF/,'');
-    const sep=text.split('\n')[0].includes(';')?';':',';
-    const allRows=parseCSV(text,sep);
-    if(allRows.length<2){toast('Arquivo vazio ou inválido.');return;}
-    const hdrs=allRows[0].map(h=>h.toLowerCase().trim());
-    const get=(row,key)=>{const i=hdrs.indexOf(key);return i>=0?(row[i]||'').trim():'';};
-    const dataRows=allRows.slice(1).filter(r=>{const nm=(r[hdrs.indexOf('nome')]||r[0]||'').trim();return nm&&!nm.startsWith('##');});
-    const toAdd=[],toUpdate=[];
-    for(const row of dataRows){
-      const nome=get(row,'nome');if(!nome)continue;
-      const ex=iniciativas.find(b=>b.nome.trim().toLowerCase()===nome.toLowerCase());
-      ex?toUpdate.push({row,existing:ex}):toAdd.push({row,nome});
-    }
-    _importParsed={hdrs,get,toAdd,toUpdate};
-    const preview=[...toAdd,...toUpdate].slice(0,10).map(item=>{
-      const nm=item.nome||item.existing?.nome;
-      const tag=item.existing?`<span style="font-size:10px;background:#e8f4ee;color:#1E7A4A;padding:1px 7px;border-radius:8px;margin-left:6px;">atualizar</span>`:`<span style="font-size:10px;background:#e8eef8;color:#1a3a6e;padding:1px 7px;border-radius:8px;margin-left:6px;">novo</span>`;
-      return `<div style="padding:6px 0;border-bottom:1px solid #f5f5f5;font-size:12px;display:flex;align-items:center;">${esc(nm)}${tag}</div>`;
-    }).join('');
-    const more=toAdd.length+toUpdate.length-10;
-    document.getElementById('import-modal').innerHTML=`
-      <div style="background:#fff;border-radius:12px;padding:24px;width:500px;max-width:96vw;max-height:88vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,.18);">
-        <h3 style="margin:0 0 4px;font-size:15px;color:var(--bordo);">📂 Prévia da importação</h3>
-        <p style="font-size:12px;color:var(--text3);margin:0 0 16px;">${file.name}</p>
-        <div style="display:flex;gap:10px;margin-bottom:16px;">
-          <div style="flex:1;background:#e8f4ee;border-radius:8px;padding:10px;text-align:center;"><div style="font-size:22px;font-weight:700;color:#1E7A4A;">${toAdd.length}</div><div style="font-size:11px;color:#1E7A4A;">novos</div></div>
-          <div style="flex:1;background:#fff8e1;border-radius:8px;padding:10px;text-align:center;"><div style="font-size:22px;font-weight:700;color:#C47D00;">${toUpdate.length}</div><div style="font-size:11px;color:#C47D00;">a atualizar</div></div>
-        </div>
-        <div style="border:1px solid #eee;border-radius:8px;padding:8px 12px;max-height:220px;overflow-y:auto;margin-bottom:12px;">${preview}${more>0?`<div style="font-size:11px;color:var(--text3);padding:6px 0;">...e mais ${more}</div>`:''}</div>
-        <div style="background:#fff8e1;border-radius:8px;padding:10px 14px;font-size:12px;color:#7a5000;margin-bottom:16px;">⚠️ Iniciativas com o mesmo nome serão <strong>atualizadas</strong>.</div>
-        <div style="display:flex;gap:10px;justify-content:flex-end;">
-          <button onclick="closeImportModal()" style="padding:8px 18px;border:1px solid #ccc;border-radius:8px;background:#fff;cursor:pointer;font-family:inherit;font-size:13px;">Cancelar</button>
-          <button id="btn-confirm-import" onclick="executeImport()" style="padding:8px 22px;background:var(--magenta);color:#fff;border:none;border-radius:8px;cursor:pointer;font-family:inherit;font-size:13px;font-weight:600;">Confirmar importação</button>
-        </div>
-      </div>`;
-    document.getElementById('import-modal').style.display='flex';
-  };
-  reader.readAsText(file,'utf-8');
+  const name=file.name||'';
+  const ext=name.split('.').pop().toLowerCase();
+  if(['xlsx','xls'].includes(ext)){
+    const reader=new FileReader();
+    reader.onload=e=>{
+      const wb=XLSX.read(e.target.result,{type:'array'});
+      const ws=wb.Sheets['Importacao'] || wb.Sheets[wb.SheetNames[0]];
+      processImportRows(rowsFromWorksheet(ws),name);
+    };
+    reader.readAsArrayBuffer(file);
+  } else {
+    const reader=new FileReader();
+    reader.onload=e=>{
+      let text=e.target.result.replace(/^\uFEFF/,'');
+      const sep=text.split('\n')[0].includes(';')?';':',';
+      processImportRows(parseCSV(text,sep),name);
+    };
+    reader.readAsText(file,'utf-8');
+  }
   event.target.value='';
 }
+
 function closeImportModal(){document.getElementById('import-modal').style.display='none';_importParsed=null;}
 async function executeImport(){
   if(!_importParsed)return;
@@ -1419,16 +1480,17 @@ async function executeImport(){
     try{
       const row=item.row;
       const nome=get(row,'nome');
+      const area=get(row,'area');
       const iaRaw=get(row,'cat_ia');
-      const cat_ia=iaRaw?iaRaw.split('|').map(s=>s.trim()).filter(Boolean):[];
+      const cat_ia=canonicalCatIA(iaRaw);
       const data={
-        creator:get(row,'creator'),gerencia:get(row,'gerencia'),area:get(row,'area'),
+        creator:get(row,'creator'),gerencia:inferGerencia(area,get(row,'gerencia')),area,
         status:get(row,'status')||'Não iniciado',
         q_inicio:get(row,'q_inicio')||'TBD',q_entrega:get(row,'q_entrega')||'TBD',
         nome,cat_ia,descricao:get(row,'descricao'),poc:get(row,'poc'),
         beneficio:get(row,'beneficio'),riscos:get(row,'riscos'),
-        gut_g:parseInt(get(row,'gut_g'))||1,gut_u:parseInt(get(row,'gut_u'))||1,
-        gut_t:parseInt(get(row,'gut_t'))||1,complexidade:parseInt(get(row,'complexidade'))||3,
+        gut_g:normalizeScoreValue(get(row,'gut_g'),1),gut_u:normalizeScoreValue(get(row,'gut_u'),1),
+        gut_t:normalizeScoreValue(get(row,'gut_t'),1),complexidade:normalizeComplexityValue(get(row,'complexidade')),
       };
       if(item.existing){await saveItemDB(data,item.existing.id);Object.assign(item.existing,data);updated++;}
       else{const nid=await saveItemDB(data,null);iniciativas.push({id:nid||nextId++,...data});added++;}
