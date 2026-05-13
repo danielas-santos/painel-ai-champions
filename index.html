@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Creators · Iniciativas de IA · RH · 2026 · v2.2</title>
+<title>Creators · Iniciativas de IA · RH · 2026 · v2.3</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -286,7 +286,7 @@ tr:hover td{background:#fdf5f8;}
   <div class="logo">
     <div class="logo-mark">⚡</div>
     <div>
-      <div class="logo-text">Creators · Iniciativas de IA <span class="logo-sub">RH · 2026 · v2.2</span></div>
+      <div class="logo-text">Creators · Iniciativas de IA <span class="logo-sub">RH · 2026 · v2.3</span></div>
     </div>
   </div>
   <div class="hright">
@@ -955,9 +955,10 @@ function renderPriorizacao() {
   }
   document.getElementById('prank').innerHTML = `
     <div style="border:1px solid var(--border);border-radius:var(--r);overflow:auto;background:#fff;">
-      <div style="display:grid;grid-template-columns:34px minmax(220px,1.5fr) 150px 190px 80px 120px 120px minmax(240px,1fr) 86px;gap:0;font-size:10px;background:var(--bordo);color:#fff;min-width:1240px;">
+      <div style="display:grid;grid-template-columns:34px minmax(210px,1.4fr) 140px 140px 180px 76px 112px 118px minmax(230px,1fr) 86px;gap:0;font-size:10px;background:var(--bordo);color:#fff;min-width:1240px;">
         <div style="padding:8px;text-align:center;">#</div>
         <div onclick="sortPrio('nome')" style="padding:8px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;cursor:pointer;">Iniciativa${prioSortMark('nome')}</div>
+        <div onclick="sortPrio('creator')" style="padding:8px;font-weight:600;cursor:pointer;">Creator${prioSortMark('creator')}</div>
         <div onclick="sortPrio('area')" style="padding:8px;font-weight:600;cursor:pointer;">Área${prioSortMark('area')}</div>
         <div onclick="sortPrio('gerencia')" style="padding:8px;font-weight:600;cursor:pointer;">Gerência${prioSortMark('gerencia')}</div>
         <div onclick="sortPrio('score')" style="padding:8px;font-weight:600;text-align:center;cursor:pointer;">Score${prioSortMark('score')}</div>
@@ -969,9 +970,10 @@ function renderPriorizacao() {
       ${ranked.map((item,i)=>{
         const bg=i%2===0?'#fff':'#fafafa';
         const resumo = item.beneficio || item.poc || item.descricao || 'Sem resumo informado.';
-        return `<div style="display:grid;grid-template-columns:34px minmax(220px,1.5fr) 150px 190px 80px 120px 120px minmax(240px,1fr) 86px;gap:0;border-top:1px solid var(--border);background:${bg};font-size:12px;min-width:1240px;align-items:center;">
+        return `<div style="display:grid;grid-template-columns:34px minmax(210px,1.4fr) 140px 140px 180px 76px 112px 118px minmax(230px,1fr) 86px;gap:0;border-top:1px solid var(--border);background:${bg};font-size:12px;min-width:1240px;align-items:center;">
           <div style="padding:9px;text-align:center;color:var(--text3);font-size:11px;">${i+1}</div>
           <div style="padding:9px;font-weight:500;line-height:1.35;">${esc(item.nome)}</div>
+          <div style="padding:9px;font-size:11px;color:var(--text2);">${esc(item.creator||'—')}</div>
           <div style="padding:9px;font-size:11px;color:var(--text2);">${esc(item.area||'—')}</div>
           <div style="padding:9px;font-size:11px;color:var(--text2);">${esc(item.gerencia||'—')}</div>
           <div style="padding:9px;text-align:center;"><span class="score-pill">${item.score}</span></div>
@@ -1637,7 +1639,7 @@ async function loadAllData(){
 }
 
 function seedExampleData(){
-  // Mantido apenas para referência. A v2.2 não carrega dados locais automaticamente.
+  // Mantido apenas para referência. A v1.2 não carrega dados locais automaticamente.
   iniciativas=[];
   nextId=100;
 }
