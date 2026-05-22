@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Creators · Iniciativas de IA · RH · 2026 · v2.3</title>
+<title>Creators · Iniciativas de IA · RH · 2026 · v2.4</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -286,7 +286,7 @@ tr:hover td{background:#fdf5f8;}
   <div class="logo">
     <div class="logo-mark">⚡</div>
     <div>
-      <div class="logo-text">Creators · Iniciativas de IA <span class="logo-sub">RH · 2026 · v2.3</span></div>
+      <div class="logo-text">Creators · Iniciativas de IA <span class="logo-sub">RH · 2026 · v2.4</span></div>
     </div>
   </div>
   <div class="hright">
@@ -430,7 +430,10 @@ tr:hover td{background:#fdf5f8;}
     </div>
     <button class="fbtn clr" onclick="clearPrioFilters()">✕ Limpar</button>
   </div>
-  <div class="sec-title">Ranking por Score GUT + Complexidade · Classificação automática</div>
+  <div class="sec-title">Ranking por Gerência · Score GUT + Complexidade · Classificação automática</div>
+  <div style="font-size:11px;color:var(--text3);margin:-4px 0 10px 2px;">
+    A coluna <strong>Prior.</strong> mostra a ordem de execução recomendada dentro de cada gerência, considerando o maior score primeiro.
+  </div>
   <div id="prank"></div>
 </div>
 
@@ -687,7 +690,7 @@ const fSets = { g: new Set(), a: new Set(), ia: new Set(), cls: new Set() };
 const kSets = { kg: new Set(), ka: new Set(), kcls: new Set(), kst: new Set() };
 const pSets = { pg: new Set(), pcreator: new Set(), pa: new Set(), pia: new Set(), cls: new Set() };
 const sortState = { i: { col: null, dir: 1 } };
-const prioSortState = { col: 'score', dir: -1 };
+const prioSortState = { col: 'gerencia_rank', dir: 1 };
 let prioFilter = null;
 let editId = null;
 let donutIA = null, donutCls = null;
@@ -920,9 +923,28 @@ function sortPrio(col){
 function prioSortMark(col){
   return prioSortState.col===col ? (prioSortState.dir===1?' ↑':' ↓') : ' ↕';
 }
+function rankWithinGerencia(rows){
+  const byG = {};
+  rows.forEach(r=>{
+    const g = r.gerencia || 'Sem Gerência';
+    if(!byG[g]) byG[g] = [];
+    byG[g].push(r);
+  });
+  Object.values(byG).forEach(list=>{
+    list.sort((a,b)=> (b.score-a.score) || String(a.nome||'').localeCompare(String(b.nome||''),'pt-BR'));
+    list.forEach((item,idx)=> item._gerRank = idx + 1);
+  });
+  return rows;
+}
 function applyPrioSort(rows){
+  const rankedRows = rankWithinGerencia([...rows]);
   const {col,dir}=prioSortState;
-  return [...rows].sort((a,b)=>{
+  return rankedRows.sort((a,b)=>{
+    if(col==='gerencia_rank'){
+      const g = String(a.gerencia||'').localeCompare(String(b.gerencia||''),'pt-BR');
+      if(g) return g;
+      return ((a._gerRank||999)-(b._gerRank||999)) * dir;
+    }
     if(col==='score') return (a.score-b.score)*dir;
     if(col==='cls'){
       const o={'Crítico':0,'Importante':1,'Postergável':2,'Diferir':3};
@@ -955,8 +977,8 @@ function renderPriorizacao() {
   }
   document.getElementById('prank').innerHTML = `
     <div style="border:1px solid var(--border);border-radius:var(--r);overflow:auto;background:#fff;">
-      <div style="display:grid;grid-template-columns:34px minmax(210px,1.4fr) 140px 140px 180px 76px 112px 118px minmax(230px,1fr) 86px;gap:0;font-size:10px;background:var(--bordo);color:#fff;min-width:1240px;">
-        <div style="padding:8px;text-align:center;">#</div>
+      <div style="display:grid;grid-template-columns:52px minmax(205px,1.35fr) 128px 132px 176px 72px 110px 116px minmax(220px,1fr) 84px;gap:0;font-size:10px;background:var(--bordo);color:#fff;min-width:1240px;">
+        <div onclick="sortPrio(\'gerencia_rank\')" style="padding:8px;text-align:center;font-weight:600;cursor:pointer;">Prior.${prioSortMark(\'gerencia_rank\')}</div>
         <div onclick="sortPrio('nome')" style="padding:8px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;cursor:pointer;">Iniciativa${prioSortMark('nome')}</div>
         <div onclick="sortPrio('creator')" style="padding:8px;font-weight:600;cursor:pointer;">Creator${prioSortMark('creator')}</div>
         <div onclick="sortPrio('area')" style="padding:8px;font-weight:600;cursor:pointer;">Área${prioSortMark('area')}</div>
@@ -970,8 +992,8 @@ function renderPriorizacao() {
       ${ranked.map((item,i)=>{
         const bg=i%2===0?'#fff':'#fafafa';
         const resumo = item.beneficio || item.poc || item.descricao || 'Sem resumo informado.';
-        return `<div style="display:grid;grid-template-columns:34px minmax(210px,1.4fr) 140px 140px 180px 76px 112px 118px minmax(230px,1fr) 86px;gap:0;border-top:1px solid var(--border);background:${bg};font-size:12px;min-width:1240px;align-items:center;">
-          <div style="padding:9px;text-align:center;color:var(--text3);font-size:11px;">${i+1}</div>
+        return `<div style="display:grid;grid-template-columns:52px minmax(205px,1.35fr) 128px 132px 176px 72px 110px 116px minmax(220px,1fr) 84px;gap:0;border-top:1px solid var(--border);background:${bg};font-size:12px;min-width:1240px;align-items:center;">
+          <div style="padding:9px;text-align:center;color:var(--bordo);font-size:11px;font-weight:600;" title="Prioridade dentro da gerência">${item._gerRank||i+1}</div>
           <div style="padding:9px;font-weight:500;line-height:1.35;">${esc(item.nome)}</div>
           <div style="padding:9px;font-size:11px;color:var(--text2);">${esc(item.creator||'—')}</div>
           <div style="padding:9px;font-size:11px;color:var(--text2);">${esc(item.area||'—')}</div>
