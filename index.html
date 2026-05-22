@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Creators · Iniciativas de IA · RH · 2026 · v3.2</title>
+<title>Creators · Iniciativas de IA · RH · 2026 · v3.3</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -311,7 +311,7 @@ tr:hover td{background:#fdf5f8;}
   <div class="logo">
     <div class="logo-mark">🤖</div>
     <div>
-      <div class="logo-text">Creators · Iniciativas de IA <span class="logo-sub">RH · 2026 · v3.2</span></div>
+      <div class="logo-text">Creators · Iniciativas de IA <span class="logo-sub">RH · 2026 · v3.3</span></div>
     </div>
   </div>
   <div class="hright">
@@ -658,10 +658,9 @@ function normalizeComplexityValue(v){
   if(!s) return 3;
   const m=s.match(/[135]/);
   if(m) return parseInt(m[0],10);
-  if(s.includes('alta')) return 1;
+  if(s.includes('alta')) return 5;
   if(s.includes('media')) return 3;
-  if(s.includes('baixa')) return 5;
-  if(s === '2') return 3;
+  if(s.includes('baixa')) return 1;
   return 3;
 }
 
@@ -681,7 +680,7 @@ function impactoLabel(v){
 }
 function complexidadeLabel(v){
   const n = +v || 3;
-  return n >= 5 ? 'Baixa' : n >= 3 ? 'Média' : 'Alta';
+  return n >= 5 ? 'Alta' : n >= 3 ? 'Média' : 'Baixa';
 }
 function normalizeClassificacao(v){
   const s=normalizeTxt(v);
@@ -717,12 +716,13 @@ let nextId = 1000;
 
 // ── Impacto × Complexidade ──────────────────────────────────
 function calcScore(item) {
-  // Nova lógica Champions IA:
   // Impacto: Baixo=1, Médio=3, Alto=5.
-  // Complexidade: Alta=1, Média=2, Baixa=3.
-  // Score = Impacto × Facilidade de implementação.
+  // Complexidade: Baixa=1, Média=3, Alta=5.
+  // Para priorização, menor complexidade aumenta a facilidade:
+  // Facilidade = 6 - Complexidade.
   const impacto = item.gut_g || 1;
-  const facilidade = item.complexidade || 1;
+  const complexidade = item.complexidade || 3;
+  const facilidade = 6 - complexidade;
   return impacto * facilidade;
 }
 
@@ -1357,7 +1357,7 @@ function buildFormFields(data) {
     <div class="fsec">Priorização: Impacto × Complexidade
       <span class="tip-wrap" style="margin-left:6px">
         <span class="tip-icon">ℹ️</span>
-        <div class="tip-box">Score = Impacto × Facilidade de implementação. Quanto maior o impacto e menor a complexidade, maior a prioridade.</div>
+        <div class="tip-box">Score = Impacto × Facilidade. A facilidade é calculada automaticamente como 6 - Complexidade.</div>
       </span>
     </div>
     <div class="fi">
@@ -1372,12 +1372,12 @@ function buildFormFields(data) {
     </div>
     <div class="fi">
       <label>Complexidade de implementação <span class="req">*</span>
-        <span class="tip-wrap"><span class="tip-icon">ℹ️</span><div class="tip-box">Alta = 1: muitas dependências, dados ou integrações. Média = 3: depende de ajustes/validação. Baixa = 5: rápida implementação, ferramentas conhecidas.</div></span>
+        <span class="tip-wrap"><span class="tip-icon">ℹ️</span><div class="tip-box">Baixa = 1: rápida implementação, ferramentas conhecidas. Média = 3: depende de ajustes/validação. Alta = 5: muitas dependências, dados ou integrações.</div></span>
       </label>
       <select id="f-c" onchange="updateScorePreview()">
-        <option value="1" ${d.complexidade===1?'selected':''}>Alta (1)</option>
+        <option value="1" ${d.complexidade===1?'selected':''}>Baixa (1)</option>
         <option value="3" ${(!d.complexidade||d.complexidade===3)?'selected':''}>Média (3)</option>
-        <option value="5" ${d.complexidade===5?'selected':''}>Baixa (5)</option>
+        <option value="5" ${d.complexidade===5?'selected':''}>Alta (5)</option>
       </select>
     </div>
     <div class="fi full">
@@ -1386,7 +1386,7 @@ function buildFormFields(data) {
     <div class="cls-preview">
       <div>
         <div class="cp-left">Score de Prioridade</div>
-        <div style="font-size:11px;color:var(--text3);margin-top:2px">Impacto × Facilidade de implementação</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:2px">Impacto × Facilidade</div>
       </div>
       <div style="text-align:right">
         <div class="cp-score" id="f-score-preview">—</div>
@@ -1440,7 +1440,8 @@ document.addEventListener('click',e=>{ const dd=document.getElementById('ia-dd')
 
 function updateScorePreview() {
   const impacto=+(document.getElementById('f-g')?.value||3);
-  const facilidade=+(document.getElementById('f-c')?.value||3);
+  const complexidade=+(document.getElementById('f-c')?.value||3);
+  const facilidade=6-complexidade;
   const score=impacto*facilidade;
   const el=document.getElementById('f-score-preview');
   const elCls=document.getElementById('f-cls-preview');
@@ -1530,7 +1531,7 @@ function downloadTemplate(){
   const headers=['Nome do creator','Área','Status','Q início','Q entrega','Nome','Categoria de IA','Descrição','POC','Benefício','Riscos','Impacto','Complexidade'];
   const example=[['Ex: João Silva','R&S','Não iniciado','Q2','Q3','Triagem automática de currículos com IA','IA Generativa | Machine Learning','Sistema que usa IA para triagem inicial de currículos.','Alto volume manual de triagem de currículos.','Redução do tempo de triagem.','Qualidade das triagens precisa de calibração.','Alto','Baixa']];
   XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([headers,...example]), 'Importacao');
-  const apoio=[['Área','Gerência'],...Object.entries(AREA_TO_GERENCIA),[],['Campo','Orientação'],['Impacto','Alto = 5 | Médio = 3 | Baixo = 1'],['Complexidade','Alta = 1 | Média = 3 | Baixa = 5'],['Classificação','Alta = score 15–25 | Média = 9–14 | Baixa = 3–8 | Backlog = 1–2'],[],['Categoria de IA','Descrição'],['Agente de IA','Executa ações automaticamente dentro de um processo'],['IA Generativa','Gera ou melhora textos, resumos, respostas e conteúdos'],['Analytics / IA Analítica','Analisa dados para identificar padrões e apoiar decisões'],['Automação','Fluxos baseados em regras, como Power Automate'],['Machine Learning','Modelos preditivos ou classificatórios'],['NLP','Entendimento e processamento de linguagem natural'],['RPA','Automação robótica de tarefas repetitivas']];
+  const apoio=[['Área','Gerência'],...Object.entries(AREA_TO_GERENCIA),[],['Campo','Orientação'],['Impacto','Alto = 5 | Médio = 3 | Baixo = 1'],['Complexidade','Baixa = 1 | Média = 3 | Alta = 5'],['Classificação','Alta = score 15–25 | Média = 9–14 | Baixa = 3–8 | Backlog = 1–2'],[],['Categoria de IA','Descrição'],['Agente de IA','Executa ações automaticamente dentro de um processo'],['IA Generativa','Gera ou melhora textos, resumos, respostas e conteúdos'],['Analytics / IA Analítica','Analisa dados para identificar padrões e apoiar decisões'],['Automação','Fluxos baseados em regras, como Power Automate'],['Machine Learning','Modelos preditivos ou classificatórios'],['NLP','Entendimento e processamento de linguagem natural'],['RPA','Automação robótica de tarefas repetitivas']];
   XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(apoio), 'Apoio');
   XLSX.writeFile(wb, 'template-creators-iniciativas.xlsx');
   toast('Template Excel baixado!');
