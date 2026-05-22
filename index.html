@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Creators · Iniciativas de IA · RH · 2026 · v2.5</title>
+<title>Creators · Iniciativas de IA · RH · 2026 · v3.0</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -196,7 +196,7 @@ tr:hover td{background:#fdf5f8;}
 .btn-danger:hover{background:#9c1038;}
 .modal-del{position:absolute;bottom:20px;left:22px;}
 
-/* GUT score display */
+/* Score display */
 .gut-score-display{grid-column:1/-1;background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;}
 .gut-score-display .gsd-label{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.04em;}
 .gut-score-display .gsd-val{font-size:20px;font-weight:300;color:var(--bordo);}
@@ -286,7 +286,7 @@ tr:hover td{background:#fdf5f8;}
   <div class="logo">
     <div class="logo-mark">🤖</div>
     <div>
-      <div class="logo-text">Creators · Iniciativas de IA <span class="logo-sub">RH · 2026 · v2.5</span></div>
+      <div class="logo-text">Creators · Iniciativas de IA <span class="logo-sub">RH · 2026 · v3.0</span></div>
     </div>
   </div>
   <div class="hright">
@@ -363,10 +363,10 @@ tr:hover td{background:#fdf5f8;}
       <div class="mdd" id="mdd-ia"><div class="mdd-list" id="mdd-list-ia"></div><div class="mdd-clear" onclick="clearAreaSet('ia')">Limpar</div></div>
     </div>
     <div class="f-sep"></div>
-    <button class="fbtn" data-fc="Crítico" onclick="toggleFCls(this)">Crítico</button>
-    <button class="fbtn" data-fc="Importante" onclick="toggleFCls(this)">Importante</button>
-    <button class="fbtn" data-fc="Postergável" onclick="toggleFCls(this)">Postergável</button>
-    <button class="fbtn" data-fc="Diferir" onclick="toggleFCls(this)">Diferir</button>
+    <button class="fbtn" data-fc="Alta" onclick="toggleFCls(this)">Alta</button>
+    <button class="fbtn" data-fc="Média" onclick="toggleFCls(this)">Média</button>
+    <button class="fbtn" data-fc="Baixa" onclick="toggleFCls(this)">Baixa</button>
+    <button class="fbtn" data-fc="Backlog" onclick="toggleFCls(this)">Backlog</button>
     <div class="f-sep"></div>
     <div class="sw">
       <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/></svg>
@@ -419,10 +419,10 @@ tr:hover td{background:#fdf5f8;}
       <div class="mdd" id="mdd-pia"><div class="mdd-list" id="mdd-list-pia"></div><div class="mdd-clear" onclick="clearAreaSet('pia')">Limpar</div></div>
     </div>
     <div class="f-sep"></div>
-    <button class="fbtn" data-pc="Crítico" onclick="togglePCls(this)">Crítico</button>
-    <button class="fbtn" data-pc="Importante" onclick="togglePCls(this)">Importante</button>
-    <button class="fbtn" data-pc="Postergável" onclick="togglePCls(this)">Postergável</button>
-    <button class="fbtn" data-pc="Diferir" onclick="togglePCls(this)">Diferir</button>
+    <button class="fbtn" data-pc="Alta" onclick="togglePCls(this)">Alta</button>
+    <button class="fbtn" data-pc="Média" onclick="togglePCls(this)">Média</button>
+    <button class="fbtn" data-pc="Baixa" onclick="togglePCls(this)">Baixa</button>
+    <button class="fbtn" data-pc="Backlog" onclick="togglePCls(this)">Backlog</button>
     <div class="f-sep"></div>
     <div class="sw">
       <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/></svg>
@@ -430,9 +430,9 @@ tr:hover td{background:#fdf5f8;}
     </div>
     <button class="fbtn clr" onclick="clearPrioFilters()">✕ Limpar</button>
   </div>
-  <div class="sec-title">Ranking por Gerência · Score GUT + Complexidade · Classificação automática</div>
+  <div class="sec-title">Ranking por Gerência · Impacto × Complexidade · Classificação automática</div>
   <div style="font-size:11px;color:var(--text3);margin:-4px 0 10px 2px;">
-    A coluna <strong>Prior.</strong> mostra a ordem de execução recomendada dentro de cada gerência, considerando o maior score primeiro.
+    A coluna <strong>Prior.</strong> mostra a ordem de execução recomendada dentro de cada gerência, considerando maior impacto e menor complexidade primeiro.
   </div>
   <div id="prank"></div>
 </div>
@@ -472,7 +472,7 @@ tr:hover td{background:#fdf5f8;}
       <div id="ch-carga-ger"></div>
     </div>
     <div class="chart-card">
-      <h4>⚙️ Gerência × Complexidade de Desenvolvimento</h4>
+      <h4>⚙️ Gerência × Complexidade de Implementação</h4>
       <div id="ch-carga-compl"></div>
     </div>
     <div class="chart-card full">
@@ -571,9 +571,9 @@ const CAT_IA = ['Agente de IA','IA Generativa','Analytics / IA Analítica','Auto
 const CAT_IA_COLORS = ['#2E101E','#662046','#BF144A','#D4729A','#FF7DAF','#8C3058','#F0B8CE'];
 const STATUS_LIST = ['Não iniciado','Em andamento','Em risco','Stand-by','Concluído'];
 const STATUS_COLOR = {'Não iniciado':'#BDBDBD','Em andamento':'#1D9E75','Em risco':'#E05A00','Stand-by':'#F4B400','Concluído':'#2E7D32'};
-const CLS_LABELS = ['Crítico','Importante','Postergável','Diferir'];
-const CLS_COLORS = {'Crítico':'#2E101E','Importante':'#662046','Postergável':'#BF144A','Diferir':'#9E9E9E'};
-const CLS_BADGE  = {'Crítico':'b-crit','Importante':'b-imp','Postergável':'b-post','Diferir':'b-dif'};
+const CLS_LABELS = ['Alta','Média','Baixa','Backlog'];
+const CLS_COLORS = {'Alta':'#2E101E','Média':'#662046','Baixa':'#BF144A','Backlog':'#9E9E9E'};
+const CLS_BADGE  = {'Alta':'b-crit','Média':'b-imp','Baixa':'b-post','Backlog':'b-dif'};
 const COMPL_LABEL = {3:'Baixa',2:'Média',1:'Alta'};
 const COMPL_COLORS = {3:'#FF7DAF',2:'#662046',1:'#2E101E'};
 const Q_COLORS   = {Q1:'#2E101E',Q2:'#662046',Q3:'#BF144A',Q4:'#FF7DAF',TBD:'#BDBDBD'};
@@ -613,8 +613,8 @@ function normalizeHeader(h){
     'categoria_de_ia':'cat_ia','categoria_ia':'cat_ia','cat_ia':'cat_ia','tipo_de_ia':'cat_ia',
     'descricao':'descricao','poc':'poc','problema_oportunidade':'poc','problema':'poc',
     'beneficio':'beneficio','beneficio_potencial':'beneficio','riscos':'riscos','riscos_identificados':'riscos',
-    'gravidade':'gut_g','gut_g':'gut_g','urgencia':'gut_u','gut_u':'gut_u','tendencia':'gut_t','gut_t':'gut_t',
-    'complexidade':'complexidade','complexidade_de_desenvolvimento':'complexidade'
+    'impacto':'gut_g','impacto_esperado':'gut_g','gravidade':'gut_g','gut_g':'gut_g','urgencia':'gut_u','gut_u':'gut_u','tendencia':'gut_t','gut_t':'gut_t',
+    'complexidade':'complexidade','complexidade_de_desenvolvimento':'complexidade','facilidade_de_implementacao':'complexidade'
   };
   return map[x]||x;
 }
@@ -637,6 +637,33 @@ function normalizeComplexityValue(v){
   if(s.includes('media')) return 2;
   if(s.includes('baixa')) return 3;
   return 3;
+}
+
+function normalizeImpactValue(v){
+  const s=normalizeTxt(v);
+  if(!s) return 3;
+  const m=s.match(/[135]/);
+  if(m) return parseInt(m[0],10);
+  if(s.includes('alto') || s.includes('alta')) return 5;
+  if(s.includes('medio') || s.includes('media')) return 3;
+  if(s.includes('baixo') || s.includes('baixa')) return 1;
+  return 3;
+}
+function impactoLabel(v){
+  const n = +v || 1;
+  return n >= 5 ? 'Alto' : n >= 3 ? 'Médio' : 'Baixo';
+}
+function complexidadeLabel(v){
+  const n = +v || 1;
+  return n >= 3 ? 'Baixa' : n >= 2 ? 'Média' : 'Alta';
+}
+function normalizeClassificacao(v){
+  const s=normalizeTxt(v);
+  if(s.includes('critico') || s.includes('alta')) return 'Alta';
+  if(s.includes('importante') || s.includes('media')) return 'Média';
+  if(s.includes('posterg') || s.includes('baixa')) return 'Baixa';
+  if(s.includes('difer') || s.includes('backlog')) return 'Backlog';
+  return '';
 }
 function canonicalCatIA(raw){
   const parts=String(raw||'').split('|').map(s=>s.trim()).filter(Boolean);
@@ -662,27 +689,28 @@ function inferGerencia(area, explicitGerencia=''){
 let iniciativas = [];
 let nextId = 1000;
 
-// ── GUT + Complexidade ──────────────────────────────────
+// ── Impacto × Complexidade ──────────────────────────────────
 function calcScore(item) {
-  const g = item.gut_g || 1;
-  const u = item.gut_u || 1;
-  const t = item.gut_t || 1;
-  const c = item.complexidade || 1;
-  return (g * u * t) + c;
+  // Nova lógica Champions IA:
+  // Impacto: Baixo=1, Médio=3, Alto=5.
+  // Complexidade: Alta=1, Média=2, Baixa=3.
+  // Score = Impacto × Facilidade de implementação.
+  const impacto = item.gut_g || 1;
+  const facilidade = item.complexidade || 1;
+  return impacto * facilidade;
 }
 
 function classifyScore(score) {
-  // Regra fixa para evitar distorção quando várias iniciativas têm pontuações parecidas.
-  // Score = (Gravidade × Urgência × Tendência) + Complexidade.
-  // Score máximo: 128 = (5 × 5 × 5) + 3.
-  // Crítico: cenário de alto impacto e alta urgência/tendência (ex.: 5×5×3 ou 5×5×5).
-  // Importante: alto impacto, mas com urgência/tendência intermediária (ex.: 5×3×3).
-  // Postergável: impacto e tendência moderados (ex.: 3×3×3).
-  // Diferir: baixa relevância/urgência/tendência no momento.
-  if (score >= 75) return 'Crítico';
-  if (score >= 40) return 'Importante';
-  if (score >= 15) return 'Postergável';
-  return 'Diferir';
+  // Régua ajustada para pipeline de iniciativas de IA.
+  // 15: alto impacto + baixa complexidade.
+  // 10: alto impacto + média complexidade.
+  // 6 a 9: impacto/facilidade médios.
+  // 3 a 5: baixo ganho ou maior esforço.
+  // 1 a 2: backlog.
+  if (score >= 10) return 'Alta';
+  if (score >= 6) return 'Média';
+  if (score >= 3) return 'Baixa';
+  return 'Backlog';
 }
 
 // ── Filter state ─────────────────────────────────────────
@@ -727,8 +755,8 @@ function mFilter(mode){
   mMetricMode=mode;clearFilters();
   if(mode==='critico'){
     document.getElementById('m-crit')?.classList.add('af');
-    fSets.cls.add('Crítico');
-    document.querySelectorAll('[data-fc]').forEach(b=>{if(b.dataset.fc==='Crítico')b.classList.add('sel');});
+    fSets.cls.add('Alta');
+    document.querySelectorAll('[data-fc]').forEach(b=>{if(b.dataset.fc==='Alta')b.classList.add('sel');});
   } else if(mode==='total'){
     document.getElementById('m-total')?.classList.add('af');
   } else if(mode==='gerencias'){
@@ -741,14 +769,14 @@ function mFilter(mode){
 }
 function renderMetrics() {
   const total = iniciativas.length;
-  const prioCount = iniciativas.filter(i=>classifyScore(calcScore(i))==='Crítico').length;
+  const prioCount = iniciativas.filter(i=>classifyScore(calcScore(i))==='Alta').length;
   const gerencias = new Set(iniciativas.map(i=>i.gerencia).filter(Boolean));
   const creators = new Set(iniciativas.map(i=>i.creator).filter(Boolean));
   document.getElementById('metrics').innerHTML = `
     <div class="metric" id="m-total" onclick="mFilter('total')"><span class="hint">filtrar ↓</span>
       <div class="val">${total}</div><div class="lbl">Iniciativas</div><div class="sub">Cadastradas no painel</div></div>
     <div class="metric" id="m-crit" onclick="mFilter('critico')"><span class="hint">filtrar ↓</span>
-      <div class="val">${prioCount}</div><div class="lbl">Crítico</div><div class="sub">Fazer agora</div></div>
+      <div class="val">${prioCount}</div><div class="lbl">Alta</div><div class="sub">Prioridade mais alta</div></div>
     <div class="metric"><span class="hint">cobertura</span>
       <div class="val">${gerencias.size}</div><div class="lbl">Gerências</div><div class="sub">Com iniciativas ativas</div></div>
     <div class="metric"><span class="hint">ativos</span>
@@ -859,7 +887,7 @@ function applySortI(rows) {
   return [...rows].sort((a,b) => {
     if (col==='score') return (calcScore(a)-calcScore(b))*dir;
     if (col==='cls') {
-      const o={'Crítico':0,'Importante':1,'Postergável':2,'Diferir':3};
+      const o={'Alta':0,'Média':1,'Baixa':2,'Backlog':3};
       return ((o[classifyScore(calcScore(a))]||4)-(o[classifyScore(calcScore(b))]||4))*dir;
     }
     return String(a[col]||'').localeCompare(String(b[col]||''),'pt-BR')*dir;
@@ -947,7 +975,7 @@ function applyPrioSort(rows){
     }
     if(col==='score') return (a.score-b.score)*dir;
     if(col==='cls'){
-      const o={'Crítico':0,'Importante':1,'Postergável':2,'Diferir':3};
+      const o={'Alta':0,'Média':1,'Baixa':2,'Backlog':3};
       return ((o[a.cls]??9)-(o[b.cls]??9))*dir;
     }
     if(col==='status') return String(a.status||'').localeCompare(String(b.status||''),'pt-BR')*dir;
@@ -958,10 +986,10 @@ function applyPrioSort(rows){
 function renderPriorizacao() {
   const allRanked = iniciativas.map(i=>({...i,score:calcScore(i),cls:classifyScore(calcScore(i))}));
   const countBase = allRanked.filter(i=>matchesPrioFilters(i,false));
-  const counts = { 'Crítico':0, 'Importante':0, 'Postergável':0, 'Diferir':0 };
+  const counts = { 'Alta':0, 'Média':0, 'Baixa':0, 'Backlog':0 };
   countBase.forEach(i=>{ counts[i.cls]=(counts[i.cls]||0)+1; });
-  const reads = { 'Crítico':'Score ≥ 75', 'Importante':'Score 40–74', 'Postergável':'Score 15–39', 'Diferir':'Score < 15' };
-  const band_cls = { 'Crítico':'crit', 'Importante':'imp', 'Postergável':'post', 'Diferir':'dif' };
+  const reads = { 'Alta':'Score 10–15', 'Média':'Score 6–9', 'Baixa':'Score 3–5', 'Backlog':'Score 1–2' };
+  const band_cls = { 'Alta':'crit', 'Média':'imp', 'Baixa':'post', 'Backlog':'dif' };
   document.getElementById('prio-bands').innerHTML = CLS_LABELS.map(l=>`
     <div class="pband ${band_cls[l]}" onclick="setPrioFilter('${l}')" style="cursor:pointer;${pSets.cls.has(l)?'box-shadow:0 0 0 2px var(--rosa);transform:translateY(-1px);':''}">
       <span class="hint">filtrar ↓</span>
@@ -1104,7 +1132,7 @@ function renderCarga(){
     <div class="btrk"><div class="bfill" style="width:${Math.round(v/maxG*100)}%;background:var(--bordo)"><span>${v}</span></div></div></div>`).join('')
     ||'<p style="font-size:12px;color:var(--text3)">Sem dados</p>';
 
-  // Gerência × Complexidade de Desenvolvimento
+  // Gerência × Complexidade de Implementação
   const gcMap={};
   iniciativas.forEach(i=>{
     const g=i.gerencia||'Sem Gerência';
@@ -1306,56 +1334,39 @@ function buildFormFields(data) {
       <textarea id="f-riscos" rows="2">${esc(d.riscos||'')}</textarea>
     </div>
 
-    <div class="fsec">Priorização GUT + Complexidade
+    <div class="fsec">Priorização: Impacto × Complexidade
       <span class="tip-wrap" style="margin-left:6px">
         <span class="tip-icon">ℹ️</span>
-        <div class="tip-box">Score = (G × U × T) + Complexidade. Quanto maior o score, maior a prioridade.</div>
+        <div class="tip-box">Score = Impacto × Facilidade de implementação. Quanto maior o impacto e menor a complexidade, maior a prioridade.</div>
       </span>
     </div>
     <div class="fi">
-      <label>Gravidade (G) <span class="req">*</span>
-        <span class="tip-wrap"><span class="tip-icon">ℹ️</span><div class="tip-box">Impacto caso o problema não seja tratado: no negócio, experiência do colaborador, risco ou imagem.</div></span>
+      <label>Impacto esperado <span class="req">*</span>
+        <span class="tip-wrap"><span class="tip-icon">ℹ️</span><div class="tip-box">Valor esperado para RH: ganho de eficiência, escala, redução de retrabalho, qualidade da experiência ou apoio à decisão.</div></span>
       </label>
       <select id="f-g" onchange="updateScorePreview()">
-        <option value="1" ${d.gut_g===1?'selected':''}>Baixa (1)</option>
-        <option value="3" ${d.gut_g===3?'selected':''}>Média (3)</option>
-        <option value="5" ${(!d.gut_g||d.gut_g===5)?'selected':''}>Alta (5)</option>
+        <option value="1" ${d.gut_g===1?'selected':''}>Baixo (1)</option>
+        <option value="3" ${(!d.gut_g||d.gut_g===3)?'selected':''}>Médio (3)</option>
+        <option value="5" ${d.gut_g===5?'selected':''}>Alto (5)</option>
       </select>
     </div>
     <div class="fi">
-      <label>Urgência (U) <span class="req">*</span>
-        <span class="tip-wrap"><span class="tip-icon">ℹ️</span><div class="tip-box">Em quanto tempo isso precisa acontecer? Considere prazos legais, pressão da liderança ou impacto imediato.</div></span>
-      </label>
-      <select id="f-u" onchange="updateScorePreview()">
-        <option value="1" ${d.gut_u===1?'selected':''}>Pode aguardar (1)</option>
-        <option value="3" ${d.gut_u===3?'selected':''}>Importante (3)</option>
-        <option value="5" ${(!d.gut_u||d.gut_u===5)?'selected':''}>Muito urgente (5)</option>
-      </select>
-    </div>
-    <div class="fi">
-      <label>Tendência (T) <span class="req">*</span>
-        <span class="tip-wrap"><span class="tip-icon">ℹ️</span><div class="tip-box">Se nada for feito: acúmulo de demanda, retrabalho, insatisfação crescente.</div></span>
-      </label>
-      <select id="f-t" onchange="updateScorePreview()">
-        <option value="1" ${d.gut_t===1?'selected':''}>Não piora (1)</option>
-        <option value="3" ${d.gut_t===3?'selected':''}>Pode piorar (3)</option>
-        <option value="5" ${(!d.gut_t||d.gut_t===5)?'selected':''}>Vai piorar rapidamente (5)</option>
-      </select>
-    </div>
-    <div class="fi">
-      <label>Complexidade de Desenvolvimento <span class="req">*</span>
-        <span class="tip-wrap"><span class="tip-icon">ℹ️</span><div class="tip-box">Baixa: automações simples, ferramentas conhecidas. Média: solução nova, múltiplos passos. Alta: conceito complexo, dependência de dados.</div></span>
+      <label>Complexidade de implementação <span class="req">*</span>
+        <span class="tip-wrap"><span class="tip-icon">ℹ️</span><div class="tip-box">Alta: muitas dependências, dados ou integrações. Média: depende de ajustes/validação. Baixa: rápida implementação, ferramentas conhecidas.</div></span>
       </label>
       <select id="f-c" onchange="updateScorePreview()">
-        <option value="3" ${(!d.complexidade||d.complexidade===3)?'selected':''}>Baixa (3)</option>
-        <option value="2" ${d.complexidade===2?'selected':''}>Média (2)</option>
         <option value="1" ${d.complexidade===1?'selected':''}>Alta (1)</option>
+        <option value="2" ${d.complexidade===2?'selected':''}>Média (2)</option>
+        <option value="3" ${(!d.complexidade||d.complexidade===3)?'selected':''}>Baixa (3)</option>
       </select>
+    </div>
+    <div class="fi full">
+      <div class="fsec-note">Régua: Alta = score 10–15 · Média = 6–9 · Baixa = 3–5 · Backlog = 1–2.</div>
     </div>
     <div class="cls-preview">
       <div>
         <div class="cp-left">Score de Prioridade</div>
-        <div style="font-size:11px;color:var(--text3);margin-top:2px">(G × U × T) + Complexidade</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:2px">Impacto × Facilidade de implementação</div>
       </div>
       <div style="text-align:right">
         <div class="cp-score" id="f-score-preview">—</div>
@@ -1408,15 +1419,12 @@ function toggleIAItem(c, checked) {
 document.addEventListener('click',e=>{ const dd=document.getElementById('ia-dd'); if(dd&&!e.target.closest('#ia-chips-wrap'))dd.classList.remove('open'); });
 
 function updateScorePreview() {
-  const g=+(document.getElementById('f-g')?.value||1);
-  const u=+(document.getElementById('f-u')?.value||1);
-  const t=+(document.getElementById('f-t')?.value||1);
-  const c=+(document.getElementById('f-c')?.value||3);
-  const score=(g*u*t)+c;
+  const impacto=+(document.getElementById('f-g')?.value||3);
+  const facilidade=+(document.getElementById('f-c')?.value||3);
+  const score=impacto*facilidade;
   const el=document.getElementById('f-score-preview');
   const elCls=document.getElementById('f-cls-preview');
   if(el)el.textContent=score;
-  // classify against current data temporarily
   const cls=classifyScore(score);
   if(elCls)elCls.innerHTML=clsBadge(cls);
 }
@@ -1439,8 +1447,8 @@ async function saveIniciativa() {
     beneficio: document.getElementById('f-benef').value.trim(),
     riscos:    document.getElementById('f-riscos').value.trim(),
     gut_g:     +(document.getElementById('f-g').value),
-    gut_u:     +(document.getElementById('f-u').value),
-    gut_t:     +(document.getElementById('f-t').value),
+    gut_u:     1,
+    gut_t:     1,
     complexidade: +(document.getElementById('f-c').value),
   };
   try {
@@ -1488,22 +1496,21 @@ function csvDownload(filename,headers,rows,sep=';'){
 }
 
 function exportCSV(){
-  const headers=['id','creator','gerencia','area','status','q_inicio','q_entrega','nome','cat_ia','descricao','poc','beneficio','riscos','gut_g','gut_u','gut_t','complexidade','score','classificacao'];
+  const headers=['id','creator','gerencia','area','status','q_inicio','q_entrega','nome','cat_ia','descricao','poc','beneficio','riscos','impacto','complexidade','score','classificacao'];
   const rows=iniciativas.map(i=>{
     const score=calcScore(i);
-    return[i.id,i.creator,i.gerencia,i.area,i.status,i.q_inicio,i.q_entrega,i.nome,(i.cat_ia||[]).join(' | '),i.descricao,i.poc,i.beneficio,i.riscos,i.gut_g,i.gut_u,i.gut_t,i.complexidade,score,classifyScore(score)];
+    return[i.id,i.creator,i.gerencia,i.area,i.status,i.q_inicio,i.q_entrega,i.nome,(i.cat_ia||[]).join(' | '),i.descricao,i.poc,i.beneficio,i.riscos,impactoLabel(i.gut_g),complexidadeLabel(i.complexidade),score,classifyScore(score)];
   });
   csvDownload('creators-iniciativas-'+new Date().toISOString().slice(0,10)+'.csv',headers,rows);
   toast('Exportado com sucesso.');
 }
 
 function downloadTemplate(){
-  // Template Excel simples gerado no navegador. A versão completa com validações também está disponível como arquivo .xlsx.
   const wb = XLSX.utils.book_new();
-  const headers=['Nome do creator','Área','Status','Q início','Q entrega','Nome','Categoria de IA','Descrição','POC','Benefício','Riscos','Gravidade','Urgência','Tendência','Complexidade'];
-  const example=[['Ex: João Silva','R&S','Não iniciado','Q2','Q3','Triagem automática de currículos com IA','IA Generativa | Machine Learning','Sistema que usa IA para triagem inicial de currículos.','Alto volume manual de triagem de currículos.','Redução do tempo de triagem.','Qualidade das triagens precisa de calibração.','5 - Alta','3 - Média','3 - Média','2 - Média']];
+  const headers=['Nome do creator','Área','Status','Q início','Q entrega','Nome','Categoria de IA','Descrição','POC','Benefício','Riscos','Impacto','Complexidade'];
+  const example=[['Ex: João Silva','R&S','Não iniciado','Q2','Q3','Triagem automática de currículos com IA','IA Generativa | Machine Learning','Sistema que usa IA para triagem inicial de currículos.','Alto volume manual de triagem de currículos.','Redução do tempo de triagem.','Qualidade das triagens precisa de calibração.','Alto','Baixa']];
   XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([headers,...example]), 'Importacao');
-  const apoio=[['Área','Gerência'],...Object.entries(AREA_TO_GERENCIA),[],['Campo','Orientação'],['Gravidade','1 - Baixa | 3 - Média | 5 - Alta'],['Urgência','1 - Baixa | 3 - Média | 5 - Alta'],['Tendência','1 - Baixa | 3 - Média | 5 - Alta'],['Complexidade','1 - Alta | 2 - Média | 3 - Baixa'],[],['Categoria de IA','Descrição'],['Agente de IA','Executa ações automaticamente dentro de um processo'],['IA Generativa','Gera ou melhora textos, resumos, respostas e conteúdos'],['Analytics / IA Analítica','Analisa dados para identificar padrões e apoiar decisões'],['Automação','Fluxos baseados em regras, como Power Automate'],['Machine Learning','Modelos preditivos ou classificatórios'],['NLP','Entendimento e processamento de linguagem natural'],['RPA','Automação robótica de tarefas repetitivas']];
+  const apoio=[['Área','Gerência'],...Object.entries(AREA_TO_GERENCIA),[],['Campo','Orientação'],['Impacto','Alto = 5 | Médio = 3 | Baixo = 1'],['Complexidade','Alta = 1 | Média = 2 | Baixa = 3'],['Classificação','Alta = score 10–15 | Média = 6–9 | Baixa = 3–5 | Backlog = 1–2'],[],['Categoria de IA','Descrição'],['Agente de IA','Executa ações automaticamente dentro de um processo'],['IA Generativa','Gera ou melhora textos, resumos, respostas e conteúdos'],['Analytics / IA Analítica','Analisa dados para identificar padrões e apoiar decisões'],['Automação','Fluxos baseados em regras, como Power Automate'],['Machine Learning','Modelos preditivos ou classificatórios'],['NLP','Entendimento e processamento de linguagem natural'],['RPA','Automação robótica de tarefas repetitivas']];
   XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(apoio), 'Apoio');
   XLSX.writeFile(wb, 'template-creators-iniciativas.xlsx');
   toast('Template Excel baixado!');
@@ -1604,8 +1611,8 @@ async function executeImport(){
         q_inicio:get(row,'q_inicio')||'TBD',q_entrega:get(row,'q_entrega')||'TBD',
         nome,cat_ia,descricao:get(row,'descricao'),poc:get(row,'poc'),
         beneficio:get(row,'beneficio'),riscos:get(row,'riscos'),
-        gut_g:normalizeScoreValue(get(row,'gut_g'),1),gut_u:normalizeScoreValue(get(row,'gut_u'),1),
-        gut_t:normalizeScoreValue(get(row,'gut_t'),1),complexidade:normalizeComplexityValue(get(row,'complexidade')),
+        gut_g:normalizeImpactValue(get(row,'gut_g') || get(row,'impacto'),3),gut_u:1,
+        gut_t:1,complexidade:normalizeComplexityValue(get(row,'complexidade')),
       };
       if(item.existing){await saveItemDB(data,item.existing.id);Object.assign(item.existing,data);updated++;}
       else{const nid=await saveItemDB(data,null);iniciativas.push({id:nid||nextId++,...data});added++;}
