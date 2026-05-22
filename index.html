@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Creators · Iniciativas de IA · RH · 2026 · v2.4</title>
+<title>Creators · Iniciativas de IA · RH · 2026 · v2.5</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -24,7 +24,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:14
 /* ── HEADER ── */
 header{background:var(--bordo);padding:0 20px;display:flex;align-items:center;justify-content:space-between;height:54px;position:sticky;top:0;z-index:200;border-bottom:3px solid var(--rosa);}
 .logo{display:flex;align-items:center;gap:10px;}
-.logo-mark{width:30px;height:30px;background:var(--rosa);border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:13px;color:var(--bordo);flex-shrink:0;}
+.logo-mark{width:32px;height:32px;background:var(--rosa);border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:13px;color:var(--bordo);flex-shrink:0;}
 .logo-text{font-size:13px;font-weight:500;color:var(--branco);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .logo-sub{font-size:11px;color:rgba(255,255,255,.4);margin-left:4px;}
 .hright{display:flex;align-items:center;gap:8px;}
@@ -284,9 +284,9 @@ tr:hover td{background:#fdf5f8;}
 
 <header>
   <div class="logo">
-    <div class="logo-mark">⚡</div>
+    <div class="logo-mark">🤖</div>
     <div>
-      <div class="logo-text">Creators · Iniciativas de IA <span class="logo-sub">RH · 2026 · v2.4</span></div>
+      <div class="logo-text">Creators · Iniciativas de IA <span class="logo-sub">RH · 2026 · v2.5</span></div>
     </div>
   </div>
   <div class="hright">
@@ -978,7 +978,7 @@ function renderPriorizacao() {
   document.getElementById('prank').innerHTML = `
     <div style="border:1px solid var(--border);border-radius:var(--r);overflow:auto;background:#fff;">
       <div style="display:grid;grid-template-columns:52px minmax(205px,1.35fr) 128px 132px 176px 72px 110px 116px minmax(220px,1fr) 84px;gap:0;font-size:10px;background:var(--bordo);color:#fff;min-width:1240px;">
-        <div onclick="sortPrio(\'gerencia_rank\')" style="padding:8px;text-align:center;font-weight:600;cursor:pointer;">Prior.${prioSortMark(\'gerencia_rank\')}</div>
+        <div onclick="sortPrio('gerencia_rank')" style="padding:8px;text-align:center;font-weight:600;cursor:pointer;">Prior.${prioSortMark('gerencia_rank')}</div>
         <div onclick="sortPrio('nome')" style="padding:8px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;cursor:pointer;">Iniciativa${prioSortMark('nome')}</div>
         <div onclick="sortPrio('creator')" style="padding:8px;font-weight:600;cursor:pointer;">Creator${prioSortMark('creator')}</div>
         <div onclick="sortPrio('area')" style="padding:8px;font-weight:600;cursor:pointer;">Área${prioSortMark('area')}</div>
