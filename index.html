@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Creators · Iniciativas de IA · RH · 2026 · v3.0</title>
+<title>Creators · Iniciativas de IA · RH · 2026 · v3.2</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -136,11 +136,36 @@ tr:hover td{background:#fdf5f8;}
 
 /* ── KANBAN ── */
 .kanban-wrap{display:flex;gap:10px;overflow-x:auto;padding-bottom:10px;}
-.kcol{min-width:200px;flex:1;background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;}
-.kch{padding:10px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);}
+.kcol{
+  min-width:200px;
+  flex:1;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--rl);
+  overflow:hidden;
+  max-height:calc(100vh - 230px);
+  display:flex;
+  flex-direction:column;
+}
+.kch{flex-shrink:0;}
+.kch{padding:10px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);flex-shrink:0;}
 .kch h3{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;}
 .kcount{font-size:11px;font-weight:600;color:var(--text3);background:var(--bg);padding:1px 7px;border-radius:10px;}
-.kdz{min-height:80px;padding:8px;display:flex;flex-direction:column;gap:6px;transition:background .15s;}
+.kdz{
+  min-height:80px;
+  max-height:calc(100vh - 290px);
+  overflow-y:auto;
+  padding:8px;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  transition:background .15s;
+  scrollbar-width:thin;
+}
+.kdz::-webkit-scrollbar{width:8px;}
+.kdz::-webkit-scrollbar-track{background:#f1f1f1;border-radius:8px;}
+.kdz::-webkit-scrollbar-thumb{background:rgba(46,16,30,.35);border-radius:8px;}
+.kdz::-webkit-scrollbar-thumb:hover{background:rgba(46,16,30,.55);}
 .kdz.da{background:rgba(255,125,175,.1);}
 .kcard{background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:9px 10px;cursor:grab;user-select:none;transition:box-shadow .12s,transform .1s;}
 .kcard:hover{box-shadow:0 3px 12px rgba(46,16,30,.1);}
@@ -286,7 +311,7 @@ tr:hover td{background:#fdf5f8;}
   <div class="logo">
     <div class="logo-mark">🤖</div>
     <div>
-      <div class="logo-text">Creators · Iniciativas de IA <span class="logo-sub">RH · 2026 · v3.0</span></div>
+      <div class="logo-text">Creators · Iniciativas de IA <span class="logo-sub">RH · 2026 · v3.2</span></div>
     </div>
   </div>
   <div class="hright">
@@ -631,11 +656,12 @@ function normalizeScoreValue(v, fallback=1){
 function normalizeComplexityValue(v){
   const s=normalizeTxt(v);
   if(!s) return 3;
-  const m=s.match(/[123]/);
+  const m=s.match(/[135]/);
   if(m) return parseInt(m[0],10);
   if(s.includes('alta')) return 1;
-  if(s.includes('media')) return 2;
-  if(s.includes('baixa')) return 3;
+  if(s.includes('media')) return 3;
+  if(s.includes('baixa')) return 5;
+  if(s === '2') return 3;
   return 3;
 }
 
@@ -654,8 +680,8 @@ function impactoLabel(v){
   return n >= 5 ? 'Alto' : n >= 3 ? 'Médio' : 'Baixo';
 }
 function complexidadeLabel(v){
-  const n = +v || 1;
-  return n >= 3 ? 'Baixa' : n >= 2 ? 'Média' : 'Alta';
+  const n = +v || 3;
+  return n >= 5 ? 'Baixa' : n >= 3 ? 'Média' : 'Alta';
 }
 function normalizeClassificacao(v){
   const s=normalizeTxt(v);
@@ -701,14 +727,8 @@ function calcScore(item) {
 }
 
 function classifyScore(score) {
-  // Régua ajustada para pipeline de iniciativas de IA.
-  // 15: alto impacto + baixa complexidade.
-  // 10: alto impacto + média complexidade.
-  // 6 a 9: impacto/facilidade médios.
-  // 3 a 5: baixo ganho ou maior esforço.
-  // 1 a 2: backlog.
-  if (score >= 10) return 'Alta';
-  if (score >= 6) return 'Média';
+  if (score >= 15) return 'Alta';
+  if (score >= 9) return 'Média';
   if (score >= 3) return 'Baixa';
   return 'Backlog';
 }
@@ -988,7 +1008,7 @@ function renderPriorizacao() {
   const countBase = allRanked.filter(i=>matchesPrioFilters(i,false));
   const counts = { 'Alta':0, 'Média':0, 'Baixa':0, 'Backlog':0 };
   countBase.forEach(i=>{ counts[i.cls]=(counts[i.cls]||0)+1; });
-  const reads = { 'Alta':'Score 10–15', 'Média':'Score 6–9', 'Baixa':'Score 3–5', 'Backlog':'Score 1–2' };
+  const reads = { 'Alta':'Score 15–25', 'Média':'Score 9–14', 'Baixa':'Score 3–8', 'Backlog':'Score 1–2' };
   const band_cls = { 'Alta':'crit', 'Média':'imp', 'Baixa':'post', 'Backlog':'dif' };
   document.getElementById('prio-bands').innerHTML = CLS_LABELS.map(l=>`
     <div class="pband ${band_cls[l]}" onclick="setPrioFilter('${l}')" style="cursor:pointer;${pSets.cls.has(l)?'box-shadow:0 0 0 2px var(--rosa);transform:translateY(-1px);':''}">
@@ -1352,16 +1372,16 @@ function buildFormFields(data) {
     </div>
     <div class="fi">
       <label>Complexidade de implementação <span class="req">*</span>
-        <span class="tip-wrap"><span class="tip-icon">ℹ️</span><div class="tip-box">Alta: muitas dependências, dados ou integrações. Média: depende de ajustes/validação. Baixa: rápida implementação, ferramentas conhecidas.</div></span>
+        <span class="tip-wrap"><span class="tip-icon">ℹ️</span><div class="tip-box">Alta = 1: muitas dependências, dados ou integrações. Média = 3: depende de ajustes/validação. Baixa = 5: rápida implementação, ferramentas conhecidas.</div></span>
       </label>
       <select id="f-c" onchange="updateScorePreview()">
         <option value="1" ${d.complexidade===1?'selected':''}>Alta (1)</option>
-        <option value="2" ${d.complexidade===2?'selected':''}>Média (2)</option>
-        <option value="3" ${(!d.complexidade||d.complexidade===3)?'selected':''}>Baixa (3)</option>
+        <option value="3" ${(!d.complexidade||d.complexidade===3)?'selected':''}>Média (3)</option>
+        <option value="5" ${d.complexidade===5?'selected':''}>Baixa (5)</option>
       </select>
     </div>
     <div class="fi full">
-      <div class="fsec-note">Régua: Alta = score 10–15 · Média = 6–9 · Baixa = 3–5 · Backlog = 1–2.</div>
+      <div class="fsec-note">Régua: Alta = score 15–25 · Média = 9–14 · Baixa = 3–8 · Backlog = 1–2.</div>
     </div>
     <div class="cls-preview">
       <div>
@@ -1510,7 +1530,7 @@ function downloadTemplate(){
   const headers=['Nome do creator','Área','Status','Q início','Q entrega','Nome','Categoria de IA','Descrição','POC','Benefício','Riscos','Impacto','Complexidade'];
   const example=[['Ex: João Silva','R&S','Não iniciado','Q2','Q3','Triagem automática de currículos com IA','IA Generativa | Machine Learning','Sistema que usa IA para triagem inicial de currículos.','Alto volume manual de triagem de currículos.','Redução do tempo de triagem.','Qualidade das triagens precisa de calibração.','Alto','Baixa']];
   XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([headers,...example]), 'Importacao');
-  const apoio=[['Área','Gerência'],...Object.entries(AREA_TO_GERENCIA),[],['Campo','Orientação'],['Impacto','Alto = 5 | Médio = 3 | Baixo = 1'],['Complexidade','Alta = 1 | Média = 2 | Baixa = 3'],['Classificação','Alta = score 10–15 | Média = 6–9 | Baixa = 3–5 | Backlog = 1–2'],[],['Categoria de IA','Descrição'],['Agente de IA','Executa ações automaticamente dentro de um processo'],['IA Generativa','Gera ou melhora textos, resumos, respostas e conteúdos'],['Analytics / IA Analítica','Analisa dados para identificar padrões e apoiar decisões'],['Automação','Fluxos baseados em regras, como Power Automate'],['Machine Learning','Modelos preditivos ou classificatórios'],['NLP','Entendimento e processamento de linguagem natural'],['RPA','Automação robótica de tarefas repetitivas']];
+  const apoio=[['Área','Gerência'],...Object.entries(AREA_TO_GERENCIA),[],['Campo','Orientação'],['Impacto','Alto = 5 | Médio = 3 | Baixo = 1'],['Complexidade','Alta = 1 | Média = 3 | Baixa = 5'],['Classificação','Alta = score 15–25 | Média = 9–14 | Baixa = 3–8 | Backlog = 1–2'],[],['Categoria de IA','Descrição'],['Agente de IA','Executa ações automaticamente dentro de um processo'],['IA Generativa','Gera ou melhora textos, resumos, respostas e conteúdos'],['Analytics / IA Analítica','Analisa dados para identificar padrões e apoiar decisões'],['Automação','Fluxos baseados em regras, como Power Automate'],['Machine Learning','Modelos preditivos ou classificatórios'],['NLP','Entendimento e processamento de linguagem natural'],['RPA','Automação robótica de tarefas repetitivas']];
   XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(apoio), 'Apoio');
   XLSX.writeFile(wb, 'template-creators-iniciativas.xlsx');
   toast('Template Excel baixado!');
