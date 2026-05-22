@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Creators · Iniciativas de IA · RH · 2026 · v3.4</title>
+<title>Creators · Iniciativas de IA · RH · 2026 · v3.5</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -311,7 +311,7 @@ tr:hover td{background:#fdf5f8;}
   <div class="logo">
     <div class="logo-mark">🤖</div>
     <div>
-      <div class="logo-text">Creators · Iniciativas de IA <span class="logo-sub">RH · 2026 · v3.4</span></div>
+      <div class="logo-text">Creators · Iniciativas de IA <span class="logo-sub">RH · 2026 · v3.5</span></div>
     </div>
   </div>
   <div class="hright">
@@ -716,21 +716,19 @@ let nextId = 1000;
 
 // ── Impacto × Complexidade ──────────────────────────────────
 function calcScore(item) {
+  // Score = Impacto × Complexidade
   // Impacto: Baixo=1, Médio=3, Alto=5.
   // Complexidade: Baixa=1, Média=3, Alta=5.
-  // Para priorização, menor complexidade aumenta a facilidade:
-  // Facilidade = 6 - Complexidade.
   const impacto = item.gut_g || 1;
-  const complexidade = item.complexidade || 3;
-  const facilidade = 6 - complexidade;
-  return impacto * facilidade;
+  const complexidade = item.complexidade || 1;
+  return impacto * complexidade;
 }
 
 function classifyScore(score) {
-  // Score = Impacto × Facilidade
-  // Impacto: 1 baixo | 3 médio | 5 alto
-  // Complexidade: 1 baixa | 3 média | 5 alta
-  // Facilidade = 6 - Complexidade
+  // Score = Impacto × Complexidade
+  // 5 × 5 = 25 => Alta
+  // 3 × 3 = 9  => Média
+  // 1 × 5 = 5  => Baixa
   if (score >= 15) return 'Alta';
   if (score >= 9) return 'Média';
   if (score >= 3) return 'Baixa';
@@ -1361,7 +1359,7 @@ function buildFormFields(data) {
     <div class="fsec">Priorização: Impacto × Complexidade
       <span class="tip-wrap" style="margin-left:6px">
         <span class="tip-icon">ℹ️</span>
-        <div class="tip-box">Score = Impacto × Facilidade. A facilidade é calculada automaticamente como 6 - Complexidade.</div>
+        <div class="tip-box">Score = Impacto × Complexidade. A facilidade é calculada automaticamente como 6 - Complexidade.</div>
       </span>
     </div>
     <div class="fi">
@@ -1385,12 +1383,12 @@ function buildFormFields(data) {
       </select>
     </div>
     <div class="fi full">
-      <div class="fsec-note">Régua: Alta = score 15–25 · Média = 9–14 · Baixa = 3–8 · Backlog = 1–2. Quanto menor a complexidade, maior a facilidade.</div>
+      <div class="fsec-note">Régua: Alta = score 15–25 · Média = 9–14 · Baixa = 3–8 · Backlog = 1–2.</div>
     </div>
     <div class="cls-preview">
       <div>
         <div class="cp-left">Score de Prioridade</div>
-        <div style="font-size:11px;color:var(--text3);margin-top:2px">Impacto × Facilidade</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:2px">Impacto × Complexidade</div>
       </div>
       <div style="text-align:right">
         <div class="cp-score" id="f-score-preview">—</div>
@@ -1445,8 +1443,7 @@ document.addEventListener('click',e=>{ const dd=document.getElementById('ia-dd')
 function updateScorePreview() {
   const impacto=+(document.getElementById('f-g')?.value||3);
   const complexidade=+(document.getElementById('f-c')?.value||3);
-  const facilidade=6-complexidade;
-  const score=impacto*facilidade;
+  const score=impacto*complexidade;
   const el=document.getElementById('f-score-preview');
   const elCls=document.getElementById('f-cls-preview');
   if(el)el.textContent=score;
