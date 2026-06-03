@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Programa Champions · Iniciativas de IA · RH · 2026 · v3.10</title>
+<title>Programa Champions · Iniciativas de IA · RH · 2026 · v3.11</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -130,7 +130,6 @@ tr:hover td{background:#fdf5f8;}
 .b-dif {background:#F5F5F5;color:var(--cls-diferir);}
 .b-ai{background:rgba(46,16,30,.07);color:var(--bordo);font-size:9px;padding:2px 6px;margin:1px;}
 .b-ref{background:#E8F5E9;color:#2E7D32;border:1px solid rgba(46,125,50,.25);}
-.b-ref-pend{background:#FFF3E0;color:#E65100;border:1px solid rgba(230,81,0,.25);}
 .dot{width:7px;height:7px;border-radius:50%;display:inline-block;}
 
 /* Score pill */
@@ -313,7 +312,7 @@ tr:hover td{background:#fdf5f8;}
   <div class="logo">
     <div class="logo-mark">🤖</div>
     <div>
-      <div class="logo-text">Programa Champions · Iniciativas de IA <span class="logo-sub">RH · 2026 · v3.10</span></div>
+      <div class="logo-text">Programa Champions · Iniciativas de IA <span class="logo-sub">RH · 2026 · v3.11</span></div>
     </div>
   </div>
   <div class="hright">
@@ -396,7 +395,6 @@ tr:hover td{background:#fdf5f8;}
     <button class="fbtn" data-fc="Backlog" onclick="toggleFCls(this)">Backlog</button>
     <div class="f-sep"></div>
     <button class="fbtn" data-fr="refinada" onclick="toggleFRef(this)">Refinadas</button>
-    <button class="fbtn" data-fr="pendente" onclick="toggleFRef(this)">Pendentes</button>
     <div class="f-sep"></div>
     <div class="sw">
       <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/></svg>
@@ -455,7 +453,6 @@ tr:hover td{background:#fdf5f8;}
     <button class="fbtn" data-pc="Backlog" onclick="togglePCls(this)">Backlog</button>
     <div class="f-sep"></div>
     <button class="fbtn" data-pr="refinada" onclick="togglePRef(this)">Refinadas</button>
-    <button class="fbtn" data-pr="pendente" onclick="togglePRef(this)">Pendentes</button>
     <div class="f-sep"></div>
     <div class="sw">
       <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/></svg>
@@ -819,7 +816,7 @@ function hasRefinamento(item) {
   return !!(String(item.mvp||'').trim() && String(item.entradas||'').trim() && String(item.saidas||'').trim());
 }
 function refinamentoStatus(item) { return hasRefinamento(item) ? 'Refinada' : 'Pendente'; }
-function refBadge(item) { return hasRefinamento(item) ? '<span class="badge b-ref">Refinada</span>' : '<span class="badge b-ref-pend">Ref. pendente</span>'; }
+function refBadge(item) { return hasRefinamento(item) ? '<span class="badge b-ref">Refinada</span>' : ''; }
 
 // ══════════════════════════════════════════════════════════
 //  METRICS
@@ -1310,7 +1307,7 @@ const mddConfigs = {
   ka: { listId:'mdd-list-ka', btnId:'mdd-btn-ka', set:kSets.ka, items:()=>AREAS, render:renderKanban },
   kcls: { listId:'mdd-list-kcls', btnId:'mdd-btn-kcls', set:kSets.kcls, items:()=>CLS_LABELS, render:renderKanban },
   kst: { listId:'mdd-list-kst', btnId:'mdd-btn-kst', set:kSets.kst, items:()=>STATUS_LIST, render:renderKanban },
-  kref: { listId:'mdd-list-kref', btnId:'mdd-btn-kref', set:kSets.kref, items:()=>['Refinada','Pendente'], render:renderKanban },
+  kref: { listId:'mdd-list-kref', btnId:'mdd-btn-kref', set:kSets.kref, items:()=>['Refinada'], render:renderKanban },
   pg: { listId:'mdd-list-pg', btnId:'mdd-btn-pg', set:pSets.pg, items:()=>GERENCIAS, render:renderPriorizacao },
   pcreator: { listId:'mdd-list-pcreator', btnId:'mdd-btn-pcreator', set:pSets.pcreator, items:()=>[...new Set(iniciativas.map(i=>i.creator).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'pt-BR')), render:renderPriorizacao },
   pa: { listId:'mdd-list-pa', btnId:'mdd-btn-pa', set:pSets.pa, items:()=>AREAS, render:renderPriorizacao },
