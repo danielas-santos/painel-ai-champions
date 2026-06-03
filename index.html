@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Creators · Iniciativas de IA · RH · 2026 · v3.8</title>
+<title>Creators · Iniciativas de IA · RH · 2026 · v3.9</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -311,7 +311,7 @@ tr:hover td{background:#fdf5f8;}
   <div class="logo">
     <div class="logo-mark">🤖</div>
     <div>
-      <div class="logo-text">Creators · Iniciativas de IA <span class="logo-sub">RH · 2026 · v3.8</span></div>
+      <div class="logo-text">Creators · Iniciativas de IA <span class="logo-sub">RH · 2026 · v3.9</span></div>
     </div>
   </div>
   <div class="hright">
@@ -1199,29 +1199,35 @@ function renderCarga(){
 
   // Gerência × Complexidade de Implementação
   const gcMap={};
+  const normComplexidade = (v) => {
+    const n = Number(v);
+    return [1,3,5].includes(n) ? n : 3;
+  };
   iniciativas.forEach(i=>{
     const g=i.gerencia||'Sem Gerência';
-    if(!gcMap[g])gcMap[g]={1:0,2:0,3:0};
-    gcMap[g][i.complexidade||3]++;
+    const c=normComplexidade(i.complexidade);
+    if(!gcMap[g])gcMap[g]={1:0,3:0,5:0};
+    gcMap[g][c]=(gcMap[g][c]||0)+1;
   });
-  const gcEntries=Object.entries(gcMap).sort((a,b)=>
-    Object.values(b[1]).reduce((x,y)=>x+y,0)-Object.values(a[1]).reduce((x,y)=>x+y,0));
-  const maxGC=Math.max(1,...gcEntries.map(([,cv])=>Object.values(cv).reduce((a,b)=>a+b,0)));
-  const COMPL_L={3:'Baixa',2:'Média',1:'Alta'};
-  const COMPL_C={3:'#FF7DAF',2:'#662046',1:'#2E101E'};
+  const safeSum = (obj) => Object.values(obj).reduce((x,y)=>x+(Number(y)||0),0);
+  const gcEntries=Object.entries(gcMap).sort((a,b)=>safeSum(b[1])-safeSum(a[1]));
+  const maxGC=Math.max(1,...gcEntries.map(([,cv])=>safeSum(cv)));
+  const COMPL_L={1:'Baixa',3:'Média',5:'Alta'};
+  const COMPL_C={1:'#FF7DAF',3:'#662046',5:'#2E101E'};
   const elCompl=document.getElementById('ch-carga-compl');
   if(elCompl){
     elCompl.innerHTML=gcEntries.map(([g,cv])=>{
-      const total=Object.values(cv).reduce((a,b)=>a+b,0);
-      const segs=[3,2,1].map(c=>{
-        if(!cv[c])return'';
-        const pct=Math.round(cv[c]/maxGC*100);
-        return`<div class="sseg" title="${COMPL_L[c]}: ${cv[c]}" style="width:${pct}%;background:${COMPL_C[c]};min-width:${cv[c]?'4px':'0'}">${pct>8?cv[c]:''}</div>`;
+      const total=safeSum(cv);
+      const segs=[1,3,5].map(c=>{
+        const val=Number(cv[c])||0;
+        if(!val)return'';
+        const pct=Math.round(val/maxGC*100);
+        return`<div class="sseg" title="${COMPL_L[c]}: ${val}" style="width:${pct}%;background:${COMPL_C[c]};min-width:${val?'4px':'0'}">${pct>8?val:''}</div>`;
       }).join('');
       return`<div class="srow"><div class="slbl" title="${esc(g)}">${esc(g)}</div><div class="strk">${segs}</div><div class="stot">${total}</div></div>`;
     }).join('')||'<p style="font-size:12px;color:var(--text3)">Sem dados</p>';
     elCompl.insertAdjacentHTML('beforeend',
-      `<div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:10px">${[3,2,1].map(c=>
+      `<div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:10px">${[1,3,5].map(c=>
         `<span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;color:var(--text2)"><span style="width:10px;height:10px;border-radius:2px;background:${COMPL_C[c]};display:inline-block"></span>${COMPL_L[c]}</span>`
       ).join('')}</div>`
     );
@@ -1363,9 +1369,15 @@ async function saveRefinamento(){
   item.entradas = document.getElementById('r-entradas').value.trim();
   item.saidas = document.getElementById('r-saidas').value.trim();
   item.dependencias = document.getElementById('r-dependencias').value.trim();
-    setRefStore(refineId, {mvp:item.mvp, entradas:item.entradas, saidas:item.saidas, dependencias:item.dependencias});
-  try { await updateItemDB(item); } catch(e) { console.warn('Refinamento salvo localmente; verifique colunas no Supabase.', e); }
-  closeMo('mo-ref'); renderAll(); toast('Refinamento salvo.');
+  try {
+    await updateItemDB(item);
+    closeMo('mo-ref');
+    renderAll();
+    toast('Refinamento salvo no banco de dados.');
+  } catch(e) {
+    console.error('Erro ao salvar refinamento:', e);
+    toast('Erro ao salvar refinamento no Supabase. Verifique as colunas mvp, entradas, saidas e dependencias.');
+  }
 }
 
 // ══════════════════════════════════════════════════════════
@@ -1760,7 +1772,7 @@ async function loadAllData(){
       poc:r.poc||'',beneficio:r.beneficio||'',riscos:r.riscos||'',
       mvp:r.mvp||'',entradas:r.entradas||'',saidas:r.saidas||'',dependencias:r.dependencias||'',
       gut_g:r.gut_g||1,gut_u:r.gut_u||1,gut_t:r.gut_t||1,complexidade:r.complexidade||3,
-    })).map(hydrateRefLocal);
+    }));
   }catch(err){
     console.error('DB load error:',err);
     iniciativas=[];
@@ -1790,32 +1802,14 @@ async function saveItemDB(data,id){
     gut_g:data.gut_g,gut_u:data.gut_u,gut_t:data.gut_t,complexidade:data.complexidade,
     updated_at:new Date().toISOString(),
   };
-  const persist = async (payload) => {
-    if(id){
-      const {error}=await supa.from('creators_iniciativas').update(payload).eq('id',id);
-      if(error) throw error;
-      return id;
-    }
-    const {data:ins,error}=await supa.from('creators_iniciativas').insert(payload).select('id').single();
-    if(error) throw error;
+  if(id){
+    const {error}=await supa.from('creators_iniciativas').update(row).eq('id',id);
+    if(error){console.error('DB update error:',error);toast('Erro ao atualizar: '+error.message);throw error;}
+    return id;
+  } else {
+    const {data:ins,error}=await supa.from('creators_iniciativas').insert(row).select('id').single();
+    if(error){console.error('DB insert error:',error);toast('Erro ao salvar: '+error.message);throw error;}
     return ins?.id;
-  };
-  try {
-    const savedId = await persist(row);
-    if(savedId) setRefStore(savedId, {mvp:row.mvp||'',entradas:row.entradas||'',saidas:row.saidas||'',dependencias:row.dependencias||''});
-    return savedId;
-  } catch(error) {
-    const msg = (error.message||'').toLowerCase();
-    if(msg.includes('mvp') || msg.includes('entradas') || msg.includes('saidas') || msg.includes('dependencias') || msg.includes('column')){
-      const basic = {...row};
-      delete basic.mvp; delete basic.entradas; delete basic.saidas; delete basic.dependencias;
-      const savedId = await persist(basic);
-      if(savedId) setRefStore(savedId, {mvp:row.mvp||'',entradas:row.entradas||'',saidas:row.saidas||'',dependencias:row.dependencias||''});
-      return savedId;
-    }
-    console.error(id?'DB update error:':'DB insert error:',error);
-    toast((id?'Erro ao atualizar: ':'Erro ao salvar: ')+error.message);
-    throw error;
   }
 }
 async function deleteItemDB(id){
