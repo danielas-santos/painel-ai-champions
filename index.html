@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Programa Champions · Iniciativas de IA · RH · 2026 · v3.11</title>
+<title>Programa Champions · Iniciativas de IA · RH · 2026 · v3.12</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -312,7 +312,7 @@ tr:hover td{background:#fdf5f8;}
   <div class="logo">
     <div class="logo-mark">🤖</div>
     <div>
-      <div class="logo-text">Programa Champions · Iniciativas de IA <span class="logo-sub">RH · 2026 · v3.11</span></div>
+      <div class="logo-text">Programa Champions · Iniciativas de IA <span class="logo-sub">RH · 2026 · v3.12</span></div>
     </div>
   </div>
   <div class="hright">
@@ -882,10 +882,14 @@ function renderChartsVG() {
     <div class="brow"><div class="blbl" title="${a}">${esc(a)}</div>
     <div class="btrk"><div class="bfill" style="width:${Math.round(v/maxA*100)}%;background:var(--magenta)"><span>${v}</span></div></div></div>`).join('') || '<p style="font-size:12px;color:var(--text3)">Sem dados</p>';
 
-  // Donut IA
+  // Donut IA — Top 5 categorias + Outros
   const iaCounts = {};
   iniciativas.forEach(i=>(i.cat_ia||[]).forEach(c=>{ iaCounts[c]=(iaCounts[c]||0)+1; }));
-  renderDonut('ch-ia-donut','ch-ia-legend', Object.entries(iaCounts), CAT_IA_COLORS, donutIA, v=>donutIA=v);
+  const iaSorted = Object.entries(iaCounts).sort((a,b)=>b[1]-a[1]);
+  const iaTop = iaSorted.slice(0,5);
+  const iaOthers = iaSorted.slice(5).reduce((acc,[,v])=>acc+v,0);
+  const iaFinal = iaOthers > 0 ? [...iaTop, ['Outros', iaOthers]] : iaTop;
+  renderDonut('ch-ia-donut','ch-ia-legend', iaFinal, CAT_IA_COLORS, donutIA, v=>donutIA=v);
 
   // Donut Cls
   const clsCounts = {};
@@ -1097,7 +1101,7 @@ function renderPriorizacao() {
   }
   document.getElementById('prank').innerHTML = `
     <div style="border:1px solid var(--border);border-radius:var(--r);overflow:auto;background:#fff;">
-      <div style="display:grid;grid-template-columns:52px minmax(205px,1.35fr) 128px 132px 176px 72px 110px 116px 116px minmax(220px,1fr) 84px;gap:0;font-size:10px;background:var(--bordo);color:#fff;min-width:1360px;">
+      <div style="display:grid;grid-template-columns:52px minmax(200px,1.2fr) 120px 120px 160px 70px 105px 116px 100px minmax(160px,.8fr) 124px;gap:0;font-size:10px;background:var(--bordo);color:#fff;min-width:1320px;">
         <div onclick="sortPrio('gerencia_rank')" style="padding:8px;text-align:center;font-weight:600;cursor:pointer;">Prior.${prioSortMark('gerencia_rank')}</div>
         <div onclick="sortPrio('nome')" style="padding:8px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;cursor:pointer;">Iniciativa${prioSortMark('nome')}</div>
         <div onclick="sortPrio('creator')" style="padding:8px;font-weight:600;cursor:pointer;">Creator${prioSortMark('creator')}</div>
@@ -1113,7 +1117,7 @@ function renderPriorizacao() {
       ${ranked.map((item,i)=>{
         const bg=i%2===0?'#fff':'#fafafa';
         const resumo = item.beneficio || item.poc || item.descricao || 'Sem resumo informado.';
-        return `<div style="display:grid;grid-template-columns:52px minmax(205px,1.35fr) 128px 132px 176px 72px 110px 116px 116px minmax(220px,1fr) 84px;gap:0;border-top:1px solid var(--border);background:${bg};font-size:12px;min-width:1360px;align-items:center;">
+        return `<div style="display:grid;grid-template-columns:52px minmax(200px,1.2fr) 120px 120px 160px 70px 105px 116px 100px minmax(160px,.8fr) 124px;gap:0;border-top:1px solid var(--border);background:${bg};font-size:12px;min-width:1320px;align-items:center;">
           <div style="padding:9px;text-align:center;color:var(--bordo);font-size:11px;font-weight:600;" title="Prioridade dentro da gerência">${item._gerRank||i+1}</div>
           <div style="padding:9px;font-weight:500;line-height:1.35;">${esc(item.nome)}</div>
           <div style="padding:9px;font-size:11px;color:var(--text2);">${esc(item.creator||'—')}</div>
@@ -1123,8 +1127,8 @@ function renderPriorizacao() {
           <div style="padding:9px;font-size:11px;color:var(--text2);line-height:1.5;">${statusDot(item.status)}</div>
           <div style="padding:9px;">${clsBadge(item.cls)}</div>
           <div style="padding:9px;">${refBadge(item)}</div>
-          <div style="padding:9px;font-size:11px;color:var(--text2);line-height:1.45;">${esc(resumo).slice(0,200)}${String(resumo).length>200?'…':''}</div>
-          <div style="padding:9px;"><div class="ract" style="justify-content:center;">
+          <div title="${esc(resumo)}" style="padding:9px;font-size:11px;color:var(--text2);line-height:1.45;">${esc(resumo).slice(0,140)}${String(resumo).length>140?'…':''}</div>
+          <div style="padding:9px;"><div class="ract" style="justify-content:center;flex-wrap:nowrap;">
             <button class="ibtn" onmouseenter="showPreview(${item.id},event)" onmouseleave="hidePreview()" onclick="showPreview(${item.id},event)" title="Visualizar">👁</button>
             <button class="ibtn" onclick="openModal(${item.id})" title="Editar">✎</button>
         <button class="ibtn" onclick="openRefModal(${item.id})" title="Refinar iniciativa">📝</button>
