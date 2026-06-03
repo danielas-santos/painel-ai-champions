@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Creators · Iniciativas de IA · RH · 2026 · v3.9</title>
+<title>Programa Champions · Iniciativas de IA · RH · 2026 · v3.10</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -129,6 +129,8 @@ tr:hover td{background:#fdf5f8;}
 .b-post{background:rgba(191,20,74,.10);color:var(--cls-postergar);}
 .b-dif {background:#F5F5F5;color:var(--cls-diferir);}
 .b-ai{background:rgba(46,16,30,.07);color:var(--bordo);font-size:9px;padding:2px 6px;margin:1px;}
+.b-ref{background:#E8F5E9;color:#2E7D32;border:1px solid rgba(46,125,50,.25);}
+.b-ref-pend{background:#FFF3E0;color:#E65100;border:1px solid rgba(230,81,0,.25);}
 .dot{width:7px;height:7px;border-radius:50%;display:inline-block;}
 
 /* Score pill */
@@ -311,7 +313,7 @@ tr:hover td{background:#fdf5f8;}
   <div class="logo">
     <div class="logo-mark">🤖</div>
     <div>
-      <div class="logo-text">Creators · Iniciativas de IA <span class="logo-sub">RH · 2026 · v3.9</span></div>
+      <div class="logo-text">Programa Champions · Iniciativas de IA <span class="logo-sub">RH · 2026 · v3.10</span></div>
     </div>
   </div>
   <div class="hright">
@@ -393,6 +395,9 @@ tr:hover td{background:#fdf5f8;}
     <button class="fbtn" data-fc="Baixa" onclick="toggleFCls(this)">Baixa</button>
     <button class="fbtn" data-fc="Backlog" onclick="toggleFCls(this)">Backlog</button>
     <div class="f-sep"></div>
+    <button class="fbtn" data-fr="refinada" onclick="toggleFRef(this)">Refinadas</button>
+    <button class="fbtn" data-fr="pendente" onclick="toggleFRef(this)">Pendentes</button>
+    <div class="f-sep"></div>
     <div class="sw">
       <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/></svg>
       <input type="text" id="sp" placeholder="Buscar iniciativa…" oninput="renderIniciativas()">
@@ -449,6 +454,9 @@ tr:hover td{background:#fdf5f8;}
     <button class="fbtn" data-pc="Baixa" onclick="togglePCls(this)">Baixa</button>
     <button class="fbtn" data-pc="Backlog" onclick="togglePCls(this)">Backlog</button>
     <div class="f-sep"></div>
+    <button class="fbtn" data-pr="refinada" onclick="togglePRef(this)">Refinadas</button>
+    <button class="fbtn" data-pr="pendente" onclick="togglePRef(this)">Pendentes</button>
+    <div class="f-sep"></div>
     <div class="sw">
       <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/></svg>
       <input type="text" id="sp-prio" placeholder="Buscar iniciativa…" oninput="renderPriorizacao()">
@@ -480,6 +488,10 @@ tr:hover td{background:#fdf5f8;}
     <div class="mdd-wrap">
       <button class="fbtn" id="mdd-btn-kst" onclick="openMDD('kst')">Etapa ▾</button>
       <div class="mdd" id="mdd-kst"><div class="mdd-list" id="mdd-list-kst"></div><div class="mdd-clear" onclick="clearMDD('kst')">Limpar</div></div>
+    </div>
+    <div class="mdd-wrap">
+      <button class="fbtn" id="mdd-btn-kref" onclick="openMDD('kref')">Refinamento ▾</button>
+      <div class="mdd" id="mdd-kref"><div class="mdd-list" id="mdd-list-kref"></div><div class="mdd-clear" onclick="clearMDD('kref')">Limpar</div></div>
     </div>
     <div class="sw" style="max-width:200px;">
       <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/></svg>
@@ -777,9 +789,9 @@ function classifyScore(score) {
 }
 
 // ── Filter state ─────────────────────────────────────────
-const fSets = { g: new Set(), a: new Set(), ia: new Set(), cls: new Set() };
-const kSets = { kg: new Set(), ka: new Set(), kcls: new Set(), kst: new Set() };
-const pSets = { pg: new Set(), pcreator: new Set(), pa: new Set(), pia: new Set(), cls: new Set() };
+const fSets = { g: new Set(), a: new Set(), ia: new Set(), cls: new Set(), ref: new Set() };
+const kSets = { kg: new Set(), ka: new Set(), kcls: new Set(), kst: new Set(), kref: new Set() };
+const pSets = { pg: new Set(), pcreator: new Set(), pa: new Set(), pia: new Set(), cls: new Set(), ref: new Set() };
 const sortState = { i: { col: null, dir: 1 } };
 const prioSortState = { col: 'gerencia_rank', dir: 1 };
 let prioFilter = null;
@@ -803,6 +815,11 @@ function statusDot(st){const c=(STATUS_COLOR||{})[st]||'#ccc';return`<span style
 function clsBadge(cls) { return `<span class="badge ${CLS_BADGE[cls]||'b-dif'}">${cls||'—'}</span>`; }
 function qBadge(q) { return `<span style="font-size:11px;color:var(--text2)">${q==='TBD'||!q?'Não def.':q}</span>`; }
 function iaBadges(arr) { return (arr||[]).map(c=>`<span class="badge b-ai">${esc(c)}</span>`).join(''); }
+function hasRefinamento(item) {
+  return !!(String(item.mvp||'').trim() && String(item.entradas||'').trim() && String(item.saidas||'').trim());
+}
+function refinamentoStatus(item) { return hasRefinamento(item) ? 'Refinada' : 'Pendente'; }
+function refBadge(item) { return hasRefinamento(item) ? '<span class="badge b-ref">Refinada</span>' : '<span class="badge b-ref-pend">Ref. pendente</span>'; }
 
 // ══════════════════════════════════════════════════════════
 //  METRICS
@@ -907,6 +924,10 @@ function matchesFilters(item) {
     const cls = classifyScore(calcScore(item));
     if (!fSets.cls.has(cls)) return false;
   }
+  if (fSets.ref.size) {
+    const ref = refinamentoStatus(item).toLowerCase();
+    if (!fSets.ref.has(ref)) return false;
+  }
   const s = (document.getElementById('sp')?.value||'').toLowerCase();
   if (s && !item.nome?.toLowerCase().includes(s) && !item.creator?.toLowerCase().includes(s)) return false;
   return true;
@@ -925,7 +946,7 @@ function renderIniciativas() {
     const cls = classifyScore(score);
     return `<tr>
       <td style="color:var(--text3);font-size:11px">${idx+1}</td>
-      <td style="font-weight:500;max-width:220px">${esc(item.nome)}</td>
+      <td style="font-weight:500;max-width:220px"><div>${esc(item.nome)}</div><div style="margin-top:4px;display:flex;gap:4px;flex-wrap:wrap;">${refBadge(item)}</div></td>
       <td style="font-size:11px;color:var(--text2)">${esc(item.creator||'—')}</td>
       <td style="font-size:11px;color:var(--text3);max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(item.gerencia||'')}">${esc(item.gerencia||'—').replace(/,.*$/,'')}</td>
       <td style="font-size:11px;color:var(--text2)">${esc(item.area||'—')}</td>
@@ -982,6 +1003,10 @@ function matchesPrioFilters(item, includeCls=true){
     const cls = classifyScore(calcScore(item));
     if (!pSets.cls.has(cls)) return false;
   }
+  if (pSets.ref.size) {
+    const ref = refinamentoStatus(item).toLowerCase();
+    if (!pSets.ref.has(ref)) return false;
+  }
   const s = getPrioSearch();
   if (s && !item.nome?.toLowerCase().includes(s) && !item.creator?.toLowerCase().includes(s) && !item.area?.toLowerCase().includes(s) && !item.gerencia?.toLowerCase().includes(s)) return false;
   return true;
@@ -1000,9 +1025,15 @@ function togglePCls(btn){
   else { pSets.cls.add(val); btn.classList.add('sel'); }
   renderPriorizacao();
 }
+function togglePRef(btn){
+  const val = btn.dataset.pr;
+  if (pSets.ref.has(val)) { pSets.ref.delete(val); btn.classList.remove('sel'); }
+  else { pSets.ref.add(val); btn.classList.add('sel'); }
+  renderPriorizacao();
+}
 function clearPrioFilters(){
-  ['pg','pcreator','pa','pia','cls'].forEach(k=>pSets[k].clear());
-  document.querySelectorAll('[data-pc]').forEach(b=>b.classList.remove('sel'));
+  ['pg','pcreator','pa','pia','cls','ref'].forEach(k=>pSets[k].clear());
+  document.querySelectorAll('[data-pc],[data-pr]').forEach(b=>b.classList.remove('sel'));
   const sp=document.getElementById('sp-prio'); if(sp) sp.value='';
   ['pg','pcreator','pa','pia'].forEach(updMDDBtn);
   renderPriorizacao();
@@ -1069,7 +1100,7 @@ function renderPriorizacao() {
   }
   document.getElementById('prank').innerHTML = `
     <div style="border:1px solid var(--border);border-radius:var(--r);overflow:auto;background:#fff;">
-      <div style="display:grid;grid-template-columns:52px minmax(205px,1.35fr) 128px 132px 176px 72px 110px 116px minmax(220px,1fr) 84px;gap:0;font-size:10px;background:var(--bordo);color:#fff;min-width:1240px;">
+      <div style="display:grid;grid-template-columns:52px minmax(205px,1.35fr) 128px 132px 176px 72px 110px 116px 116px minmax(220px,1fr) 84px;gap:0;font-size:10px;background:var(--bordo);color:#fff;min-width:1360px;">
         <div onclick="sortPrio('gerencia_rank')" style="padding:8px;text-align:center;font-weight:600;cursor:pointer;">Prior.${prioSortMark('gerencia_rank')}</div>
         <div onclick="sortPrio('nome')" style="padding:8px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;cursor:pointer;">Iniciativa${prioSortMark('nome')}</div>
         <div onclick="sortPrio('creator')" style="padding:8px;font-weight:600;cursor:pointer;">Creator${prioSortMark('creator')}</div>
@@ -1078,13 +1109,14 @@ function renderPriorizacao() {
         <div onclick="sortPrio('score')" style="padding:8px;font-weight:600;text-align:center;cursor:pointer;">Score${prioSortMark('score')}</div>
         <div onclick="sortPrio('status')" style="padding:8px;font-weight:600;cursor:pointer;">Etapa${prioSortMark('status')}</div>
         <div onclick="sortPrio('cls')" style="padding:8px;font-weight:600;cursor:pointer;">Classificação automática${prioSortMark('cls')}</div>
+        <div style="padding:8px;font-weight:600;">Refinamento</div>
         <div style="padding:8px;font-weight:600;">Análise para priorização</div>
         <div style="padding:8px;font-weight:600;text-align:center;">Ações</div>
       </div>
       ${ranked.map((item,i)=>{
         const bg=i%2===0?'#fff':'#fafafa';
         const resumo = item.beneficio || item.poc || item.descricao || 'Sem resumo informado.';
-        return `<div style="display:grid;grid-template-columns:52px minmax(205px,1.35fr) 128px 132px 176px 72px 110px 116px minmax(220px,1fr) 84px;gap:0;border-top:1px solid var(--border);background:${bg};font-size:12px;min-width:1240px;align-items:center;">
+        return `<div style="display:grid;grid-template-columns:52px minmax(205px,1.35fr) 128px 132px 176px 72px 110px 116px 116px minmax(220px,1fr) 84px;gap:0;border-top:1px solid var(--border);background:${bg};font-size:12px;min-width:1360px;align-items:center;">
           <div style="padding:9px;text-align:center;color:var(--bordo);font-size:11px;font-weight:600;" title="Prioridade dentro da gerência">${item._gerRank||i+1}</div>
           <div style="padding:9px;font-weight:500;line-height:1.35;">${esc(item.nome)}</div>
           <div style="padding:9px;font-size:11px;color:var(--text2);">${esc(item.creator||'—')}</div>
@@ -1093,6 +1125,7 @@ function renderPriorizacao() {
           <div style="padding:9px;text-align:center;"><span class="score-pill">${item.score}</span></div>
           <div style="padding:9px;font-size:11px;color:var(--text2);line-height:1.5;">${statusDot(item.status)}</div>
           <div style="padding:9px;">${clsBadge(item.cls)}</div>
+          <div style="padding:9px;">${refBadge(item)}</div>
           <div style="padding:9px;font-size:11px;color:var(--text2);line-height:1.45;">${esc(resumo).slice(0,200)}${String(resumo).length>200?'…':''}</div>
           <div style="padding:9px;"><div class="ract" style="justify-content:center;">
             <button class="ibtn" onmouseenter="showPreview(${item.id},event)" onmouseleave="hidePreview()" onclick="showPreview(${item.id},event)" title="Visualizar">👁</button>
@@ -1116,6 +1149,7 @@ function renderKanban() {
     if (kSets.ka.size && !kSets.ka.has(i.area)) return false;
     if (kSets.kcls.size && !kSets.kcls.has(classifyScore(calcScore(i)))) return false;
     if (kSets.kst.size && !kSets.kst.has(normalizeEtapa(i.status || 'Não iniciado'))) return false;
+    if (kSets.kref.size && !kSets.kref.has(refinamentoStatus(i))) return false;
     return true;
   });
   const cols = {Q1:{label:'Q1',color:Q_COLORS.Q1},Q2:{label:'Q2',color:Q_COLORS.Q2},Q3:{label:'Q3',color:Q_COLORS.Q3},Q4:{label:'Q4',color:Q_COLORS.Q4},TBD:{label:'Não definido',color:Q_COLORS.TBD}};
@@ -1134,7 +1168,7 @@ function renderKanban() {
               <span style="font-size:10px;color:var(--text3)">·</span>
               <span style="font-size:10px;color:var(--text3)">${esc(i.area||'—')}</span>
             </div>
-            <div class="km" style="margin-top:3px">${clsBadge(cls)}</div>
+            <div class="km" style="margin-top:3px">${refBadge(i)} ${clsBadge(cls)}</div>
           </div>`;
         }).join('')}
       </div>
@@ -1252,10 +1286,16 @@ function toggleFCls(btn) {
   else { fSets.cls.add(val); btn.classList.add('sel'); }
   renderIniciativas();
 }
+function toggleFRef(btn) {
+  const val = btn.dataset.fr;
+  if (fSets.ref.has(val)) { fSets.ref.delete(val); btn.classList.remove('sel'); }
+  else { fSets.ref.add(val); btn.classList.add('sel'); }
+  renderIniciativas();
+}
 
 function clearFilters() {
-  ['g','a','ia','cls'].forEach(k=>fSets[k].clear());
-  document.querySelectorAll('[data-fc]').forEach(b=>b.classList.remove('sel'));
+  ['g','a','ia','cls','ref'].forEach(k=>fSets[k].clear());
+  document.querySelectorAll('[data-fc],[data-fr]').forEach(b=>b.classList.remove('sel'));
   const sp=document.getElementById('sp'); if(sp)sp.value='';
   updMDDBtn('g');updMDDBtn('a');updMDDBtn('ia');
   renderIniciativas();
@@ -1270,6 +1310,7 @@ const mddConfigs = {
   ka: { listId:'mdd-list-ka', btnId:'mdd-btn-ka', set:kSets.ka, items:()=>AREAS, render:renderKanban },
   kcls: { listId:'mdd-list-kcls', btnId:'mdd-btn-kcls', set:kSets.kcls, items:()=>CLS_LABELS, render:renderKanban },
   kst: { listId:'mdd-list-kst', btnId:'mdd-btn-kst', set:kSets.kst, items:()=>STATUS_LIST, render:renderKanban },
+  kref: { listId:'mdd-list-kref', btnId:'mdd-btn-kref', set:kSets.kref, items:()=>['Refinada','Pendente'], render:renderKanban },
   pg: { listId:'mdd-list-pg', btnId:'mdd-btn-pg', set:pSets.pg, items:()=>GERENCIAS, render:renderPriorizacao },
   pcreator: { listId:'mdd-list-pcreator', btnId:'mdd-btn-pcreator', set:pSets.pcreator, items:()=>[...new Set(iniciativas.map(i=>i.creator).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'pt-BR')), render:renderPriorizacao },
   pa: { listId:'mdd-list-pa', btnId:'mdd-btn-pa', set:pSets.pa, items:()=>AREAS, render:renderPriorizacao },
@@ -1299,7 +1340,7 @@ function updMDDBtn(key) {
   const cfg=mddConfigs[key];if(!cfg)return;
   const btn=document.getElementById(cfg.btnId);if(!btn)return;
   const s=cfg.set,items=cfg.items();
-  const label={g:'Gerência',a:'Área',ia:'Categoria de IA',kg:'Gerência',ka:'Área',kcls:'Classificação',kst:'Etapa',pg:'Gerência',pcreator:'Creator',pa:'Área',pia:'Categoria de IA'}[key]||key;
+  const label={g:'Gerência',a:'Área',ia:'Categoria de IA',kg:'Gerência',ka:'Área',kcls:'Classificação',kst:'Etapa',kref:'Refinamento',pg:'Gerência',pcreator:'Creator',pa:'Área',pia:'Categoria de IA'}[key]||key;
   if(s.size===0){btn.textContent=label+' ▾';btn.classList.remove('sel');}
   else if(s.size===1){btn.textContent=[...s][0].slice(0,14)+(([...s][0].length>14)?'…':'')+' ▾';btn.classList.add('sel');}
   else{btn.textContent=s.size+' selecionados ▾';btn.classList.add('sel');}
@@ -1325,7 +1366,7 @@ function showPreview(id, event) {
     <div class="preview-row"><div class="preview-label">Creator</div><div class="preview-val">${esc(item.creator||'—')}</div></div>
     <div class="preview-row"><div class="preview-label">Gerência</div><div class="preview-val">${esc(item.gerencia||'—')}</div></div>
     <div class="preview-row"><div class="preview-label">Área</div><div class="preview-val">${esc(item.area||'—')}</div></div>
-    <div class="preview-row"><div class="preview-label">Score</div><div class="preview-val"><span class="score-pill">${score}</span> ${clsBadge(cls)}</div></div>
+    <div class="preview-row"><div class="preview-label">Score</div><div class="preview-val"><span class="score-pill">${score}</span> ${clsBadge(cls)} ${refBadge(item)}</div></div>
     <div class="preview-row"><div class="preview-label">Tipo de IA</div><div class="preview-val">${iaBadges(item.cat_ia)||'—'}</div></div>
     ${item.descricao?`<div class="preview-row"><div class="preview-label">Descrição</div><div class="preview-val" style="font-size:11px;line-height:1.5;max-height:80px;overflow:auto">${esc(item.descricao)}</div></div>`:''}
     ${item.beneficio?`<div class="preview-row"><div class="preview-label">Benefício</div><div class="preview-val" style="font-size:11px;line-height:1.5">${esc(item.beneficio)}</div></div>`:''}
