@@ -2,1882 +2,768 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Programa Champions · Iniciativas de IA · RH · 2026 · v3.12</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Programa Champions · Gestão de Iniciativas de IA · v4.0</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bordo:#2E101E;--bordo-luz:#662046;--rosa:#FF7DAF;--magenta:#BF144A;
-  --cinza:#9E9E9E;--offwhite:#F7F7F7;--branco:#fff;
-  --bg:var(--offwhite);--surface:var(--branco);--text:#000;--text2:#3a3a3a;--text3:#777;
-  --border:rgba(0,0,0,.09);--border2:rgba(0,0,0,.16);
-  --r:8px;--rl:14px;--font:'Fira Sans',sans-serif;
-  /* Classificação */
-  --cls-critico:#2E101E;--cls-importante:#2E101E;--cls-postergar:#BF144A;--cls-diferir:#9E9E9E;
+  --brand:#8e2f3e;
+  --brand-strong:#6f2030;
+  --brand-soft:#fbe9ec;
+  --brand-faint:#fff7f8;
+  --ink:#1f1b1c;
+  --muted:#74696c;
+  --subtle:#9d9295;
+  --line:#e6dddf;
+  --line-strong:#d8cccf;
+  --surface:#ffffff;
+  --canvas:#fbf8f8;
+  --success:#2fb37b;
+  --warning:#e9aa18;
+  --danger:#e43f48;
+  --info:#6a6f7a;
+  --shadow:0 1px 2px rgba(32,16,21,.06),0 8px 24px rgba(53,23,32,.04);
+  --radius:12px;
+  --radius-sm:8px;
+  --max:1320px;
 }
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:14px;}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--canvas);color:var(--ink);font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;font-size:14px}
+button,input,select,textarea{font:inherit}
+button{color:inherit}
+.icon{width:17px;height:17px;display:inline-block;vertical-align:-3px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.icon-sm{width:14px;height:14px}
+.hidden{display:none!important}
 
-/* ── HEADER ── */
-header{background:var(--bordo);padding:0 20px;display:flex;align-items:center;justify-content:space-between;height:54px;position:sticky;top:0;z-index:200;border-bottom:3px solid var(--rosa);}
-.logo{display:flex;align-items:center;gap:10px;}
-.logo-mark{width:32px;height:32px;background:var(--rosa);border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:13px;color:var(--bordo);flex-shrink:0;}
-.logo-text{font-size:13px;font-weight:500;color:var(--branco);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.logo-sub{font-size:11px;color:rgba(255,255,255,.4);margin-left:4px;}
-.hright{display:flex;align-items:center;gap:8px;}
-#last-update{font-size:11px;color:rgba(255,255,255,.35);white-space:nowrap;}
+/* Header */
+.app-header{position:sticky;top:0;z-index:200;background:rgba(255,255,255,.97);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.header-inner{max-width:var(--max);margin:0 auto;padding:12px 22px 0}
+.header-row{height:54px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.brand{display:flex;align-items:center;gap:11px;min-width:220px}
+.brand-mark{width:36px;height:36px;border-radius:9px;background:var(--brand);color:#fff;display:grid;place-items:center;box-shadow:0 6px 16px rgba(142,47,62,.18)}
+.brand-mark .icon{width:21px;height:21px}
+.brand-title{font-weight:700;font-size:14px;line-height:1.15}
+.brand-subtitle{font-size:10.5px;color:var(--muted);margin-top:3px}
+.header-actions{display:flex;align-items:center;gap:8px}
+.btn{height:34px;padding:0 13px;border:1px solid var(--line-strong);border-radius:8px;background:#fff;display:inline-flex;align-items:center;justify-content:center;gap:7px;font-size:12px;font-weight:600;cursor:pointer;transition:.15s ease;text-decoration:none;white-space:nowrap}
+.btn:hover{border-color:#beaeb2;background:#fffafa}
+.btn-primary{background:var(--brand);color:#fff;border-color:var(--brand)}
+.btn-primary:hover{background:var(--brand-strong);border-color:var(--brand-strong)}
+.btn-ghost{background:transparent;border-color:transparent;color:var(--muted)}
+.btn-danger{color:#fff;background:var(--danger);border-color:var(--danger)}
+.btn-danger:hover{background:#c93039;border-color:#c93039}
+.nav{height:49px;display:flex;align-items:flex-end;gap:4px;overflow-x:auto;scrollbar-width:none}
+.nav::-webkit-scrollbar{display:none}
+.nav-btn{height:43px;border:0;background:transparent;border-radius:8px 8px 0 0;padding:0 14px;display:flex;align-items:center;gap:8px;color:var(--muted);font-size:12px;font-weight:500;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap}
+.nav-btn:hover{color:var(--brand);background:#fffafa}
+.nav-btn.active{color:var(--brand);background:var(--brand-soft);border-bottom-color:var(--brand)}
 
-/* ── NAV ── */
-nav{background:var(--surface);border-bottom:1px solid var(--border);padding:0 8px;display:flex;position:sticky;top:54px;z-index:199;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
-nav::-webkit-scrollbar{display:none;}
-.ntab{padding:12px 14px;font-size:12px;font-weight:500;color:var(--text3);border:none;background:transparent;cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;white-space:nowrap;font-family:var(--font);}
-.ntab:hover{color:var(--bordo-luz);}
-.ntab.active{color:var(--bordo);border-bottom-color:var(--rosa);}
+/* Dropdowns */
+details.dropdown{position:relative}
+details.dropdown>summary{list-style:none}
+details.dropdown>summary::-webkit-details-marker{display:none}
+.dropdown-menu{position:absolute;right:0;top:calc(100% + 6px);min-width:220px;background:#fff;border:1px solid var(--line);border-radius:10px;box-shadow:0 14px 38px rgba(43,21,28,.16);padding:6px;z-index:500}
+.dropdown-item{width:100%;border:0;background:transparent;border-radius:7px;padding:9px 10px;display:flex;align-items:center;gap:9px;text-align:left;font-size:12px;color:var(--ink);cursor:pointer}
+.dropdown-item:hover{background:var(--brand-faint);color:var(--brand)}
+.dropdown-sep{height:1px;background:var(--line);margin:5px 3px}
 
-/* ── MAIN ── */
-main{max-width:1380px;margin:0 auto;padding:16px 14px 80px;}
-.sec{display:none;}.sec.active{display:block;}
+/* Layout */
+main{max-width:var(--max);margin:0 auto;padding:30px 22px 72px}
+.page{display:none}
+.page.active{display:block}
+.page-head{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:22px}
+.page-title{font-size:24px;line-height:1.2;margin:0;font-weight:700;letter-spacing:-.02em}
+.page-subtitle{font-size:12px;color:var(--muted);margin-top:6px;line-height:1.5}
+.section-title{font-size:13px;font-weight:700;margin:0 0 12px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+.card-pad{padding:18px}
+.empty-state{padding:42px 18px;text-align:center;color:var(--muted);font-size:12px}
+.empty-state strong{display:block;color:var(--ink);font-size:14px;margin-bottom:6px}
 
-/* ── METRICS ── */
-.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px;}
-@media(max-width:640px){.metrics{grid-template-columns:repeat(2,1fr);}}
-.metric{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);padding:14px 16px;border-top:3px solid var(--bordo);cursor:pointer;transition:box-shadow .15s,transform .1s;position:relative;}
-.metric:hover{box-shadow:0 4px 16px rgba(46,16,30,.12);transform:translateY(-1px);}
-.metric.af{border-top-color:var(--rosa);box-shadow:0 0 0 2px var(--rosa);}
-.metric .val{font-size:26px;font-weight:300;color:var(--bordo);line-height:1;}
-.metric .lbl{font-size:11px;font-weight:500;color:var(--text2);margin-top:5px;text-transform:uppercase;letter-spacing:.04em;}
-.metric .sub{font-size:10px;color:var(--text3);margin-top:2px;}
-.hint{position:absolute;top:8px;right:10px;font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.04em;}
+/* Overview */
+.metrics-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
+.metric-card{padding:17px 18px;cursor:pointer;transition:.15s ease;min-height:96px}
+.metric-card:hover{transform:translateY(-1px);box-shadow:0 4px 20px rgba(58,25,34,.09)}
+.metric-top{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:11px;font-weight:500}
+.metric-icon{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:#f5f1f2;color:var(--brand)}
+.metric-value{font-size:26px;font-weight:700;letter-spacing:-.04em;margin-top:9px}
+.metric-card.danger .metric-value,.metric-card.danger .metric-icon{color:var(--danger)}
+.metric-card.warning .metric-value,.metric-card.warning .metric-icon{color:var(--warning)}
+.overview-split{display:grid;grid-template-columns:1.02fr 1fr;gap:14px;margin-bottom:14px}
+.panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.panel-title{font-size:12px;font-weight:700}
+.panel-link{border:0;background:transparent;color:var(--brand);font-size:11px;font-weight:600;cursor:pointer;padding:4px}
+.attention-list{display:flex;flex-direction:column}
+.attention-row{display:grid;grid-template-columns:10px minmax(0,1fr) auto;gap:10px;align-items:start;padding:11px 0;border-bottom:1px solid var(--line)}
+.attention-row:last-child{border-bottom:0}
+.attention-dot{width:8px;height:8px;border-radius:50%;margin-top:5px;background:var(--warning)}
+.attention-dot.high{background:var(--danger)}
+.attention-name{font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.attention-meta{font-size:10px;color:var(--muted);margin-top:3px;line-height:1.4}
+.reason-badge{font-size:9px;border:1px solid var(--line-strong);border-radius:999px;padding:3px 7px;color:var(--muted);white-space:nowrap}
+.quarter-bars{display:flex;flex-direction:column;gap:12px}
+.qbar-row{display:grid;grid-template-columns:32px 1fr auto;gap:10px;align-items:center}
+.qbar-label{font-size:11px;font-weight:600;color:var(--brand)}
+.qbar-track{height:7px;background:#f1ebed;border-radius:999px;overflow:hidden}
+.qbar-fill{height:100%;background:var(--brand);border-radius:999px;transition:width .25s ease}
+.qbar-count{font-size:10px;color:var(--muted);min-width:78px;text-align:right}
+.overview-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+.capacity-card{margin-top:14px}
+.capacity-list{display:flex;flex-direction:column;gap:10px}
+.capacity-row{display:grid;grid-template-columns:minmax(210px,300px) 1fr 36px;gap:12px;align-items:center}
+.capacity-label{font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.capacity-track{height:22px;background:#f2eff0;border-radius:5px;overflow:hidden;display:flex}
+.capacity-seg{height:100%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;min-width:0}
+.capacity-seg.low{background:#ff7daf}
+.capacity-seg.medium{background:#792148}
+.capacity-seg.high{background:#2e101e}
+.capacity-total{font-size:11px;font-weight:700;text-align:right}
+.legend{display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-top:12px}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:10px;color:var(--muted)}
+.legend-swatch{width:10px;height:10px;border-radius:3px}
+.bar-list{display:flex;flex-direction:column;gap:9px}
+.bar-row{display:grid;grid-template-columns:minmax(130px,220px) 1fr 24px;gap:10px;align-items:center}
+.bar-label{font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar-track{height:8px;background:#f1ebed;border-radius:999px;overflow:hidden}
+.bar-fill{height:100%;border-radius:999px;background:var(--brand)}
+.bar-value{font-size:10px;text-align:right;color:var(--muted)}
+.donut-layout{display:flex;align-items:center;gap:22px;min-height:190px}
+.donut-layout canvas{max-width:150px;max-height:150px}
+.donut-legend{display:flex;flex-direction:column;gap:9px;flex:1}
+.donut-row{display:flex;align-items:center;gap:8px;font-size:10px;color:var(--muted)}
+.donut-dot{width:9px;height:9px;border-radius:50%}
+.donut-value{margin-left:auto;color:var(--ink);font-weight:700}
 
-/* ── CARDS SECTION TITLE ── */
-.sec-title{font-size:11px;font-weight:600;color:var(--bordo);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
-.sec-title::after{content:'';flex:1;height:1px;background:var(--border);}
+/* Filters and tabs */
+.segmented{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.segment-btn{height:28px;padding:0 11px;border:1px solid var(--line);background:#fff;border-radius:999px;font-size:10.5px;color:var(--muted);cursor:pointer}
+.segment-btn.active{background:var(--brand);border-color:var(--brand);color:#fff}
+.segment-count{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:18px;padding:0 5px;margin-left:5px;border-radius:999px;background:rgba(255,255,255,.2);font-size:9px}
+.segment-btn:not(.active) .segment-count{background:#f1ecee;color:var(--muted)}
+.filter-shell{padding:10px 12px;margin-bottom:14px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.search-box{position:relative;flex:1;min-width:260px}
+.search-box .icon{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--subtle)}
+.search-box input{width:100%;height:36px;padding:0 12px 0 36px;border:1px solid var(--line-strong);border-radius:8px;background:#fff;color:var(--ink);font-size:11px}
+.search-box input:focus,select:focus,textarea:focus,input:focus{outline:2px solid rgba(142,47,62,.12);border-color:var(--brand)!important}
+.select{height:36px;min-width:150px;border:1px solid var(--line-strong);border-radius:8px;background:#fff;padding:0 10px;font-size:11px;color:var(--ink)}
+.more-filters{position:relative}
+.more-filters>summary{list-style:none}
+.more-filters>summary::-webkit-details-marker{display:none}
+.more-filter-panel{position:absolute;right:0;top:calc(100% + 6px);width:320px;background:#fff;border:1px solid var(--line);box-shadow:0 14px 38px rgba(43,21,28,.16);border-radius:10px;padding:12px;z-index:30;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.more-filter-panel label{font-size:9px;color:var(--muted);display:flex;flex-direction:column;gap:5px;text-transform:uppercase;font-weight:700;letter-spacing:.04em}
+.more-filter-panel .select{min-width:0;width:100%}
+.result-count{font-size:10px;color:var(--muted);white-space:nowrap;margin-left:auto}
 
-/* ── CHARTS GRID ── */
-.charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px;}
-@media(max-width:760px){.charts-grid{grid-template-columns:1fr;}}
-.chart-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);padding:14px 16px;}
-.chart-card h4{font-size:11px;font-weight:600;color:var(--bordo);text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px;}
-.chart-card.full{grid-column:1/-1;}
+/* Table */
+.table-card{overflow:hidden}
+.table-scroll{overflow:auto}
+table{width:100%;border-collapse:collapse;min-width:850px;background:#fff}
+th{font-size:9.5px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.04em;text-align:left;padding:11px 12px;border-bottom:1px solid var(--line);white-space:nowrap;background:#fff}
+td{padding:11px 12px;border-bottom:1px solid var(--line);font-size:11px;vertical-align:middle}
+tbody tr{cursor:pointer;transition:background .12s}
+tbody tr:hover{background:var(--brand-faint)}
+tbody tr:last-child td{border-bottom:0}
+.item-name{font-size:11.5px;font-weight:600;line-height:1.35}
+.item-sub{font-size:9.5px;color:var(--muted);margin-top:3px;line-height:1.35}
+.pill{display:inline-flex;align-items:center;gap:5px;min-height:22px;padding:2px 8px;border-radius:999px;font-size:9.5px;font-weight:600;background:#f3eef0;color:var(--brand)}
+.pill.high{background:#eee8ea;color:#4d1a29}
+.pill.medium{background:#f2e9ee;color:#792148}
+.pill.low{background:#fff0f5;color:#b3174a}
+.pill.backlog{background:#f2f2f2;color:#777}
+.pill.stage{background:transparent;color:var(--ink);padding-left:0}
+.stage-dot{width:7px;height:7px;border-radius:50%;display:inline-block;background:#bbb}
+.stage-dot.dev{background:var(--success)}
+.stage-dot.test{background:var(--warning)}
+.stage-dot.done{background:#238b61}
+.quarter-pill{display:inline-flex;align-items:center;justify-content:center;min-width:30px;height:22px;border-radius:999px;border:1px solid var(--line);font-size:9px;color:var(--muted);background:#fff}
+.action-menu{position:relative;display:inline-block}
+.action-menu>summary{list-style:none;width:30px;height:30px;border-radius:7px;display:grid;place-items:center;cursor:pointer;color:var(--muted)}
+.action-menu>summary::-webkit-details-marker{display:none}
+.action-menu>summary:hover{background:#f4eff1;color:var(--brand)}
+.action-popup{position:absolute;right:0;top:32px;min-width:150px;background:#fff;border:1px solid var(--line);border-radius:9px;padding:5px;box-shadow:0 12px 30px rgba(43,21,28,.15);z-index:40}
+.action-popup button{width:100%;border:0;background:transparent;border-radius:6px;padding:8px 9px;text-align:left;display:flex;align-items:center;gap:8px;font-size:10.5px;cursor:pointer}
+.action-popup button:hover{background:var(--brand-faint);color:var(--brand)}
+.action-popup button.danger{color:var(--danger)}
 
-/* Horizontal bars */
-.brow{display:flex;align-items:center;gap:8px;margin-bottom:7px;font-size:12px;}
-.blbl{min-width:240px;color:var(--text2);font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.btrk{flex:1;height:18px;background:#f2f2f2;border-radius:4px;overflow:hidden;}
-.bfill{height:100%;border-radius:4px;display:flex;align-items:center;padding-left:6px;min-width:24px;transition:width .4s;}
-.bfill span{font-size:10px;font-weight:600;color:#fff;white-space:nowrap;}
+/* Planning */
+.planning-filter{margin-bottom:14px}
+.kanban{display:grid;grid-template-columns:repeat(5,minmax(220px,1fr));gap:10px;overflow-x:auto;padding-bottom:8px}
+.kanban-col{background:#fff;border:1px solid var(--line);border-radius:10px;min-height:520px;max-height:calc(100vh - 250px);display:flex;flex-direction:column;overflow:hidden}
+.kanban-head{padding:12px;border-bottom:1px solid var(--line);flex-shrink:0}
+.kanban-title-line{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.kanban-title{font-size:11px;font-weight:700}
+.kanban-count{font-size:9px;color:var(--muted);background:#f3eff0;border-radius:999px;padding:2px 7px}
+.load-line{display:flex;align-items:center;gap:6px;margin-top:5px;font-size:9px;color:var(--muted)}
+.load-indicator{width:26px;height:5px;border-radius:999px;background:var(--success)}
+.load-indicator.attention{background:var(--warning)}
+.load-indicator.over{background:var(--danger)}
+.kanban-body{padding:8px;display:flex;flex-direction:column;gap:7px;overflow-y:auto;min-height:100px;scrollbar-width:thin;flex:1}
+.kanban-body::-webkit-scrollbar{width:7px}.kanban-body::-webkit-scrollbar-thumb{background:#cfc3c6;border-radius:999px}
+.kanban-body.dragover{background:#fff2f5}
+.kanban-card{border:1px solid var(--line);background:#fff;border-radius:9px;padding:10px;cursor:grab;box-shadow:0 1px 2px rgba(31,16,21,.03)}
+.kanban-card:hover{border-color:#cfbfc3;box-shadow:0 5px 16px rgba(53,23,32,.08)}
+.kanban-card.dragging{opacity:.45}
+.kanban-card-title{font-size:11px;font-weight:600;line-height:1.4}
+.kanban-card-meta{font-size:9.5px;color:var(--muted);margin-top:5px;display:flex;justify-content:space-between;gap:8px}
+.kanban-card-tags{margin-top:8px;display:flex;gap:5px;flex-wrap:wrap}
+.kanban-empty{font-size:10px;color:var(--subtle);text-align:center;padding:26px 8px;border:1px dashed var(--line-strong);border-radius:8px}
 
-/* Donut mini */
-.donut-wrap{display:flex;align-items:center;gap:16px;}
-.donut-wrap canvas{max-width:120px;max-height:120px;}
-.donut-legend{flex:1;display:flex;flex-direction:column;gap:6px;}
-.dl-row{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--text2);}
-.dl-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
-.dl-val{margin-left:auto;font-weight:600;color:var(--text);}
+/* Priority */
+.priority-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.priority-card{padding:14px 16px;cursor:pointer;transition:.15s}
+.priority-card:hover{transform:translateY(-1px)}
+.priority-card.active{box-shadow:0 0 0 2px var(--brand)}
+.priority-num{font-size:23px;font-weight:700}
+.priority-label{font-size:10px;text-transform:uppercase;letter-spacing:.05em;font-weight:700;color:var(--brand);margin-top:4px}
+.priority-note{font-size:9.5px;color:var(--muted);margin-top:3px}
+.priority-explain{font-size:10.5px;color:var(--muted);line-height:1.55;margin:-2px 0 14px}
+.priority-groups{display:flex;flex-direction:column;gap:14px}
+.priority-group{overflow:hidden}
+.priority-group-head{padding:11px 14px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}
+.priority-group-title{font-size:11.5px;font-weight:700}
+.priority-group-count{font-size:9px;color:var(--muted)}
+.priority-order{width:28px;height:28px;border-radius:50%;background:var(--brand-soft);color:var(--brand);display:grid;place-items:center;font-size:10px;font-weight:700}
 
-/* ── FILTERS BAR ── */
-.filter-bar{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);padding:10px 12px;margin-bottom:12px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;}
-.filter-bar label{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.04em;}
-.fbtn{padding:4px 10px;border:1px solid var(--border2);border-radius:20px;background:var(--bg);font-size:11px;font-weight:500;color:var(--text2);cursor:pointer;font-family:var(--font);transition:all .12s;white-space:nowrap;}
-.fbtn:hover{border-color:var(--bordo-luz);color:var(--bordo-luz);}
-.fbtn.sel{background:var(--bordo);color:#fff;border-color:var(--bordo);}
-.fbtn.clr{background:transparent;border-color:transparent;color:var(--text3);font-size:11px;}
-.fbtn.clr:hover{color:var(--magenta);}
-.f-sep{width:1px;height:16px;background:var(--border2);margin:0 2px;}
+/* Modal */
+.modal-backdrop{position:fixed;inset:0;background:rgba(32,18,22,.48);z-index:700;display:none;align-items:flex-start;justify-content:center;padding:28px 16px;overflow:auto}
+.modal-backdrop.open{display:flex}
+.modal{width:min(760px,100%);background:#fff;border-radius:14px;box-shadow:0 24px 80px rgba(31,15,20,.25);overflow:hidden}
+.modal-head{padding:18px 20px;border-bottom:1px solid var(--line);display:flex;align-items:flex-start;justify-content:space-between;gap:14px}
+.modal-title{font-size:17px;font-weight:700;margin:0}
+.modal-subtitle{font-size:10.5px;color:var(--muted);margin-top:4px}
+.icon-btn{width:32px;height:32px;border:0;border-radius:8px;background:transparent;color:var(--muted);display:grid;place-items:center;cursor:pointer}
+.icon-btn:hover{background:#f4eff1;color:var(--brand)}
+.modal-body{padding:18px 20px;max-height:calc(100vh - 190px);overflow-y:auto}
+.form-section{margin-bottom:20px}
+.form-section:last-child{margin-bottom:0}
+.form-section-title{font-size:10px;text-transform:uppercase;letter-spacing:.06em;font-weight:700;color:var(--brand);padding-bottom:8px;border-bottom:1px solid var(--line);margin-bottom:12px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.field{display:flex;flex-direction:column;gap:5px}
+.field.full{grid-column:1/-1}
+.field label{font-size:9.5px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.03em}
+.field input,.field select,.field textarea{width:100%;border:1px solid var(--line-strong);border-radius:8px;background:#fff;padding:9px 10px;font-size:11px;color:var(--ink)}
+.field input,.field select{height:38px}
+.field textarea{resize:vertical;min-height:72px;line-height:1.45}
+.field input.error,.field select.error,.field textarea.error{border-color:var(--danger);background:#fff8f8}
+.readonly-box{height:38px;border:1px solid var(--line);border-radius:8px;background:#faf7f8;padding:0 10px;display:flex;align-items:center;font-size:11px;color:var(--muted)}
+.category-box{border:1px solid var(--line-strong);border-radius:8px;padding:9px;display:grid;grid-template-columns:repeat(2,1fr);gap:7px}
+.category-option{display:flex;align-items:center;gap:7px;font-size:10.5px;color:var(--ink)}
+.category-option input{accent-color:var(--brand)}
+.priority-preview{border:1px solid var(--line);border-radius:10px;background:var(--brand-faint);padding:14px;display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center}
+.priority-preview-title{font-size:11px;font-weight:700}
+.priority-preview-text{font-size:10px;color:var(--muted);margin-top:4px;line-height:1.5}
+.priority-preview-value{text-align:right}
+.priority-preview-score{font-size:21px;font-weight:700;color:var(--brand)}
+.modal-foot{padding:13px 20px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:8px;background:#fffcfc}
 
-/* Search */
-.sw{position:relative;flex:1;min-width:160px;max-width:260px;}
-.sw svg{position:absolute;left:8px;top:50%;transform:translateY(-50%);width:13px;height:13px;color:var(--text3);}
-.sw input{width:100%;padding:5px 8px 5px 26px;border:1px solid var(--border2);border-radius:20px;font-size:11px;font-family:var(--font);background:var(--bg);color:var(--text);}
-.sw input:focus{outline:none;border-color:var(--bordo-luz);}
+/* Dialogs and toast */
+.confirm-box{width:min(420px,100%);background:#fff;border-radius:13px;padding:20px;box-shadow:0 24px 80px rgba(31,15,20,.25)}
+.confirm-title{font-size:15px;font-weight:700;margin:0}
+.confirm-text{font-size:11px;color:var(--muted);line-height:1.55;margin:8px 0 18px}
+.confirm-actions{display:flex;justify-content:flex-end;gap:8px}
+.import-preview{width:min(540px,100%);background:#fff;border-radius:13px;overflow:hidden;box-shadow:0 24px 80px rgba(31,15,20,.25)}
+.import-summary{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}
+.import-stat{border:1px solid var(--line);border-radius:9px;padding:12px;text-align:center}
+.import-stat strong{display:block;font-size:22px;color:var(--brand)}
+.import-stat span{font-size:10px;color:var(--muted)}
+.toast{position:fixed;right:18px;bottom:18px;z-index:1000;background:#2f1720;color:#fff;padding:11px 15px;border-radius:9px;font-size:11px;box-shadow:0 12px 30px rgba(36,16,22,.28);opacity:0;transform:translateY(18px);pointer-events:none;transition:.2s}
+.toast.show{opacity:1;transform:translateY(0)}
+.loading{min-height:160px;display:grid;place-items:center;color:var(--muted);font-size:11px}
+.error-banner{display:none;background:#fff4f4;border:1px solid #f3c9cd;color:#9f2430;border-radius:9px;padding:10px 12px;font-size:11px;margin-bottom:14px}
+.error-banner.show{display:block}
 
-/* MDD multi-select dropdown */
-.mdd-wrap{position:relative;}
-.mdd{position:absolute;top:calc(100% + 4px);left:0;background:var(--surface);border:1px solid var(--border2);border-radius:var(--r);box-shadow:0 6px 20px rgba(0,0,0,.12);min-width:200px;z-index:100;display:none;max-height:260px;overflow-y:auto;}
-.mdd.open{display:block;}
-.mdd-list{padding:6px 0;}
-.mdd-item{display:flex;align-items:center;gap:8px;padding:7px 12px;font-size:12px;color:var(--text2);cursor:pointer;}
-.mdd-item:hover{background:#fdf5f8;}
-.mdd-item input{accent-color:var(--bordo);width:14px;height:14px;}
-.mdd-clear{padding:6px 12px;border-top:1px solid var(--border);font-size:11px;color:var(--text3);cursor:pointer;text-align:center;}
-.mdd-clear:hover{color:var(--magenta);}
-
-/* ── TABLE ── */
-.tbl-wrap{overflow-x:auto;border-radius:var(--r);border:1px solid var(--border);}
-table{width:100%;border-collapse:collapse;font-size:12px;background:var(--surface);min-width:700px;}
-th{text-align:left;padding:9px 12px;font-weight:500;font-size:10px;color:var(--branco);background:var(--bordo);text-transform:uppercase;letter-spacing:.06em;white-space:nowrap;}
-th.th-sort{cursor:pointer;user-select:none;}
-th.th-sort:hover{background:var(--bordo-luz);}
-th.asc::after{content:' ↑';}th.desc::after{content:' ↓';}
-td{padding:9px 12px;border-bottom:1px solid var(--border);vertical-align:middle;}
-tr:last-child td{border-bottom:none;}
-tr:hover td{background:#fdf5f8;}
-.ract{display:flex;gap:4px;}
-.ibtn{width:24px;height:24px;border:none;border-radius:5px;background:var(--bg);cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;transition:all .12s;color:var(--text2);}
-.ibtn:hover{background:var(--bordo);color:#fff;}
-.ibtn.d:hover{background:var(--magenta);color:#fff;}
-.empty{text-align:center;padding:32px;color:var(--text3);font-size:13px;}
-.empty strong{display:block;margin-bottom:4px;color:var(--text2);}
-
-/* ── BADGES ── */
-.badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:600;letter-spacing:.03em;}
-.b-crit{background:rgba(46,16,30,.10);color:var(--cls-critico);}
-.b-imp {background:rgba(102,32,70,.10);color:var(--cls-importante);}
-.b-post{background:rgba(191,20,74,.10);color:var(--cls-postergar);}
-.b-dif {background:#F5F5F5;color:var(--cls-diferir);}
-.b-ai{background:rgba(46,16,30,.07);color:var(--bordo);font-size:9px;padding:2px 6px;margin:1px;}
-.b-ref{background:#E8F5E9;color:#2E7D32;border:1px solid rgba(46,125,50,.25);}
-.dot{width:7px;height:7px;border-radius:50%;display:inline-block;}
-
-/* Score pill */
-.score-pill{display:inline-flex;align-items:center;justify-content:center;min-width:32px;height:20px;padding:0 7px;border-radius:10px;font-size:11px;font-weight:600;background:var(--bordo);color:#fff;}
-
-/* ── KANBAN ── */
-.kanban-wrap{display:flex;gap:10px;overflow-x:auto;padding-bottom:10px;}
-.kcol{
-  min-width:200px;
-  flex:1;
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:var(--rl);
-  overflow:hidden;
-  max-height:calc(100vh - 230px);
-  display:flex;
-  flex-direction:column;
+@media(max-width:1020px){
+  .metrics-grid{grid-template-columns:repeat(2,1fr)}
+  .overview-split,.overview-grid{grid-template-columns:1fr}
+  .capacity-row{grid-template-columns:190px 1fr 32px}
 }
-.kch{flex-shrink:0;}
-.kch{padding:10px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);flex-shrink:0;}
-.kch h3{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;}
-.kcount{font-size:11px;font-weight:600;color:var(--text3);background:var(--bg);padding:1px 7px;border-radius:10px;}
-.kdz{
-  min-height:80px;
-  max-height:calc(100vh - 290px);
-  overflow-y:auto;
-  padding:8px;
-  display:flex;
-  flex-direction:column;
-  gap:6px;
-  transition:background .15s;
-  scrollbar-width:thin;
+@media(max-width:720px){
+  .header-inner{padding:8px 12px 0}.header-row{height:auto;padding:4px 0 7px;align-items:flex-start}.brand-subtitle{display:none}
+  .header-actions .btn span.label{display:none}.header-actions .btn{width:36px;padding:0}.btn-primary{width:auto!important;padding:0 11px!important}.btn-primary span.label{display:inline!important}
+  main{padding:22px 12px 60px}.page-title{font-size:21px}.metrics-grid{grid-template-columns:1fr 1fr;gap:8px}.metric-card{padding:14px;min-height:88px}.metric-value{font-size:23px}
+  .form-grid{grid-template-columns:1fr}.field.full{grid-column:auto}.category-box{grid-template-columns:1fr}.more-filter-panel{position:fixed;left:12px;right:12px;top:130px;width:auto}
+  .capacity-row{grid-template-columns:1fr}.capacity-total{text-align:left}.donut-layout{flex-direction:column;align-items:flex-start}
 }
-.kdz::-webkit-scrollbar{width:8px;}
-.kdz::-webkit-scrollbar-track{background:#f1f1f1;border-radius:8px;}
-.kdz::-webkit-scrollbar-thumb{background:rgba(46,16,30,.35);border-radius:8px;}
-.kdz::-webkit-scrollbar-thumb:hover{background:rgba(46,16,30,.55);}
-.kdz.da{background:rgba(255,125,175,.1);}
-.kcard{background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:9px 10px;cursor:grab;user-select:none;transition:box-shadow .12s,transform .1s;}
-.kcard:hover{box-shadow:0 3px 12px rgba(46,16,30,.1);}
-.kcard.dragging{opacity:.5;transform:rotate(1.5deg);}
-.kt{font-size:12px;font-weight:500;color:var(--text);margin-bottom:5px;line-height:1.3;}
-.km{font-size:10px;color:var(--text3);display:flex;flex-wrap:wrap;gap:3px;align-items:center;}
-.kcard .touch-drag{position:fixed;z-index:999;pointer-events:none;opacity:.9;box-shadow:0 8px 24px rgba(0,0,0,.25);border-radius:var(--r);}
-
-/* ── PRIORITY BANDS ── */
-.pband-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px;}
-@media(max-width:640px){.pband-grid{grid-template-columns:repeat(2,1fr);}}
-.pband{border-radius:var(--rl);padding:12px 14px;border-top:3px solid;}
-
-
-
-.pband.aco{background:#F5F5F5;border-color:var(--cls-diferir);}
-.pband.crit,.pband.imp,.pband.post,.pband.dif{background:var(--surface);border-color:var(--bordo);}
-.pband .pv{font-size:22px;font-weight:300;color:var(--text);}
-.pband .pl{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;margin-top:3px;}
-
-
-
-
-.pband .pl{color:var(--bordo);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;margin-top:3px;}
-.pband .ps{font-size:10px;color:var(--text3);margin-top:2px;}
-
-/* ── RANKING LIST ── */
-#prank{margin-top:12px;}
-
-/* ── MODAL ── */
-.overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:300;display:none;align-items:flex-start;justify-content:center;padding:24px 14px;overflow-y:auto;}
-.overlay.open{display:flex;}
-.modal{background:var(--branco);border-radius:var(--rl);padding:22px 22px 20px;width:100%;max-width:640px;border-top:4px solid var(--rosa);position:relative;}
-.modal h2{font-size:16px;font-weight:500;color:var(--bordo);margin-bottom:4px;}
-.msub{font-size:12px;color:var(--text3);margin-bottom:14px;}
-.req{color:var(--magenta);}
-.fg{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-.fi{display:flex;flex-direction:column;gap:5px;}
-.fi.full{grid-column:1/-1;}
-.fi label{font-size:11px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:.04em;display:flex;align-items:center;gap:4px;}
-.fi input,.fi select,.fi textarea{padding:8px 10px;border:1px solid var(--border2);border-radius:var(--r);font-family:var(--font);font-size:12px;color:var(--text);background:var(--bg);}
-.fi input:focus,.fi select:focus,.fi textarea:focus{outline:none;border-color:var(--bordo-luz);}
-.fi input.err,.fi select.err,.fi textarea.err{border-color:var(--magenta);background:#fff5f7;}
-.fi textarea{resize:vertical;}
-.fsec{grid-column:1/-1;font-size:11px;font-weight:600;color:var(--bordo);text-transform:uppercase;letter-spacing:.06em;padding-top:8px;border-top:1px solid var(--border);margin-top:2px;}
-.modal-footer{display:flex;justify-content:flex-end;gap:8px;margin-top:18px;padding-top:14px;border-top:1px solid var(--border);}
-.btn{padding:8px 18px;border-radius:var(--r);font-family:var(--font);font-size:12px;font-weight:500;cursor:pointer;border:none;transition:all .15s;}
-.btn-primary{background:var(--bordo);color:#fff;}
-.btn-primary:hover{background:var(--bordo-luz);}
-.btn-ghost{background:transparent;border:1px solid var(--border2);color:var(--text2);}
-.btn-ghost:hover{border-color:var(--bordo);color:var(--bordo);}
-.btn-danger{background:var(--magenta);color:#fff;}
-.btn-danger:hover{background:#9c1038;}
-.modal-del{position:absolute;bottom:20px;left:22px;}
-
-/* Score display */
-.gut-score-display{grid-column:1/-1;background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;}
-.gut-score-display .gsd-label{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.04em;}
-.gut-score-display .gsd-val{font-size:20px;font-weight:300;color:var(--bordo);}
-.gut-score-display .gsd-cls{}
-
-/* Tooltip ℹ️ */
-.tip-wrap{position:relative;display:inline-flex;}
-.tip-wrap .tip-icon{font-size:12px;cursor:help;color:var(--text3);}
-.tip-wrap .tip-box{position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:var(--bordo);color:#fff;font-size:11px;padding:8px 12px;border-radius:var(--r);width:240px;z-index:400;pointer-events:none;opacity:0;transition:opacity .15s;line-height:1.5;}
-.tip-wrap:hover .tip-box{opacity:1;}
-.tip-box::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:var(--bordo);}
-
-/* ── PREVIEW POPUP ── */
-#preview-popup{display:none;position:fixed;z-index:500;background:var(--surface);border:1px solid var(--border2);border-radius:var(--rl);padding:14px;width:320px;box-shadow:0 8px 30px rgba(0,0,0,.18);pointer-events:none;}
-.preview-row{display:flex;gap:8px;margin-bottom:7px;font-size:12px;}
-.preview-label{font-size:9px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.04em;min-width:80px;padding-top:1px;}
-.preview-val{color:var(--text2);line-height:1.4;flex:1;}
-
-/* ── TOAST ── */
-.toast{position:fixed;bottom:18px;right:14px;z-index:700;background:var(--bordo);color:var(--branco);padding:10px 16px;border-radius:var(--r);font-size:13px;font-weight:500;transform:translateY(60px);opacity:0;transition:all .25s;border-left:4px solid var(--rosa);max-width:calc(100vw - 28px);}
-.toast.show{transform:translateY(0);opacity:1;}
-
-/* ── CONFIRM ── */
-#confirm-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:600;align-items:center;justify-content:center;}
-#confirm-overlay.open{display:flex;}
-#confirm-box{background:#fff;border-radius:var(--rl);padding:22px 24px;max-width:420px;width:90%;border-top:4px solid var(--magenta);}
-#confirm-box h3{font-size:14px;font-weight:500;color:var(--bordo);margin-bottom:8px;}
-#confirm-msg{font-size:13px;color:var(--text2);margin-bottom:18px;line-height:1.5;}
-#confirm-box .cf{display:flex;justify-content:flex-end;gap:8px;}
-
-/* ── AI TYPE MODAL ── */
-.ai-types-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;}
-.ai-type-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:10px 12px;}
-.ai-type-card .atc-icon{font-size:18px;margin-bottom:4px;}
-.ai-type-card .atc-name{font-size:12px;font-weight:600;color:var(--bordo);}
-.ai-type-card .atc-def{font-size:11px;color:var(--text3);margin-top:3px;line-height:1.4;}
-.ai-type-card .atc-ex{font-size:10px;color:var(--text3);margin-top:4px;font-style:italic;}
-
-/* ── HEADER BUTTONS ── */
-.hbtn{padding:5px 12px;border-radius:var(--r);font-family:var(--font);font-size:11px;font-weight:500;cursor:pointer;border:1px solid rgba(255,255,255,.25);color:rgba(255,255,255,.85);background:transparent;transition:all .15s;white-space:nowrap;}
-.hbtn:hover{background:rgba(255,255,255,.1);}
-.hbtn.primary{background:var(--rosa);color:var(--bordo);border-color:var(--rosa);}
-.hbtn.primary:hover{background:#ff9abf;}
-.export-wrap{position:relative;}
-.export-menu{position:absolute;top:calc(100% + 4px);right:0;background:var(--surface);border:1px solid var(--border2);border-radius:var(--r);box-shadow:0 6px 20px rgba(0,0,0,.14);min-width:190px;z-index:210;display:none;}
-.export-menu.open{display:block;}
-.emitem{padding:9px 14px;font-size:12px;color:var(--text2);cursor:pointer;display:flex;align-items:center;gap:8px;}
-.emitem:hover{background:#fdf5f8;}
-
-/* ── CARGA SECTION ── */
-.carga-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
-@media(max-width:760px){.carga-grid{grid-template-columns:1fr;}}
-.srow{display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:11px;}
-.slbl{min-width:240px;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.strk{flex:1;display:flex;height:16px;border-radius:4px;overflow:hidden;background:#f2f2f2;}
-.sseg{height:100%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:#fff;}
-.stot{min-width:24px;text-align:right;font-weight:600;color:var(--text2);}
-
-/* Score grid in form */
-.score-grid{display:grid;gap:8px;}
-.score-row{display:grid;grid-template-columns:1fr 120px;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid var(--border);}
-.score-row:last-child{border-bottom:none;}
-.sc-label{font-size:12px;color:var(--text2);}
-.peso-badge{font-size:9px;font-weight:600;color:var(--text3);background:var(--bg);padding:1px 5px;border-radius:8px;margin-left:6px;border:1px solid var(--border);}
-.sc-sel{padding:5px 8px;border:1px solid var(--border2);border-radius:var(--r);font-family:var(--font);font-size:12px;background:var(--bg);color:var(--text);}
-.fsec-note{background:#fff8f0;border-left:3px solid var(--rosa);padding:8px 12px;border-radius:0 var(--r) var(--r) 0;font-size:12px;color:var(--text2);margin-top:6px;}
-
-/* Classification bands in form */
-.cls-preview{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:10px 14px;}
-.cls-preview .cp-left{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--text3);}
-.cls-preview .cp-score{font-size:22px;font-weight:300;color:var(--bordo);}
-
-/* Multi-select chips */
-.chips-wrap{display:flex;flex-wrap:wrap;gap:4px;padding:6px;border:1px solid var(--border2);border-radius:var(--r);background:var(--bg);min-height:36px;cursor:pointer;}
-.chip{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;background:var(--bordo);color:#fff;border-radius:12px;font-size:11px;}
-.chip .chip-x{cursor:pointer;opacity:.7;}
-.chip .chip-x:hover{opacity:1;}
-.chips-placeholder{font-size:11px;color:var(--text3);padding:2px 4px;}
-
-/* Tabs in "Por Quarter" */
-.kfilter-bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px;}
 </style>
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute">
+  <symbol id="i-ai" viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="14" rx="3"/><path d="M9 9h6v6H9zM9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3"/></symbol>
+  <symbol id="i-overview" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></symbol>
+  <symbol id="i-list" viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></symbol>
+  <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></symbol>
+  <symbol id="i-priority" viewBox="0 0 24 24"><path d="M9 6h12M9 12h12M9 18h12M3 6l1 1 2-2M3 12l1 1 2-2M3 18l1 1 2-2"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-data" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v6c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 11v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></symbol>
+  <symbol id="i-more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></symbol>
+  <symbol id="i-edit" viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4z"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M19 6l-1 15H6L5 6M10 11v6M14 11v6"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+  <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
+  <symbol id="i-filter" viewBox="0 0 24 24"><path d="M4 5h16M7 12h10M10 19h4"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></symbol>
+  <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 21V9M7 14l5-5 5 5M5 3h14"/></symbol>
+</svg>
 
-<header>
-  <div class="logo">
-    <div class="logo-mark">🤖</div>
-    <div>
-      <div class="logo-text">Programa Champions · Iniciativas de IA <span class="logo-sub">RH · 2026 · v3.12</span></div>
-    </div>
-  </div>
-  <div class="hright">
-    <span id="last-update" style="font-size:11px;color:rgba(255,255,255,.35);"></span>
-    <div class="export-wrap">
-      <button class="hbtn" onclick="toggleExportMenu()">Exportar ▾</button>
-      <div class="export-menu" id="export-menu">
-        <div class="emitem" onclick="exportCSV();toggleExportMenu()">📊 Exportar CSV</div>
-        <div class="emitem" onclick="downloadTemplate();toggleExportMenu()">📥 Template de Importação</div>
+<header class="app-header">
+  <div class="header-inner">
+    <div class="header-row">
+      <div class="brand">
+        <div class="brand-mark"><svg class="icon"><use href="#i-ai"/></svg></div>
+        <div><div class="brand-title">Programa Champions</div><div class="brand-subtitle">Gestão de Iniciativas de IA · RH · 2026 · v4.0</div></div>
+      </div>
+      <div class="header-actions">
+        <details class="dropdown" id="data-dropdown">
+          <summary class="btn"><svg class="icon icon-sm"><use href="#i-data"/></svg><span class="label">Dados</span></summary>
+          <div class="dropdown-menu">
+            <button class="dropdown-item" onclick="exportCSV();closeDetails('data-dropdown')"><svg class="icon icon-sm"><use href="#i-download"/></svg>Exportar CSV</button>
+            <button class="dropdown-item" onclick="downloadTemplate();closeDetails('data-dropdown')"><svg class="icon icon-sm"><use href="#i-download"/></svg>Baixar template Excel</button>
+            <div class="dropdown-sep"></div>
+            <label class="dropdown-item"><svg class="icon icon-sm"><use href="#i-upload"/></svg>Importar arquivo<input id="file-import" type="file" accept=".csv,.xlsx,.xls" hidden onchange="importFile(event)"></label>
+          </div>
+        </details>
+        <button class="btn btn-primary" onclick="openInitiativeModal()"><svg class="icon icon-sm"><use href="#i-plus"/></svg><span class="label">Nova iniciativa</span></button>
       </div>
     </div>
-    <label class="hbtn" style="cursor:pointer;" title="Importar CSV">
-      📂 Importar
-      <input type="file" accept=".csv,.xlsx,.xls" style="display:none" onchange="importCSV(event)">
-    </label>
-    <button class="hbtn primary" onclick="openModal(null)">+ Nova Iniciativa</button>
+    <nav class="nav">
+      <button class="nav-btn active" data-tab="overview" onclick="showPage('overview',this)"><svg class="icon"><use href="#i-overview"/></svg>Visão Geral</button>
+      <button class="nav-btn" data-tab="initiatives" onclick="showPage('initiatives',this)"><svg class="icon"><use href="#i-list"/></svg>Iniciativas</button>
+      <button class="nav-btn" data-tab="planning" onclick="showPage('planning',this)"><svg class="icon"><use href="#i-calendar"/></svg>Planejamento</button>
+      <button class="nav-btn" data-tab="priority" onclick="showPage('priority',this)"><svg class="icon"><use href="#i-priority"/></svg>Priorização</button>
+    </nav>
   </div>
 </header>
 
-<nav>
-  <button class="ntab active" onclick="showTab('visao-geral',this)">Visão Geral</button>
-  <button class="ntab" onclick="showTab('iniciativas',this)">Iniciativas</button>
-  <button class="ntab" onclick="showTab('priorizacao',this)">Priorização</button>
-  <button class="ntab" onclick="showTab('quarters',this)">Por Quarter</button>
-  <button class="ntab" onclick="showTab('carga',this)">Capacidade & Demanda</button>
-</nav>
-
 <main>
+  <div id="db-error" class="error-banner"></div>
 
-<!-- ── VISÃO GERAL ─────────────────────────────────────── -->
-<div class="sec active" id="tab-visao-geral">
-  <div id="metrics" class="metrics"></div>
+  <section id="page-overview" class="page active">
+    <div class="page-head"><div><h1 class="page-title">Visão Geral</h1><div class="page-subtitle">Acompanhe o andamento, a concentração e a prioridade das iniciativas do programa.</div></div></div>
+    <div id="metrics" class="metrics-grid"></div>
+    <div class="overview-split">
+      <div class="card card-pad"><div class="panel-head"><div class="panel-title">Pontos que pedem atenção</div><button class="panel-link" onclick="goToInitiatives()">Abrir portfólio →</button></div><div id="attention-list"></div></div>
+      <div class="card card-pad"><div class="panel-head"><div class="panel-title">Concentração por quarter</div><button class="panel-link" onclick="goToPlanning()">Abrir planejamento →</button></div><div id="quarter-bars" class="quarter-bars"></div></div>
+    </div>
+    <div class="card card-pad capacity-card"><div class="panel-head"><div><div class="panel-title">Gerência × complexidade de implementação</div><div class="page-subtitle">Distribuição da demanda entre baixa, média e alta complexidade.</div></div></div><div id="capacity-list" class="capacity-list"></div><div class="legend"><span class="legend-item"><span class="legend-swatch" style="background:#ff7daf"></span>Baixa</span><span class="legend-item"><span class="legend-swatch" style="background:#792148"></span>Média</span><span class="legend-item"><span class="legend-swatch" style="background:#2e101e"></span>Alta</span></div></div>
+    <div class="overview-grid">
+      <div class="card card-pad"><div class="panel-head"><div class="panel-title">Iniciativas por área</div></div><div id="area-bars" class="bar-list"></div></div>
+      <div class="card card-pad"><div class="panel-head"><div class="panel-title">Categorias de IA</div></div><div class="donut-layout"><canvas id="ai-donut" width="150" height="150"></canvas><div id="ai-legend" class="donut-legend"></div></div></div>
+    </div>
+  </section>
 
-  <div class="sec-title">Distribuição de Iniciativas</div>
-  <div class="charts-grid">
-    <div class="chart-card">
-      <h4>📊 Por Gerência</h4>
-      <div id="ch-gerencia"></div>
+  <section id="page-initiatives" class="page">
+    <div class="page-head"><div><h1 class="page-title">Iniciativas</h1><div class="page-subtitle">Consulte, edite e acompanhe todas as iniciativas do programa.</div></div><button class="btn btn-primary" onclick="openInitiativeModal()"><svg class="icon icon-sm"><use href="#i-plus"/></svg>Nova iniciativa</button></div>
+    <div id="status-segments" class="segmented"></div>
+    <div class="card filter-shell">
+      <div class="search-box"><svg class="icon"><use href="#i-search"/></svg><input id="initiative-search" type="search" placeholder="Buscar por nome, descrição ou creator..." oninput="renderInitiatives()"></div>
+      <select id="initiative-area" class="select" onchange="renderInitiatives()"><option value="">Área · todas</option></select>
+      <select id="initiative-quarter" class="select" onchange="renderInitiatives()"><option value="">Quarter · todos</option><option>Q1</option><option>Q2</option><option>Q3</option><option>Q4</option><option value="TBD">Não definido</option></select>
+      <details class="more-filters" id="initiative-more">
+        <summary class="btn"><svg class="icon icon-sm"><use href="#i-filter"/></svg>Mais filtros</summary>
+        <div class="more-filter-panel">
+          <label>Creator<select id="initiative-creator" class="select" onchange="renderInitiatives()"><option value="">Todos</option></select></label>
+          <label>Gerência<select id="initiative-manager" class="select" onchange="renderInitiatives()"><option value="">Todas</option></select></label>
+          <label>Categoria de IA<select id="initiative-category" class="select" onchange="renderInitiatives()"><option value="">Todas</option></select></label>
+          <label>Prioridade<select id="initiative-priority" class="select" onchange="renderInitiatives()"><option value="">Todas</option><option>Alta</option><option>Média</option><option>Baixa</option><option>Backlog</option></select></label>
+          <button class="btn" style="grid-column:1/-1" onclick="clearInitiativeFilters()">Limpar filtros</button>
+        </div>
+      </details>
+      <span id="initiative-count" class="result-count"></span>
     </div>
-    <div class="chart-card">
-      <h4>📊 Por Área</h4>
-      <div id="ch-area-vg"></div>
-    </div>
-    <div class="chart-card">
-      <h4>🤖 Por Categoria de IA</h4>
-      <div class="donut-wrap">
-        <canvas id="ch-ia-donut" width="120" height="120"></canvas>
-        <div class="donut-legend" id="ch-ia-legend"></div>
-      </div>
-    </div>
-    <div class="chart-card">
-      <h4>🎯 Por Classificação de Prioridade</h4>
-      <div class="donut-wrap">
-        <canvas id="ch-cls-donut" width="110" height="110"></canvas>
-        <div class="donut-legend" id="ch-cls-legend"></div>
-      </div>
-    </div>
-  </div>
-</div>
+    <div class="card table-card"><div class="table-scroll"><table><thead><tr><th>Iniciativa</th><th>Creator</th><th>Área</th><th>Quarter</th><th>Prioridade</th><th>Etapa</th><th style="width:56px"></th></tr></thead><tbody id="initiatives-body"></tbody></table></div></div>
+  </section>
 
-<!-- ── INICIATIVAS ──────────────────────────────────────── -->
-<div class="sec" id="tab-iniciativas">
-  <div class="filter-bar">
-    <div class="mdd-wrap">
-      <button class="fbtn" id="mdd-btn-g" onclick="openMDD('g')">Gerência ▾</button>
-      <div class="mdd" id="mdd-g"><div class="mdd-list" id="mdd-list-g"></div><div class="mdd-clear" onclick="clearAreaSet('g')">Limpar</div></div>
+  <section id="page-planning" class="page">
+    <div class="page-head"><div><h1 class="page-title">Planejamento</h1><div class="page-subtitle">Organize as iniciativas por quarter e acompanhe a concentração da demanda.</div></div></div>
+    <div class="card filter-shell planning-filter">
+      <div class="search-box"><svg class="icon"><use href="#i-search"/></svg><input id="planning-search" type="search" placeholder="Buscar iniciativa..." oninput="renderPlanning()"></div>
+      <select id="planning-manager" class="select" onchange="renderPlanning()"><option value="">Todas as gerências</option></select>
+      <select id="planning-area" class="select" onchange="renderPlanning()"><option value="">Todas as áreas</option></select>
+      <select id="planning-stage" class="select" onchange="renderPlanning()"><option value="">Todas as etapas</option><option>Não iniciado</option><option>Desenvolvimento</option><option>Testes</option><option>Concluída</option></select>
+      <span id="planning-count" class="result-count"></span>
     </div>
-    <div class="mdd-wrap">
-      <button class="fbtn" id="mdd-btn-a" onclick="openMDD('a')">Área ▾</button>
-      <div class="mdd" id="mdd-a"><div class="mdd-list" id="mdd-list-a"></div><div class="mdd-clear" onclick="clearAreaSet('a')">Limpar</div></div>
-    </div>
-    <div class="mdd-wrap">
-      <button class="fbtn" id="mdd-btn-ia" onclick="openMDD('ia')">Categoria de IA ▾</button>
-      <div class="mdd" id="mdd-ia"><div class="mdd-list" id="mdd-list-ia"></div><div class="mdd-clear" onclick="clearAreaSet('ia')">Limpar</div></div>
-    </div>
-    <div class="f-sep"></div>
-    <button class="fbtn" data-fc="Alta" onclick="toggleFCls(this)">Alta</button>
-    <button class="fbtn" data-fc="Média" onclick="toggleFCls(this)">Média</button>
-    <button class="fbtn" data-fc="Baixa" onclick="toggleFCls(this)">Baixa</button>
-    <button class="fbtn" data-fc="Backlog" onclick="toggleFCls(this)">Backlog</button>
-    <div class="f-sep"></div>
-    <button class="fbtn" data-fr="refinada" onclick="toggleFRef(this)">Refinadas</button>
-    <div class="f-sep"></div>
-    <div class="sw">
-      <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/></svg>
-      <input type="text" id="sp" placeholder="Buscar iniciativa…" oninput="renderIniciativas()">
-    </div>
-    <button class="fbtn clr" onclick="clearFilters()">✕ Limpar</button>
-  </div>
+    <div id="kanban" class="kanban"></div>
+  </section>
 
-  <div class="tbl-wrap">
-    <table>
-      <thead>
-        <tr>
-          <th style="width:28px">#</th>
-          <th class="th-sort" onclick="sortTable('i','nome')">Iniciativa</th>
-          <th class="th-sort" onclick="sortTable('i','creator')">Creator</th>
-          <th class="th-sort" onclick="sortTable('i','gerencia')">Gerência</th>
-          <th class="th-sort" onclick="sortTable('i','area')">Área</th>
-          <th class="th-sort" onclick="sortTable('i','cat_ia')">Categoria IA</th>
-          <th class="th-sort" onclick="sortTable('i','q_inicio')">Q Início</th>
-          <th class="th-sort" onclick="sortTable('i','q_entrega')">Q Entrega</th>
-          <th class="th-sort" onclick="sortTable('i','score')">Score ▾</th>
-          <th class="th-sort" onclick="sortTable('i','cls')">Classificação</th>
-          <th>Etapa</th>
-        <th>Ações</th>
-        </tr>
-      </thead>
-      <tbody id="tb-init"></tbody>
-    </table>
-  </div>
-</div>
-
-<!-- ── PRIORIZAÇÃO ──────────────────────────────────────── -->
-<div class="sec" id="tab-priorizacao">
-  <div class="pband-grid" id="prio-bands"></div>
-  <div class="filter-bar" id="prio-filter-bar">
-    <div class="mdd-wrap">
-      <button class="fbtn" id="mdd-btn-pg" onclick="openMDD('pg')">Gerência ▾</button>
-      <div class="mdd" id="mdd-pg"><div class="mdd-list" id="mdd-list-pg"></div><div class="mdd-clear" onclick="clearAreaSet('pg')">Limpar</div></div>
+  <section id="page-priority" class="page">
+    <div class="page-head"><div><h1 class="page-title">Priorização</h1><div class="page-subtitle">A prioridade é definida principalmente pelo impacto; a complexidade organiza a ordem dentro de cada gerência.</div></div></div>
+    <div id="priority-cards" class="priority-cards"></div>
+    <div class="card filter-shell">
+      <div class="search-box"><svg class="icon"><use href="#i-search"/></svg><input id="priority-search" type="search" placeholder="Buscar iniciativa..." oninput="renderPriority()"></div>
+      <select id="priority-manager" class="select" onchange="renderPriority()"><option value="">Todas as gerências</option></select>
+      <select id="priority-creator" class="select" onchange="renderPriority()"><option value="">Todos os creators</option></select>
+      <select id="priority-area" class="select" onchange="renderPriority()"><option value="">Todas as áreas</option></select>
+      <span id="priority-count" class="result-count"></span>
     </div>
-    <div class="mdd-wrap">
-      <button class="fbtn" id="mdd-btn-pcreator" onclick="openMDD('pcreator')">Creator ▾</button>
-      <div class="mdd" id="mdd-pcreator"><div class="mdd-list" id="mdd-list-pcreator"></div><div class="mdd-clear" onclick="clearAreaSet('pcreator')">Limpar</div></div>
-    </div>
-    <div class="mdd-wrap">
-      <button class="fbtn" id="mdd-btn-pa" onclick="openMDD('pa')">Área ▾</button>
-      <div class="mdd" id="mdd-pa"><div class="mdd-list" id="mdd-list-pa"></div><div class="mdd-clear" onclick="clearAreaSet('pa')">Limpar</div></div>
-    </div>
-    <div class="mdd-wrap">
-      <button class="fbtn" id="mdd-btn-pia" onclick="openMDD('pia')">Categoria de IA ▾</button>
-      <div class="mdd" id="mdd-pia"><div class="mdd-list" id="mdd-list-pia"></div><div class="mdd-clear" onclick="clearAreaSet('pia')">Limpar</div></div>
-    </div>
-    <div class="f-sep"></div>
-    <button class="fbtn" data-pc="Alta" onclick="togglePCls(this)">Alta</button>
-    <button class="fbtn" data-pc="Média" onclick="togglePCls(this)">Média</button>
-    <button class="fbtn" data-pc="Baixa" onclick="togglePCls(this)">Baixa</button>
-    <button class="fbtn" data-pc="Backlog" onclick="togglePCls(this)">Backlog</button>
-    <div class="f-sep"></div>
-    <button class="fbtn" data-pr="refinada" onclick="togglePRef(this)">Refinadas</button>
-    <div class="f-sep"></div>
-    <div class="sw">
-      <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/></svg>
-      <input type="text" id="sp-prio" placeholder="Buscar iniciativa…" oninput="renderPriorizacao()">
-    </div>
-    <button class="fbtn clr" onclick="clearPrioFilters()">✕ Limpar</button>
-  </div>
-  <div class="sec-title">Ranking por Gerência · Impacto × Facilidade de execução · Classificação automática</div>
-  <div style="font-size:11px;color:var(--text3);margin:-4px 0 10px 2px;">
-    A coluna <strong>Prior.</strong> mostra a ordem de execução recomendada dentro de cada gerência, considerando maior impacto e menor complexidade primeiro.
-  </div>
-  <div id="prank"></div>
-</div>
-
-<!-- ── POR QUARTER ──────────────────────────────────────── -->
-<div class="sec" id="tab-quarters">
-  <div class="kfilter-bar">
-    <div class="mdd-wrap">
-      <button class="fbtn" id="mdd-btn-kg" onclick="openMDD('kg')">Gerência ▾</button>
-      <div class="mdd" id="mdd-kg"><div class="mdd-list" id="mdd-list-kg"></div><div class="mdd-clear" onclick="clearAreaSet('kg')">Limpar</div></div>
-    </div>
-    <div class="mdd-wrap">
-      <button class="fbtn" id="mdd-btn-ka" onclick="openMDD('ka')">Área ▾</button>
-      <div class="mdd" id="mdd-ka"><div class="mdd-list" id="mdd-list-ka"></div><div class="mdd-clear" onclick="clearAreaSet('ka')">Limpar</div></div>
-    </div>
-    <div class="mdd-wrap">
-      <button class="fbtn" id="mdd-btn-kcls" onclick="openMDD('kcls')">Classificação ▾</button>
-      <div class="mdd" id="mdd-kcls"><div class="mdd-list" id="mdd-list-kcls"></div><div class="mdd-clear" onclick="clearMDD('kcls')">Limpar</div></div>
-    </div>
-    <div class="mdd-wrap">
-      <button class="fbtn" id="mdd-btn-kst" onclick="openMDD('kst')">Etapa ▾</button>
-      <div class="mdd" id="mdd-kst"><div class="mdd-list" id="mdd-list-kst"></div><div class="mdd-clear" onclick="clearMDD('kst')">Limpar</div></div>
-    </div>
-    <div class="mdd-wrap">
-      <button class="fbtn" id="mdd-btn-kref" onclick="openMDD('kref')">Refinamento ▾</button>
-      <div class="mdd" id="mdd-kref"><div class="mdd-list" id="mdd-list-kref"></div><div class="mdd-clear" onclick="clearMDD('kref')">Limpar</div></div>
-    </div>
-    <div class="sw" style="max-width:200px;">
-      <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/></svg>
-      <input type="text" id="sk" placeholder="Buscar…" oninput="renderKanban()">
-    </div>
-  </div>
-  <div class="kanban-wrap" id="kanban"></div>
-</div>
-
-<!-- ── CAPACIDADE & DEMANDA ──────────────────────────────── -->
-<div class="sec" id="tab-carga">
-  <div class="carga-grid">
-    <div class="chart-card">
-      <h4>📊 Volume por Gerência</h4>
-      <div id="ch-carga-ger"></div>
-    </div>
-    <div class="chart-card">
-      <h4>⚙️ Gerência × Complexidade de Implementação</h4>
-      <div id="ch-carga-compl"></div>
-    </div>
-    <div class="chart-card full">
-      <h4>📅 Volume por Quarter</h4>
-      <div id="ch-carga-q" style="display:flex;gap:10px;flex-wrap:wrap;"></div>
-    </div>
-  </div>
-</div>
-
+    <div class="priority-explain">Regra do ranking: impacto alto permanece acima do médio e do baixo. Dentro do mesmo impacto, iniciativas de menor complexidade aparecem primeiro. Para baixo impacto, alta complexidade é direcionada ao backlog.</div>
+    <div id="priority-groups" class="priority-groups"></div>
+  </section>
 </main>
 
-<!-- ── MODAL NOVA/EDITAR INICIATIVA ──────────────────────── -->
-<div class="overlay" id="mo" onclick="closeMoBg(event,'mo')">
+<!-- Initiative modal -->
+<div id="initiative-modal" class="modal-backdrop" onclick="closeModalOnBackdrop(event,'initiative-modal')">
   <div class="modal">
-    <h2 id="mo-title">Nova Iniciativa</h2>
-    <p class="msub">Preencha os campos e calcule automaticamente a classificação de prioridade.</p>
-    <div class="fg" id="form-fields"></div>
-    <div class="modal-footer">
-      <button class="btn btn-ghost" onclick="closeMo('mo')">Cancelar</button>
-      <button class="btn btn-ghost" id="btn-refine-init" onclick="if(editId){closeMo('mo');openRefModal(editId)}" style="display:none">Refinar iniciativa</button>
-      <button class="btn btn-primary" onclick="saveIniciativa()">Salvar</button>
+    <div class="modal-head"><div><h2 id="initiative-modal-title" class="modal-title">Nova iniciativa</h2><div class="modal-subtitle">Preencha os dados essenciais para acompanhamento e priorização.</div></div><button class="icon-btn" onclick="closeInitiativeModal()"><svg class="icon"><use href="#i-close"/></svg></button></div>
+    <div class="modal-body">
+      <div class="form-section"><div class="form-section-title">Identificação</div><div class="form-grid">
+        <div class="field"><label>Nome do creator *</label><input id="f-creator" type="text"></div>
+        <div class="field"><label>Área *</label><select id="f-area" onchange="updateManagerPreview()"></select></div>
+        <div class="field"><label>Gerência</label><div id="f-manager-preview" class="readonly-box"></div></div>
+        <div class="field"><label>Etapa *</label><select id="f-stage"><option>Não iniciado</option><option>Desenvolvimento</option><option>Testes</option><option>Concluída</option></select></div>
+        <div class="field"><label>Q início</label><select id="f-q-start"><option>Q1</option><option>Q2</option><option>Q3</option><option>Q4</option><option value="TBD">Não definido</option></select></div>
+        <div class="field"><label>Q entrega</label><select id="f-q-end"><option>Q1</option><option>Q2</option><option>Q3</option><option>Q4</option><option value="TBD">Não definido</option></select></div>
+        <div class="field full"><label>Nome da iniciativa *</label><input id="f-name" type="text"></div>
+      </div></div>
+      <div class="form-section"><div class="form-section-title">Categoria e contexto</div><div class="form-grid">
+        <div class="field full"><label>Categoria de IA *</label><div id="category-options" class="category-box"></div></div>
+        <div class="field full"><label>Descrição *</label><textarea id="f-description"></textarea></div>
+        <div class="field full"><label>Problema / oportunidade *</label><textarea id="f-problem"></textarea></div>
+        <div class="field full"><label>Benefício potencial</label><textarea id="f-benefit"></textarea></div>
+        <div class="field full"><label>Riscos identificados</label><textarea id="f-risks"></textarea></div>
+      </div></div>
+      <div class="form-section"><div class="form-section-title">Priorização</div><div class="form-grid">
+        <div class="field"><label>Impacto esperado *</label><select id="f-impact" onchange="updatePriorityPreview()"><option value="1">Baixo</option><option value="3">Médio</option><option value="5">Alto</option></select></div>
+        <div class="field"><label>Complexidade de implementação *</label><select id="f-complexity" onchange="updatePriorityPreview()"><option value="1">Baixa</option><option value="3">Média</option><option value="5">Alta</option></select></div>
+        <div class="field full"><div class="priority-preview"><div><div class="priority-preview-title">Classificação automática</div><div class="priority-preview-text">O impacto define o nível principal. A complexidade é usada para ordenar as iniciativas dentro do mesmo nível.</div></div><div class="priority-preview-value"><div id="priority-preview-score" class="priority-preview-score">Índice —</div><div id="priority-preview-badge"></div></div></div></div>
+      </div></div>
     </div>
-    <div class="modal-del">
-      <button class="btn btn-danger" id="btn-del-init" style="display:none" onclick="delFromModal()">Excluir</button>
-    </div>
+    <div class="modal-foot"><button class="btn" onclick="closeInitiativeModal()">Cancelar</button><button id="save-button" class="btn btn-primary" onclick="saveInitiative()">Salvar iniciativa</button></div>
   </div>
 </div>
 
-<!-- ── MODAL REFINAR INICIATIVA ─────────────────────────────── -->
-<div class="overlay" id="mo-ref" onclick="closeMoBg(event,'mo-ref')">
-  <div class="modal" style="max-width:620px;">
-    <h2 id="mo-ref-title">Refinar Iniciativa</h2>
-    <p class="msub">Preencha apenas os campos complementares necessários para transformar a ideia em MVP.</p>
-    <div class="fg">
-      <div class="fi full"><label>MVP <span class="req">*</span></label><textarea id="r-mvp" rows="3" placeholder="Qual é a menor versão que já gera valor?"></textarea></div>
-      <div class="fi full"><label>Entradas <span class="req">*</span></label><textarea id="r-entradas" rows="2" placeholder="Quais informações, arquivos ou dados o agente/automação precisa receber?"></textarea></div>
-      <div class="fi full"><label>Saídas <span class="req">*</span></label><textarea id="r-saidas" rows="2" placeholder="O que deve ser entregue ao final?"></textarea></div>
-      <div class="fi full"><label>Dependências</label><textarea id="r-dependencias" rows="2" placeholder="Sistemas, bases, validações, aprovações ou apoio necessário."></textarea></div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-ghost" onclick="closeMo('mo-ref')">Cancelar</button>
-      <button class="btn btn-primary" onclick="saveRefinamento()">Salvar refinamento</button>
-    </div>
-  </div>
-</div>
+<!-- Confirmation -->
+<div id="confirm-modal" class="modal-backdrop" onclick="closeModalOnBackdrop(event,'confirm-modal')"><div class="confirm-box"><h3 class="confirm-title">Excluir iniciativa?</h3><div id="confirm-text" class="confirm-text"></div><div class="confirm-actions"><button class="btn" onclick="closeConfirm()">Cancelar</button><button class="btn btn-danger" onclick="confirmDelete()">Excluir</button></div></div></div>
 
-<!-- ── MODAL TIPOS DE IA ──────────────────────────────────── -->
-<div class="overlay" id="mo-ia" onclick="closeMoBg(event,'mo-ia')">
-  <div class="modal" style="max-width:540px;">
-    <h2>🤖 Tipos de Categoria de IA</h2>
-    <p class="msub">Selecione as categorias que melhor descrevem sua iniciativa (pode ser mais de uma).</p>
-    <div class="ai-types-grid">
-      <div class="ai-type-card"><div class="atc-icon">🤝</div><div class="atc-name">Agente de IA</div><div class="atc-def">Sistema que usa IA para tomar decisões e executar ações automaticamente dentro de um processo.</div><div class="atc-ex">Ex: abrir chamados, classificar demandas, disparar fluxos</div></div>
-      <div class="ai-type-card"><div class="atc-icon">✨</div><div class="atc-name">IA Generativa</div><div class="atc-def">IA capaz de criar conteúdo novo como textos, respostas, resumos ou sugestões.</div><div class="atc-ex">Ex: chatbots que escrevem respostas completas, resumos de relatórios</div></div>
-      <div class="ai-type-card"><div class="atc-icon">📈</div><div class="atc-name">Analytics / IA Analítica</div><div class="atc-def">Análise de dados para identificar padrões, tendências ou apoiar decisões.</div><div class="atc-ex">Ex: prever turnover, análise preditiva de absenteísmo</div></div>
-      <div class="ai-type-card"><div class="atc-icon">⚙️</div><div class="atc-name">Automação (Power Automate)</div><div class="atc-def">Fluxos baseados em regras, sem aprendizado de dados.</div><div class="atc-ex">Ex: envio automático de e-mails, aprovações por formulário</div></div>
-      <div class="ai-type-card"><div class="atc-icon">🧠</div><div class="atc-name">Machine Learning</div><div class="atc-def">Identifica padrões em dados para classificar, ranquear ou validar informações automaticamente.</div><div class="atc-ex">Ex: matching de candidatos, validação antifraude</div></div>
-      <div class="ai-type-card"><div class="atc-icon">💬</div><div class="atc-name">NLP</div><div class="atc-def">Tecnologia que permite à IA entender, interpretar e responder linguagem humana.</div><div class="atc-ex">Ex: chatbot que entende perguntas em linguagem natural</div></div>
-      <div class="ai-type-card"><div class="atc-icon">🤖</div><div class="atc-name">RPA</div><div class="atc-def">Automação de tarefas repetitivas baseada em regras, sem aprendizado de dados.</div><div class="atc-ex">Ex: copiar dados de um sistema para outro automaticamente</div></div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-ghost" onclick="closeMo('mo-ia')">Fechar</button>
-    </div>
-  </div>
-</div>
+<!-- Import preview -->
+<div id="import-modal" class="modal-backdrop" onclick="closeModalOnBackdrop(event,'import-modal')"><div class="import-preview"><div class="modal-head"><div><h3 class="modal-title">Prévia da importação</h3><div id="import-file-name" class="modal-subtitle"></div></div><button class="icon-btn" onclick="closeImport()"><svg class="icon"><use href="#i-close"/></svg></button></div><div class="modal-body"><div class="import-summary"><div class="import-stat"><strong id="import-new-count">0</strong><span>novas iniciativas</span></div><div class="import-stat"><strong id="import-update-count">0</strong><span>iniciativas a atualizar</span></div></div><div class="page-subtitle">Iniciativas com o mesmo nome serão atualizadas. A gerência será associada automaticamente pela área.</div></div><div class="modal-foot"><button class="btn" onclick="closeImport()">Cancelar</button><button id="import-confirm-button" class="btn btn-primary" onclick="executeImport()">Confirmar importação</button></div></div></div>
 
-<!-- ── CONFIRM ── -->
-<div id="confirm-overlay">
-  <div id="confirm-box">
-    <h3>Confirmar exclusão</h3>
-    <p id="confirm-msg"></p>
-    <div class="cf">
-      <button class="btn btn-ghost" onclick="closeConfirm()">Cancelar</button>
-      <button class="btn btn-danger" id="confirm-yes">Excluir</button>
-    </div>
-  </div>
-</div>
-
-<!-- ── PREVIEW ── -->
-<div id="preview-popup"></div>
-<!-- ── TOAST ── -->
-<div class="toast" id="toast"></div>
-<!-- ── IMPORT MODAL ── -->
-<div id="import-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:500;align-items:center;justify-content:center;"></div>
+<div id="toast" class="toast"></div>
 
 <script>
-// ══════════════════════════════════════════════════════════
-//  SUPABASE
-// ══════════════════════════════════════════════════════════
-const SUPA_URL = 'https://swoytlxivrkvyzqwlmqs.supabase.co';
-const SUPA_KEY = 'sb_publishable_rdOxO5Uw4Z98jxCJiLSOaQ_zQrIpFQ6';
-const SUPABASE_CONFIGURED = SUPA_URL.startsWith('https://') && !SUPA_URL.includes('COLE_AQUI') && !SUPA_KEY.includes('COLE_AQUI');
-const supa = SUPABASE_CONFIGURED ? window.supabase.createClient(SUPA_URL, SUPA_KEY) : null;
-console.log('Supabase configured:', SUPABASE_CONFIGURED);
+const SUPA_URL='https://swoytlxivrkvyzqwlmqs.supabase.co';
+const SUPA_KEY='sb_publishable_rdOxO5Uw4Z98jxCJiLSOaQ_zQrIpFQ6';
+const supa=(SUPA_URL&&SUPA_KEY&&window.supabase)?window.supabase.createClient(SUPA_URL,SUPA_KEY):null;
 
-// ══════════════════════════════════════════════════════════
-//  CONSTANTS
-// ══════════════════════════════════════════════════════════
-const GERENCIAS = [
-  'Atendimento & Employee Experience',
-  'Administração de Pessoal & SST',
-  'Benefícios',
-  'DHO & DEI',
-  'Comunicação Interna & Work-Life Balance',
-  'Talent & Employer Branding',
-  'Remuneração & People Analytics',
-  'Soluções & Inovação',
+const MANAGERS=[
+  'Atendimento & Employee Experience','Administração de Pessoal & SST','Benefícios','DHO & DEI',
+  'Comunicação Interna & Work-Life Balance','Talent & Employer Branding','Remuneração & People Analytics','Soluções & Inovação'
 ];
-const AREAS = [
-  'Acessos e Sistemas','Admissão e Cadastro','Afastamento e Licenças','Atendimento',
-  'Benefícios','Business Partner','Comunicação Interna','DEI&P','Desligamento',
-  'DHO','Férias','Folha de Pagamento','Gestão de Ponto','R&S','Remuneração','SST','Projetos',
-];
-const CAT_IA = ['Agente de IA','IA Generativa','Analytics / IA Analítica','Automação','Machine Learning','NLP','RPA'];
-const CAT_IA_COLORS = ['#2E101E','#662046','#BF144A','#D4729A','#FF7DAF','#8C3058','#F0B8CE'];
-const STATUS_LIST = ['Não iniciado','Desenvolvimento','Testes','Concluída'];
-const STATUS_COLOR = {'Não iniciado':'#BDBDBD','Desenvolvimento':'#1D9E75','Testes':'#E05A00','Concluída':'#2E7D32'};
-const CLS_LABELS = ['Alta','Média','Baixa','Backlog'];
-const CLS_COLORS = {'Alta':'#2E101E','Média':'#662046','Baixa':'#BF144A','Backlog':'#9E9E9E'};
-const CLS_BADGE  = {'Alta':'b-crit','Média':'b-imp','Baixa':'b-post','Backlog':'b-dif'};
-const COMPL_LABEL = {3:'Baixa',2:'Média',1:'Alta'};
-const COMPL_COLORS = {3:'#FF7DAF',2:'#662046',1:'#2E101E'};
-const Q_COLORS   = {Q1:'#2E101E',Q2:'#662046',Q3:'#BF144A',Q4:'#FF7DAF',TBD:'#BDBDBD'};
-
-const AREA_TO_GERENCIA = {
-  'Acessos e Sistemas':'Atendimento & Employee Experience',
-  'Admissão e Cadastro':'Administração de Pessoal & SST',
-  'Afastamento e Licenças':'Administração de Pessoal & SST',
-  'Afastamentos e Licenças':'Administração de Pessoal & SST',
-  'Atendimento':'Atendimento & Employee Experience',
-  'Benefícios':'Benefícios',
-  'Business Partner':'DHO & DEI',
-  'Comunicação Interna':'Comunicação Interna & Work-Life Balance',
-  'DEI&P':'DHO & DEI',
-  'Desligamento':'Administração de Pessoal & SST',
-  'DHO':'DHO & DEI',
-  'Férias':'Administração de Pessoal & SST',
-  'Folha de Pagamento':'Administração de Pessoal & SST',
-  'Gestão de Ponto':'Administração de Pessoal & SST',
-  'R&S':'Talent & Employer Branding',
-  'Remuneração':'Remuneração & People Analytics',
-  'SST':'Administração de Pessoal & SST',
-  'Projetos':'Soluções & Inovação',
+const AREAS=['Acessos e Sistemas','Admissão e Cadastro','Afastamento e Licenças','Atendimento','Benefícios','Business Partner','Comunicação Interna','DEI&P','Desligamento','DHO','Férias','Folha de Pagamento','Gestão de Ponto','R&S','Remuneração','SST','Projetos'];
+const AREA_MANAGER={
+  'Acessos e Sistemas':'Atendimento & Employee Experience','Admissão e Cadastro':'Administração de Pessoal & SST',
+  'Afastamento e Licenças':'Administração de Pessoal & SST','Afastamentos e Licenças':'Administração de Pessoal & SST',
+  'Atendimento':'Atendimento & Employee Experience','Benefícios':'Benefícios','Business Partner':'DHO & DEI',
+  'Comunicação Interna':'Comunicação Interna & Work-Life Balance','DEI&P':'DHO & DEI','Desligamento':'Administração de Pessoal & SST',
+  'DHO':'DHO & DEI','Férias':'Administração de Pessoal & SST','Folha de Pagamento':'Administração de Pessoal & SST',
+  'Gestão de Ponto':'Administração de Pessoal & SST','R&S':'Talent & Employer Branding','Remuneração':'Remuneração & People Analytics',
+  'SST':'Administração de Pessoal & SST','Projetos':'Soluções & Inovação'
 };
+const AI_CATEGORIES=['Agente de IA','IA Generativa','Analytics / IA Analítica','Automação','Machine Learning','NLP','RPA'];
+const AI_COLORS=['#8e2f3e','#5f1d2d','#bf4b6c','#ef7ea2','#d2a4b2','#7d6170','#e5bac7'];
+const STAGES=['Não iniciado','Desenvolvimento','Testes','Concluída'];
+const QUARTERS=['Q1','Q2','Q3','Q4','TBD'];
+const PRIORITIES=['Alta','Média','Baixa','Backlog'];
 
-function normalizeTxt(v){
-  return String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
+let initiatives=[];
+let activeStatus='';
+let activePriority='';
+let editingId=null;
+let deletingId=null;
+let importPayload=null;
+let aiChart=null;
+
+function icon(name,cls='icon icon-sm'){return `<svg class="${cls}"><use href="#i-${name}"/></svg>`}
+function esc(value){return String(value??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+function normalizeText(value){return String(value??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim()}
+function managerForArea(area,explicit=''){return AREA_MANAGER[area]||explicit||''}
+function normalizeStage(value){
+  const s=normalizeText(value);
+  if(!s||s.includes('nao iniciado')||s.includes('mape'))return 'Não iniciado';
+  if(s.includes('desenv')||s.includes('andamento')||s.includes('prior')||s.includes('refin')||s.includes('stand'))return 'Desenvolvimento';
+  if(s.includes('teste'))return 'Testes';
+  if(s.includes('conclu')||s.includes('entreg'))return 'Concluída';
+  return STAGES.includes(value)?value:'Não iniciado';
 }
-function normalizeHeader(h){
-  const x=normalizeTxt(h).replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'');
-  const map={
-    'nome_do_creator':'creator','creator':'creator','criador':'creator',
-    'area':'area','gerencia':'gerencia','status':'status','etapa':'status',
-    'q_inicio':'q_inicio','quarter_inicio':'q_inicio','inicio':'q_inicio',
-    'q_entrega':'q_entrega','quarter_entrega':'q_entrega','entrega':'q_entrega',
-    'nome':'nome','iniciativa':'nome','nome_da_iniciativa':'nome',
-    'categoria_de_ia':'cat_ia','categoria_ia':'cat_ia','cat_ia':'cat_ia','tipo_de_ia':'cat_ia',
-    'descricao':'descricao','poc':'poc','problema_oportunidade':'poc','problema':'poc',
-    'beneficio':'beneficio','beneficio_potencial':'beneficio','riscos':'riscos','riscos_identificados':'riscos','mvp':'mvp','entradas':'entradas','saidas':'saidas','saídas':'saidas','dependencias':'dependencias','dependências':'dependencias',
-    'impacto':'gut_g','impacto_esperado':'gut_g','gravidade':'gut_g','gut_g':'gut_g','urgencia':'gut_u','gut_u':'gut_u','tendencia':'gut_t','gut_t':'gut_t',
-    'complexidade':'complexidade','complexidade_de_desenvolvimento':'complexidade','facilidade_de_implementacao':'complexidade'
-  };
-  return map[x]||x;
-}
-function normalizeScoreValue(v, fallback=1){
-  const s=normalizeTxt(v);
-  if(!s) return fallback;
-  const m=s.match(/[1352]/);
-  if(m) return parseInt(m[0],10);
-  if(s.includes('alta')) return 5;
-  if(s.includes('media')) return 3;
-  if(s.includes('baixa')) return 1;
-  return fallback;
-}
-function normalizeComplexityValue(v){
-  const s=normalizeTxt(v);
-  if(!s) return 3;
-  const m=s.match(/[135]/);
-  if(m) return parseInt(m[0],10);
-  if(s.includes('alta')) return 5;
-  if(s.includes('media')) return 3;
-  if(s.includes('baixa')) return 1;
+function normalizeImpact(value){
+  const s=normalizeText(value); const n=Number(value);
+  if([1,3,5].includes(n))return n;
+  if(s.includes('alto')||s.includes('alta'))return 5;
+  if(s.includes('medio')||s.includes('media'))return 3;
+  if(s.includes('baixo')||s.includes('baixa'))return 1;
   return 3;
 }
-
-function normalizeImpactValue(v){
-  const s=normalizeTxt(v);
-  if(!s) return 3;
-  const m=s.match(/[135]/);
-  if(m) return parseInt(m[0],10);
-  if(s.includes('alto') || s.includes('alta')) return 5;
-  if(s.includes('medio') || s.includes('media')) return 3;
-  if(s.includes('baixo') || s.includes('baixa')) return 1;
+function normalizeComplexity(value){
+  const s=normalizeText(value); const n=Number(value);
+  if([1,3,5].includes(n))return n;
+  if(s.includes('alta'))return 5;
+  if(s.includes('media'))return 3;
+  if(s.includes('baixa'))return 1;
   return 3;
 }
-function impactoLabel(v){
-  const n = +v || 1;
-  return n >= 5 ? 'Alto' : n >= 3 ? 'Médio' : 'Baixo';
-}
-function complexidadeLabel(v){
-  const n = +v || 3;
-  return n >= 5 ? 'Alta' : n >= 3 ? 'Média' : 'Baixa';
-}
-function normalizeClassificacao(v){
-  const s=normalizeTxt(v);
-  if(s.includes('critico') || s.includes('alta')) return 'Alta';
-  if(s.includes('importante') || s.includes('media')) return 'Média';
-  if(s.includes('posterg') || s.includes('baixa')) return 'Baixa';
-  if(s.includes('difer') || s.includes('backlog')) return 'Backlog';
-  return '';
-}
-function normalizeEtapa(v){
-  const s=normalizeTxt(v);
-  if(!s) return 'Não iniciado';
-  if(s.includes('desenv') || s.includes('andamento') || s.includes('risco')) return 'Desenvolvimento';
-  if(s.includes('teste')) return 'Testes';
-  if(s.includes('conclu') || s.includes('entreg')) return 'Concluída';
-  // Compatibilidade com etapas antigas já salvas no banco/arquivos importados
-  if(s.includes('prior') || s.includes('refin') || s.includes('stand')) return 'Desenvolvimento';
-  if(s.includes('nao iniciado') || s.includes('não iniciado') || s.includes('mape')) return 'Não iniciado';
-  return STATUS_LIST.includes(v) ? v : 'Não iniciado';
-}
-function getRefStore(){
-  try { return JSON.parse(localStorage.getItem('refinamento_iniciativas') || '{}'); } catch(e) { return {}; }
-}
-function setRefStore(id, data){
-  try { const all=getRefStore(); all[id]=data; localStorage.setItem('refinamento_iniciativas', JSON.stringify(all)); } catch(e) {}
-}
-function hydrateRefLocal(item){
-  const ref=getRefStore()[item.id];
-  return ref ? {...item, ...ref} : item;
-}
-function canonicalCatIA(raw){
-  const parts=String(raw||'').split('|').map(s=>s.trim()).filter(Boolean);
-  return parts.map(p=>{
-    const n=normalizeTxt(p);
-    if(n==='analytics' || n.includes('analitica')) return 'Analytics / IA Analítica';
-    if(n.includes('generativa') || n==='genai') return 'IA Generativa';
-    if(n.includes('agente')) return 'Agente de IA';
-    if(n.includes('automacao') || n.includes('power automate')) return 'Automação';
-    if(n.includes('machine') || n==='ml') return 'Machine Learning';
-    if(n.includes('nlp')) return 'NLP';
-    if(n.includes('rpa')) return 'RPA';
-    return p;
+function normalizeCategories(raw){
+  const arr=Array.isArray(raw)?raw:String(raw||'').split('|');
+  return arr.map(v=>String(v).trim()).filter(Boolean).map(v=>{
+    const n=normalizeText(v);
+    if(n==='analytics'||n.includes('analitica'))return 'Analytics / IA Analítica';
+    if(n.includes('generativa')||n==='genai')return 'IA Generativa';
+    if(n.includes('agente'))return 'Agente de IA';
+    if(n.includes('automacao')||n.includes('power automate'))return 'Automação';
+    if(n.includes('machine')||n==='ml')return 'Machine Learning';
+    if(n.includes('nlp'))return 'NLP';
+    if(n.includes('rpa'))return 'RPA';
+    return v;
   });
 }
-function inferGerencia(area, explicitGerencia=''){
-  return AREA_TO_GERENCIA[area] || explicitGerencia || '';
+function impactLabel(v){return Number(v)>=5?'Alto':Number(v)>=3?'Médio':'Baixo'}
+function complexityLabel(v){return Number(v)>=5?'Alta':Number(v)>=3?'Média':'Baixa'}
+function facilityValue(complexity){return 6-normalizeComplexity(complexity)}
+function rankScore(item){return normalizeImpact(item.gut_g)*10+facilityValue(item.complexidade)}
+function priorityFor(item){
+  const impact=normalizeImpact(item.gut_g); const complexity=normalizeComplexity(item.complexidade);
+  if(impact===5)return 'Alta';
+  if(impact===3)return 'Média';
+  return complexity===5?'Backlog':'Baixa';
+}
+function priorityClass(value){return value==='Alta'?'high':value==='Média'?'medium':value==='Baixa'?'low':'backlog'}
+function stageClass(value){return value==='Desenvolvimento'?'dev':value==='Testes'?'test':value==='Concluída'?'done':''}
+function pillPriority(value){return `<span class="pill ${priorityClass(value)}">${esc(value)}</span>`}
+function pillStage(value){return `<span class="pill stage"><span class="stage-dot ${stageClass(value)}"></span>${esc(value)}</span>`}
+function quarterLabel(q){return q&&q!=='TBD'?q:'Não definido'}
+function daysSince(date){if(!date)return null;const d=new Date(date);if(Number.isNaN(d.getTime()))return null;return Math.floor((Date.now()-d.getTime())/86400000)}
+function toast(message){const el=document.getElementById('toast');el.textContent=message;el.classList.add('show');clearTimeout(toast.timer);toast.timer=setTimeout(()=>el.classList.remove('show'),3000)}
+function setDbError(message=''){const el=document.getElementById('db-error');el.textContent=message;el.classList.toggle('show',Boolean(message))}
+function closeDetails(id){const el=document.getElementById(id);if(el)el.open=false}
+function closeModalOnBackdrop(event,id){if(event.target.id===id)document.getElementById(id).classList.remove('open')}
+function fillSelect(id,values,placeholder){const el=document.getElementById(id);if(!el)return;const current=el.value;el.innerHTML=`<option value="">${esc(placeholder)}</option>`+values.map(v=>`<option value="${esc(v)}">${esc(v)}</option>`).join('');if(values.includes(current))el.value=current}
+function unique(values){return [...new Set(values.filter(Boolean))].sort((a,b)=>String(a).localeCompare(String(b),'pt-BR'))}
+
+function showPage(name,button){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById(`page-${name}`).classList.add('active');
+  (button||document.querySelector(`[data-tab="${name}"]`))?.classList.add('active');
+  if(name==='overview')renderOverview();
+  if(name==='initiatives')renderInitiatives();
+  if(name==='planning')renderPlanning();
+  if(name==='priority')renderPriority();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function goToInitiatives(preset=''){if(preset)applyInitiativePreset(preset);showPage('initiatives')}
+function goToPlanning(){showPage('planning')}
+function applyInitiativePreset(preset){
+  activeStatus='';activePriority='';
+  if(preset==='active')activeStatus='active';
+  if(preset==='high')activePriority='Alta';
+  if(preset==='not-started')activeStatus='Não iniciado';
+  if(preset==='backlog')activePriority='Backlog';
+  ['initiative-search','initiative-area','initiative-quarter','initiative-creator','initiative-manager','initiative-category','initiative-priority'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=''});
+  if(activePriority){const p=document.getElementById('initiative-priority');if(p)p.value=activePriority}
 }
 
-// ══════════════════════════════════════════════════════════
-//  DATA
-// ══════════════════════════════════════════════════════════
-let iniciativas = [];
-let nextId = 1000;
-
-// ── Impacto × Facilidade de Execução ─────────────────────────
-function calcScore(item) {
-  // Score = Impacto × Facilidade de execução.
-  // Impacto: Baixo=1, Médio=3, Alto=5.
-  // Complexidade: Baixa=1, Média=3, Alta=5.
-  // Facilidade: Baixa complexidade=5, Média=3, Alta=1.
-  // Ex.: Alto impacto (5) + baixa complexidade (1) => 5 × 5 = 25 => Alta.
-  const impacto = item.gut_g || 1;
-  const complexidade = item.complexidade || 1;
-  const facilidade = 6 - complexidade;
-  return impacto * facilidade;
+function populateFilterOptions(){
+  const creators=unique(initiatives.map(i=>i.creator));
+  fillSelect('initiative-area',AREAS,'Área · todas');
+  fillSelect('initiative-creator',creators,'Todos');
+  fillSelect('initiative-manager',MANAGERS,'Todas');
+  fillSelect('initiative-category',AI_CATEGORIES,'Todas');
+  fillSelect('planning-manager',MANAGERS,'Todas as gerências');
+  fillSelect('planning-area',AREAS,'Todas as áreas');
+  fillSelect('priority-manager',MANAGERS,'Todas as gerências');
+  fillSelect('priority-creator',creators,'Todos os creators');
+  fillSelect('priority-area',AREAS,'Todas as áreas');
+  const areaSelect=document.getElementById('f-area');
+  if(areaSelect&&!areaSelect.options.length)areaSelect.innerHTML=AREAS.map(a=>`<option value="${esc(a)}">${esc(a)}</option>`).join('');
 }
 
-function classifyScore(score) {
-  // Score = Impacto × Facilidade de execução.
-  // Alta: 18–25 | Média: 10–17 | Baixa: 5–9 | Backlog: 1–4.
-  if (score >= 18) return 'Alta';
-  if (score >= 10) return 'Média';
-  if (score >= 5) return 'Baixa';
-  return 'Backlog';
+function renderAll(){populateFilterOptions();renderOverview();renderInitiatives();renderPlanning();renderPriority()}
+
+function renderOverview(){
+  const active=initiatives.filter(i=>['Desenvolvimento','Testes'].includes(normalizeStage(i.status))).length;
+  const high=initiatives.filter(i=>priorityFor(i)==='Alta').length;
+  const notStarted=initiatives.filter(i=>normalizeStage(i.status)==='Não iniciado').length;
+  const backlog=initiatives.filter(i=>priorityFor(i)==='Backlog').length;
+  document.getElementById('metrics').innerHTML=`
+    <div class="card metric-card" onclick="goToInitiatives('active')"><div class="metric-top"><span class="metric-icon">${icon('priority')}</span>Iniciativas ativas</div><div class="metric-value">${active}</div></div>
+    <div class="card metric-card danger" onclick="goToInitiatives('high')"><div class="metric-top"><span class="metric-icon">${icon('priority')}</span>Prioridade alta</div><div class="metric-value">${high}</div></div>
+    <div class="card metric-card warning" onclick="goToInitiatives('not-started')"><div class="metric-top"><span class="metric-icon">${icon('calendar')}</span>Não iniciadas</div><div class="metric-value">${notStarted}</div></div>
+    <div class="card metric-card" onclick="goToInitiatives('backlog')"><div class="metric-top"><span class="metric-icon">${icon('list')}</span>No backlog</div><div class="metric-value">${backlog}</div></div>`;
+  renderAttention();renderQuarterBars();renderCapacity();renderAreaBars();renderAIDonut();
+}
+function attentionReasons(item){
+  if(normalizeStage(item.status)==='Concluída')return [];
+  const reasons=[];const q=item.q_entrega||'TBD';const age=daysSince(item.updated_at);
+  if(!item.creator)reasons.push({label:'Creator não definido',level:'high'});
+  if(q==='TBD')reasons.push({label:'Quarter não definido',level:'normal'});
+  if(!(item.cat_ia||[]).length)reasons.push({label:'Categoria não definida',level:'normal'});
+  if(age!==null&&age>30)reasons.push({label:`Sem atualização há ${age}d`,level:'high'});
+  return reasons;
+}
+function renderAttention(){
+  const rows=initiatives.map(item=>({item,reasons:attentionReasons(item)})).filter(x=>x.reasons.length).sort((a,b)=>Number(b.reasons.some(r=>r.level==='high'))-Number(a.reasons.some(r=>r.level==='high'))).slice(0,6);
+  const el=document.getElementById('attention-list');
+  if(!rows.length){el.innerHTML='<div class="empty-state"><strong>Nenhuma pendência relevante</strong>As iniciativas estão com os principais dados preenchidos.</div>';return}
+  el.innerHTML=rows.map(({item,reasons})=>{const r=reasons[0];return `<div class="attention-row" style="cursor:pointer" onclick="openInitiativeModal(${item.id})"><span class="attention-dot ${r.level==='high'?'high':''}"></span><div><div class="attention-name">${esc(item.nome)}</div><div class="attention-meta">${esc(item.area||'Sem área')} · ${quarterLabel(item.q_entrega)} · ${esc(normalizeStage(item.status))}</div></div><span class="reason-badge">${esc(r.label)}</span></div>`}).join('');
+}
+function renderQuarterBars(){
+  const counts={Q1:0,Q2:0,Q3:0,Q4:0,TBD:0};initiatives.forEach(i=>{const q=counts[i.q_entrega]!==undefined?i.q_entrega:'TBD';counts[q]++});const max=Math.max(1,...Object.values(counts));
+  document.getElementById('quarter-bars').innerHTML=QUARTERS.map(q=>`<div class="qbar-row"><div class="qbar-label">${q}</div><div class="qbar-track"><div class="qbar-fill" style="width:${counts[q]/max*100}%"></div></div><div class="qbar-count">${counts[q]} iniciativa${counts[q]===1?'':'s'}</div></div>`).join('');
+}
+function renderCapacity(){
+  const map={};initiatives.forEach(i=>{const g=i.gerencia||managerForArea(i.area)||'Sem gerência';const c=normalizeComplexity(i.complexidade);map[g]??={1:0,3:0,5:0};map[g][c]++});
+  const entries=Object.entries(map).sort((a,b)=>Object.values(b[1]).reduce((x,y)=>x+y,0)-Object.values(a[1]).reduce((x,y)=>x+y,0));const max=Math.max(1,...entries.map(([,v])=>v[1]+v[3]+v[5]));
+  const el=document.getElementById('capacity-list');
+  if(!entries.length){el.innerHTML='<div class="empty-state"><strong>Sem dados</strong>Cadastre iniciativas para visualizar a distribuição.</div>';return}
+  el.innerHTML=entries.map(([g,v])=>{const total=v[1]+v[3]+v[5];return `<div class="capacity-row"><div class="capacity-label" title="${esc(g)}">${esc(g)}</div><div class="capacity-track">${v[1]?`<div class="capacity-seg low" style="width:${v[1]/max*100}%">${v[1]}</div>`:''}${v[3]?`<div class="capacity-seg medium" style="width:${v[3]/max*100}%">${v[3]}</div>`:''}${v[5]?`<div class="capacity-seg high" style="width:${v[5]/max*100}%">${v[5]}</div>`:''}</div><div class="capacity-total">${total}</div></div>`}).join('');
+}
+function renderAreaBars(){
+  const counts={};initiatives.forEach(i=>{const a=i.area||'Sem área';counts[a]=(counts[a]||0)+1});const entries=Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,8);const max=Math.max(1,...entries.map(([,v])=>v));
+  document.getElementById('area-bars').innerHTML=entries.length?entries.map(([a,v])=>`<div class="bar-row"><div class="bar-label" title="${esc(a)}">${esc(a)}</div><div class="bar-track"><div class="bar-fill" style="width:${v/max*100}%"></div></div><div class="bar-value">${v}</div></div>`).join(''):'<div class="empty-state"><strong>Sem dados</strong></div>';
+}
+function renderAIDonut(){
+  const counts={};initiatives.forEach(i=>(i.cat_ia||[]).forEach(c=>counts[c]=(counts[c]||0)+1));let entries=Object.entries(counts).sort((a,b)=>b[1]-a[1]);const others=entries.slice(5).reduce((s,[,v])=>s+v,0);entries=entries.slice(0,5);if(others)entries.push(['Outros',others]);
+  const legend=document.getElementById('ai-legend');const canvas=document.getElementById('ai-donut');if(aiChart)aiChart.destroy();
+  if(!entries.length){legend.innerHTML='<div class="empty-state"><strong>Sem dados</strong></div>';return}
+  aiChart=new Chart(canvas,{type:'doughnut',data:{labels:entries.map(e=>e[0]),datasets:[{data:entries.map(e=>e[1]),backgroundColor:AI_COLORS.slice(0,entries.length),borderWidth:3,borderColor:'#fff'}]},options:{responsive:true,maintainAspectRatio:true,cutout:'64%',plugins:{legend:{display:false}}}});
+  legend.innerHTML=entries.map(([l,v],i)=>`<div class="donut-row"><span class="donut-dot" style="background:${AI_COLORS[i]}"></span><span>${esc(l)}</span><span class="donut-value">${v}</span></div>`).join('');
 }
 
-// ── Filter state ─────────────────────────────────────────
-const fSets = { g: new Set(), a: new Set(), ia: new Set(), cls: new Set(), ref: new Set() };
-const kSets = { kg: new Set(), ka: new Set(), kcls: new Set(), kst: new Set(), kref: new Set() };
-const pSets = { pg: new Set(), pcreator: new Set(), pa: new Set(), pia: new Set(), cls: new Set(), ref: new Set() };
-const sortState = { i: { col: null, dir: 1 } };
-const prioSortState = { col: 'gerencia_rank', dir: 1 };
-let prioFilter = null;
-let editId = null;
-let donutIA = null, donutCls = null;
-let _iaSelection = [];
-
-// ══════════════════════════════════════════════════════════
-//  HELPERS
-// ══════════════════════════════════════════════════════════
-function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-function toast(msg) { const el=document.getElementById('toast'); el.textContent=msg; el.classList.add('show'); setTimeout(()=>el.classList.remove('show'),2800); }
-function closeMo(id) { document.getElementById(id).classList.remove('open'); }
-function closeMoBg(e, id) { if(e.target===document.getElementById(id)) closeMo(id); }
-function validateFields(ids) {
-  let ok=true;
-  ids.forEach(id=>{ const el=document.getElementById(id); if(!el) return; const v=el.value?.trim(); if(!v){el.classList.add('err');ok=false;}else el.classList.remove('err'); });
-  return ok;
+function renderStatusSegments(){
+  const counts={all:initiatives.length};STAGES.forEach(s=>counts[s]=initiatives.filter(i=>normalizeStage(i.status)===s).length);
+  const defs=[['','Todas',counts.all],['active','Ativas',counts['Desenvolvimento']+counts['Testes']],['Não iniciado','Não iniciadas',counts['Não iniciado']],['Desenvolvimento','Desenvolvimento',counts['Desenvolvimento']],['Testes','Testes',counts['Testes']],['Concluída','Concluídas',counts['Concluída']]];
+  document.getElementById('status-segments').innerHTML=defs.map(([v,l,c])=>`<button class="segment-btn ${activeStatus===v?'active':''}" onclick="setStatusFilter('${v}')">${l}<span class="segment-count">${c}</span></button>`).join('');
 }
-function statusDot(st){const c=(STATUS_COLOR||{})[st]||'#ccc';return`<span style="display:inline-flex;align-items:center;gap:4px"><span style="width:7px;height:7px;border-radius:50%;background:${c};flex-shrink:0;display:inline-block"></span><span style="font-size:11px">${esc(st||'—')}</span></span>`;}
-function clsBadge(cls) { return `<span class="badge ${CLS_BADGE[cls]||'b-dif'}">${cls||'—'}</span>`; }
-function qBadge(q) { return `<span style="font-size:11px;color:var(--text2)">${q==='TBD'||!q?'Não def.':q}</span>`; }
-function iaBadges(arr) { return (arr||[]).map(c=>`<span class="badge b-ai">${esc(c)}</span>`).join(''); }
-function hasRefinamento(item) {
-  return !!(String(item.mvp||'').trim() && String(item.entradas||'').trim() && String(item.saidas||'').trim());
-}
-function refinamentoStatus(item) { return hasRefinamento(item) ? 'Refinada' : 'Pendente'; }
-function refBadge(item) { return hasRefinamento(item) ? '<span class="badge b-ref">Refinada</span>' : ''; }
-
-// ══════════════════════════════════════════════════════════
-//  METRICS
-// ══════════════════════════════════════════════════════════
-let mMetricMode = null;
-function mFilter(mode){
-  const tabs=document.querySelectorAll('.ntab');
-  document.querySelectorAll('.metric').forEach(m=>m.classList.remove('af'));
-  if(mMetricMode===mode){
-    mMetricMode=null;clearFilters();
-    showTab('iniciativas',tabs[1]);return;
-  }
-  mMetricMode=mode;clearFilters();
-  if(mode==='critico'){
-    document.getElementById('m-crit')?.classList.add('af');
-    fSets.cls.add('Alta');
-    document.querySelectorAll('[data-fc]').forEach(b=>{if(b.dataset.fc==='Alta')b.classList.add('sel');});
-  } else if(mode==='total'){
-    document.getElementById('m-total')?.classList.add('af');
-  } else if(mode==='gerencias'){
-    document.getElementById('m-ger')?.classList.add('af');
-  } else if(mode==='creators'){
-    document.getElementById('m-creator')?.classList.add('af');
-  }
-  showTab('iniciativas',tabs[1]);
-  renderIniciativas();
-}
-function renderMetrics() {
-  const total = iniciativas.length;
-  const prioCount = iniciativas.filter(i=>classifyScore(calcScore(i))==='Alta').length;
-  const gerencias = new Set(iniciativas.map(i=>i.gerencia).filter(Boolean));
-  const creators = new Set(iniciativas.map(i=>i.creator).filter(Boolean));
-  document.getElementById('metrics').innerHTML = `
-    <div class="metric" id="m-total" onclick="mFilter('total')"><span class="hint">filtrar ↓</span>
-      <div class="val">${total}</div><div class="lbl">Iniciativas</div><div class="sub">Cadastradas no painel</div></div>
-    <div class="metric" id="m-crit" onclick="mFilter('critico')"><span class="hint">filtrar ↓</span>
-      <div class="val">${prioCount}</div><div class="lbl">Alta</div><div class="sub">Prioridade mais alta</div></div>
-    <div class="metric"><span class="hint">cobertura</span>
-      <div class="val">${gerencias.size}</div><div class="lbl">Gerências</div><div class="sub">Com iniciativas ativas</div></div>
-    <div class="metric"><span class="hint">ativos</span>
-      <div class="val">${creators.size}</div><div class="lbl">Creators</div><div class="sub">Responsáveis cadastrados</div></div>`;
-}
-
-// ══════════════════════════════════════════════════════════
-//  CHARTS — VISÃO GERAL
-// ══════════════════════════════════════════════════════════
-function renderChartsVG() {
-  // By Gerência
-  const gerCounts = {};
-  iniciativas.forEach(i=>{ const g=i.gerencia||'Sem Gerência'; gerCounts[g]=(gerCounts[g]||0)+1; });
-  const gerSorted = Object.entries(gerCounts).sort((a,b)=>b[1]-a[1]);
-  const maxG = Math.max(1,...gerSorted.map(([,v])=>v));
-  document.getElementById('ch-gerencia').innerHTML = gerSorted.map(([g,v])=>`
-    <div class="brow"><div class="blbl" title="${esc(g)}">${esc(g)}</div>
-    <div class="btrk"><div class="bfill" style="width:${Math.round(v/maxG*100)}%;background:var(--bordo-luz)"><span>${v}</span></div></div></div>`).join('') || '<p style="font-size:12px;color:var(--text3)">Sem dados</p>';
-
-  // By Area
-  const areaCounts = {};
-  iniciativas.forEach(i=>{ const a=i.area||'Sem Área'; areaCounts[a]=(areaCounts[a]||0)+1; });
-  const areaSorted = Object.entries(areaCounts).sort((a,b)=>b[1]-a[1]).slice(0,10);
-  const maxA = Math.max(1,...areaSorted.map(([,v])=>v));
-  document.getElementById('ch-area-vg').innerHTML = areaSorted.map(([a,v])=>`
-    <div class="brow"><div class="blbl" title="${a}">${esc(a)}</div>
-    <div class="btrk"><div class="bfill" style="width:${Math.round(v/maxA*100)}%;background:var(--magenta)"><span>${v}</span></div></div></div>`).join('') || '<p style="font-size:12px;color:var(--text3)">Sem dados</p>';
-
-  // Donut IA — Top 5 categorias + Outros
-  const iaCounts = {};
-  iniciativas.forEach(i=>(i.cat_ia||[]).forEach(c=>{ iaCounts[c]=(iaCounts[c]||0)+1; }));
-  const iaSorted = Object.entries(iaCounts).sort((a,b)=>b[1]-a[1]);
-  const iaTop = iaSorted.slice(0,5);
-  const iaOthers = iaSorted.slice(5).reduce((acc,[,v])=>acc+v,0);
-  const iaFinal = iaOthers > 0 ? [...iaTop, ['Outros', iaOthers]] : iaTop;
-  renderDonut('ch-ia-donut','ch-ia-legend', iaFinal, CAT_IA_COLORS, donutIA, v=>donutIA=v);
-
-  // Donut Cls
-  const clsCounts = {};
-  iniciativas.forEach(i=>{ const cls=classifyScore(calcScore(i)); clsCounts[cls]=(clsCounts[cls]||0)+1; });
-  const clsEntries = CLS_LABELS.filter(l=>clsCounts[l]).map(l=>[l,clsCounts[l]]);
-  const clsColors = clsEntries.map(([l])=>CLS_COLORS[l]);
-  renderDonut('ch-cls-donut','ch-cls-legend', clsEntries, clsColors, donutCls, v=>donutCls=v);
-}
-
-function renderDonut(canvasId, legendId, entries, colors, chartRef, setRef) {
-  const canvas = document.getElementById(canvasId);
-  if (!canvas) return;
-  if (chartRef) chartRef.destroy();
-  if (!entries.length) { document.getElementById(legendId).innerHTML='<span style="font-size:12px;color:var(--text3)">Sem dados</span>'; return; }
-  const chart = new Chart(canvas, {
-    type:'doughnut',
-    data:{ labels:entries.map(([l])=>l), datasets:[{ data:entries.map(([,v])=>v), backgroundColor:colors.slice(0,entries.length), borderWidth:2, borderColor:'#fff' }] },
-    options:{ plugins:{ legend:{display:false}, tooltip:{callbacks:{label:c=>`${c.label}: ${c.raw}`}} }, cutout:'60%' }
-  });
-  setRef(chart);
-  document.getElementById(legendId).innerHTML = entries.map(([l,v],i)=>`
-    <div class="dl-row"><div class="dl-dot" style="background:${colors[i]||'#ccc'}"></div><span>${esc(l)}</span><span class="dl-val">${v}</span></div>`).join('');
-}
-
-// ══════════════════════════════════════════════════════════
-//  RENDER INICIATIVAS TABLE
-// ══════════════════════════════════════════════════════════
-function matchesFilters(item) {
-  if (fSets.g.size && !fSets.g.has(item.gerencia)) return false;
-  if (fSets.a.size && !fSets.a.has(item.area)) return false;
-  if (fSets.ia.size && !(item.cat_ia||[]).some(c=>fSets.ia.has(c))) return false;
-  if (fSets.cls.size) {
-    const cls = classifyScore(calcScore(item));
-    if (!fSets.cls.has(cls)) return false;
-  }
-  if (fSets.ref.size) {
-    const ref = refinamentoStatus(item).toLowerCase();
-    if (!fSets.ref.has(ref)) return false;
-  }
-  const s = (document.getElementById('sp')?.value||'').toLowerCase();
-  if (s && !item.nome?.toLowerCase().includes(s) && !item.creator?.toLowerCase().includes(s)) return false;
+function setStatusFilter(value){activeStatus=value;renderInitiatives()}
+function initiativeMatches(item){
+  const q=normalizeText(document.getElementById('initiative-search')?.value);const area=document.getElementById('initiative-area')?.value||'';const quarter=document.getElementById('initiative-quarter')?.value||'';const creator=document.getElementById('initiative-creator')?.value||'';const manager=document.getElementById('initiative-manager')?.value||'';const category=document.getElementById('initiative-category')?.value||'';const priority=document.getElementById('initiative-priority')?.value||activePriority||'';
+  const stage=normalizeStage(item.status);
+  if(activeStatus==='active'&&!['Desenvolvimento','Testes'].includes(stage))return false;
+  if(activeStatus&&activeStatus!=='active'&&stage!==activeStatus)return false;
+  if(area&&item.area!==area)return false;if(quarter&&(item.q_entrega||'TBD')!==quarter)return false;if(creator&&item.creator!==creator)return false;if(manager&&(item.gerencia||managerForArea(item.area))!==manager)return false;if(category&&!(item.cat_ia||[]).includes(category))return false;if(priority&&priorityFor(item)!==priority)return false;
+  if(q){const hay=normalizeText([item.nome,item.descricao,item.creator,item.area,item.beneficio].join(' '));if(!hay.includes(q))return false}
   return true;
 }
+function renderInitiatives(){
+  renderStatusSegments();const rows=initiatives.filter(initiativeMatches).sort((a,b)=>rankScore(b)-rankScore(a)||String(a.nome).localeCompare(String(b.nome),'pt-BR'));document.getElementById('initiative-count').textContent=`${rows.length} de ${initiatives.length}`;
+  const body=document.getElementById('initiatives-body');
+  if(!rows.length){body.innerHTML='<tr><td colspan="7"><div class="empty-state"><strong>Nenhuma iniciativa encontrada</strong>Ajuste os filtros ou cadastre uma nova iniciativa.</div></td></tr>';return}
+  body.innerHTML=rows.map(item=>`<tr onclick="openInitiativeModal(${item.id})"><td><div class="item-name">${esc(item.nome)}</div><div class="item-sub">${esc((item.cat_ia||[]).slice(0,2).join(' · ')||'Categoria não definida')}</div></td><td>${esc(item.creator||'—')}</td><td>${esc(item.area||'—')}</td><td><span class="quarter-pill">${esc(quarterLabel(item.q_entrega))}</span></td><td>${pillPriority(priorityFor(item))}</td><td>${pillStage(normalizeStage(item.status))}</td><td onclick="event.stopPropagation()">${actionMenu(item.id)}</td></tr>`).join('');
+}
+function actionMenu(id){return `<details class="action-menu"><summary>${icon('more')}</summary><div class="action-popup"><button onclick="openInitiativeModal(${id});this.closest('details').open=false">${icon('edit')}Editar iniciativa</button><button class="danger" onclick="askDelete(${id});this.closest('details').open=false">${icon('trash')}Excluir</button></div></details>`}
+function clearInitiativeFilters(){activeStatus='';activePriority='';['initiative-search','initiative-area','initiative-quarter','initiative-creator','initiative-manager','initiative-category','initiative-priority'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=''});renderInitiatives()}
 
-function renderIniciativas() {
-  const rows = iniciativas.filter(matchesFilters);
-  const sorted = applySortI(rows);
-  const tbody = document.getElementById('tb-init');
-  if (!sorted.length) {
-    tbody.innerHTML = `<tr><td colspan="11"><div class="empty"><strong>Nenhum resultado</strong>Ajuste os filtros ou adicione uma iniciativa.</div></td></tr>`;
-    return;
-  }
-  tbody.innerHTML = sorted.map((item, idx) => {
-    const score = calcScore(item);
-    const cls = classifyScore(score);
-    return `<tr>
-      <td style="color:var(--text3);font-size:11px">${idx+1}</td>
-      <td style="font-weight:500;max-width:220px"><div>${esc(item.nome)}</div><div style="margin-top:4px;display:flex;gap:4px;flex-wrap:wrap;">${refBadge(item)}</div></td>
-      <td style="font-size:11px;color:var(--text2)">${esc(item.creator||'—')}</td>
-      <td style="font-size:11px;color:var(--text3);max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(item.gerencia||'')}">${esc(item.gerencia||'—').replace(/,.*$/,'')}</td>
-      <td style="font-size:11px;color:var(--text2)">${esc(item.area||'—')}</td>
-      <td style="max-width:160px">${iaBadges(item.cat_ia)}</td>
-      <td>${qBadge(item.q_inicio)}</td>
-      <td>${qBadge(item.q_entrega)}</td>
-      <td style="text-align:center"><span class="score-pill">${score}</span></td>
-      <td>${clsBadge(cls)}</td>
-      <td><div style="display:flex;align-items:center">${statusDot(item.status)}</div></td>
-      <td><div class="ract">
-        <button class="ibtn" onmouseenter="showPreview(${item.id},event)" onmouseleave="hidePreview()" onclick="showPreview(${item.id},event)" title="Visualizar">👁</button>
-        <button class="ibtn" onclick="openModal(${item.id})" title="Editar">✎</button>
-        <button class="ibtn" onclick="openRefModal(${item.id})" title="Refinar iniciativa">📝</button>
-        <button class="ibtn d" onclick="confirmDel(${item.id})" title="Excluir">✕</button>
-      </div></td>
-    </tr>`;
-  }).join('');
+function planningMatches(item){
+  const q=normalizeText(document.getElementById('planning-search')?.value);const manager=document.getElementById('planning-manager')?.value||'';const area=document.getElementById('planning-area')?.value||'';const stage=document.getElementById('planning-stage')?.value||'';
+  if(manager&&(item.gerencia||managerForArea(item.area))!==manager)return false;if(area&&item.area!==area)return false;if(stage&&normalizeStage(item.status)!==stage)return false;if(q&&!normalizeText(item.nome).includes(q))return false;return true;
 }
+function loadStatus(count){if(count<=4)return['Confortável',''];if(count<=8)return['Atenção','attention'];return['Sobrecarregado','over']}
+function renderPlanning(){
+  const filtered=initiatives.filter(planningMatches);document.getElementById('planning-count').textContent=`${filtered.length} de ${initiatives.length}`;const groups={Q1:[],Q2:[],Q3:[],Q4:[],TBD:[]};filtered.forEach(i=>(groups[i.q_entrega]||groups.TBD).push(i));Object.values(groups).forEach(list=>list.sort((a,b)=>rankScore(b)-rankScore(a)));
+  document.getElementById('kanban').innerHTML=QUARTERS.map(q=>{const list=groups[q];const [load,cls]=loadStatus(list.length);return `<div class="kanban-col"><div class="kanban-head"><div class="kanban-title-line"><div class="kanban-title">${q==='TBD'?'NÃO DEFINIDO':q}</div><span class="kanban-count">${list.length}</span></div><div class="load-line"><span class="load-indicator ${cls}"></span>${load}</div></div><div class="kanban-body" id="kanban-${q}" ondragover="planningDragOver(event)" ondragleave="this.classList.remove('dragover')" ondrop="planningDrop(event,'${q}')">${list.length?list.map(item=>`<div class="kanban-card" draggable="true" data-id="${item.id}" ondragstart="planningDragStart(event)" ondragend="planningDragEnd(event)" ondblclick="openInitiativeModal(${item.id})"><div class="kanban-card-title">${esc(item.nome)}</div><div class="kanban-card-meta"><span>${esc(item.creator||'—')}</span><span>${esc(item.area||'—')}</span></div><div class="kanban-card-tags">${pillPriority(priorityFor(item))}${pillStage(normalizeStage(item.status))}</div></div>`).join(''):'<div class="kanban-empty">Arraste uma iniciativa para cá</div>'}</div></div>`}).join('');
+}
+let draggingId=null;
+function planningDragStart(event){draggingId=Number(event.currentTarget.dataset.id);event.currentTarget.classList.add('dragging');event.dataTransfer.effectAllowed='move'}
+function planningDragOver(event){event.preventDefault();event.currentTarget.classList.add('dragover')}
+function planningDragEnd(event){event.currentTarget.classList.remove('dragging');document.querySelectorAll('.kanban-body').forEach(el=>el.classList.remove('dragover'))}
+async function planningDrop(event,quarter){event.preventDefault();event.currentTarget.classList.remove('dragover');if(!draggingId)return;const item=initiatives.find(i=>i.id===draggingId);draggingId=null;if(!item||item.q_entrega===quarter)return;const old=item.q_entrega;item.q_entrega=quarter;item.updated_at=new Date().toISOString();renderPlanning();try{await saveItemDB(item,item.id);toast('Quarter atualizado.');renderOverview()}catch(e){item.q_entrega=old;renderPlanning()}}
 
-function applySortI(rows) {
-  const { col, dir } = sortState.i;
-  if (!col) return [...rows].sort((a,b)=>calcScore(b)-calcScore(a));
-  return [...rows].sort((a,b) => {
-    if (col==='score') return (calcScore(a)-calcScore(b))*dir;
-    if (col==='cls') {
-      const o={'Alta':0,'Média':1,'Baixa':2,'Backlog':3};
-      return ((o[classifyScore(calcScore(a))]||4)-(o[classifyScore(calcScore(b))]||4))*dir;
-    }
-    return String(a[col]||'').localeCompare(String(b[col]||''),'pt-BR')*dir;
-  });
+function priorityMatches(item){
+  const q=normalizeText(document.getElementById('priority-search')?.value);const manager=document.getElementById('priority-manager')?.value||'';const creator=document.getElementById('priority-creator')?.value||'';const area=document.getElementById('priority-area')?.value||'';
+  if(manager&&(item.gerencia||managerForArea(item.area))!==manager)return false;if(creator&&item.creator!==creator)return false;if(area&&item.area!==area)return false;if(activePriority&&priorityFor(item)!==activePriority)return false;if(q&&!normalizeText([item.nome,item.creator,item.area].join(' ')).includes(q))return false;return true;
 }
-
-function sortTable(key, col) {
-  const st = sortState[key];
-  st.col===col ? (st.dir*=-1) : (st.col=col,st.dir=1);
-  document.querySelectorAll(`th.th-sort`).forEach(th=>{th.classList.remove('asc','desc');});
-  const ths = document.querySelectorAll(`th.th-sort`);
-  ths.forEach(th=>{ if(th.getAttribute('onclick')?.includes(`'${col}'`)) th.classList.add(st.dir===1?'asc':'desc'); });
-  renderIniciativas();
+function renderPriorityCards(baseRows){
+  const counts={Alta:0,Média:0,Baixa:0,Backlog:0};baseRows.forEach(i=>counts[priorityFor(i)]++);
+  const notes={Alta:'Impacto alto',Média:'Impacto médio',Baixa:'Impacto baixo',Backlog:'Baixo impacto + alta complexidade'};
+  document.getElementById('priority-cards').innerHTML=PRIORITIES.map(p=>`<div class="card priority-card ${activePriority===p?'active':''}" onclick="togglePriorityFilter('${p}')"><div class="priority-num">${counts[p]}</div><div class="priority-label">${p}</div><div class="priority-note">${notes[p]}</div></div>`).join('');
 }
-
-// ══════════════════════════════════════════════════════════
-//  PRIORIZAÇÃO TAB
-// ══════════════════════════════════════════════════════════
-function getPrioSearch(){
-  return (document.getElementById('sp-prio')?.value||'').toLowerCase();
+function togglePriorityFilter(value){activePriority=activePriority===value?'':value;renderPriority()}
+function renderPriority(){
+  const base=initiatives.filter(item=>{const current=activePriority;activePriority='';const ok=priorityMatches(item);activePriority=current;return ok});renderPriorityCards(base);
+  const rows=initiatives.filter(priorityMatches);document.getElementById('priority-count').textContent=`${rows.length} de ${initiatives.length}`;
+  const groups={};rows.forEach(i=>{const g=i.gerencia||managerForArea(i.area)||'Sem gerência';(groups[g]??=[]).push(i)});Object.values(groups).forEach(list=>list.sort((a,b)=>rankScore(b)-rankScore(a)||String(a.nome).localeCompare(String(b.nome),'pt-BR')));
+  const entries=Object.entries(groups).sort((a,b)=>a[0].localeCompare(b[0],'pt-BR'));const el=document.getElementById('priority-groups');
+  if(!entries.length){el.innerHTML='<div class="card empty-state"><strong>Nenhuma iniciativa encontrada</strong>Ajuste os filtros para visualizar o ranking.</div>';return}
+  el.innerHTML=entries.map(([manager,list])=>`<div class="card priority-group"><div class="priority-group-head"><div class="priority-group-title">${esc(manager)}</div><div class="priority-group-count">${list.length} iniciativa${list.length===1?'':'s'}</div></div><div class="table-scroll"><table style="min-width:940px"><thead><tr><th style="width:55px">Ordem</th><th>Iniciativa</th><th>Creator</th><th>Área</th><th>Impacto</th><th>Complexidade</th><th>Prioridade</th><th>Etapa</th><th style="width:55px"></th></tr></thead><tbody>${list.map((item,index)=>`<tr onclick="openInitiativeModal(${item.id})"><td><span class="priority-order">${index+1}</span></td><td><div class="item-name">${esc(item.nome)}</div></td><td>${esc(item.creator||'—')}</td><td>${esc(item.area||'—')}</td><td>${impactLabel(item.gut_g)}</td><td>${complexityLabel(item.complexidade)}</td><td>${pillPriority(priorityFor(item))}</td><td>${pillStage(normalizeStage(item.status))}</td><td onclick="event.stopPropagation()">${actionMenu(item.id)}</td></tr>`).join('')}</tbody></table></div></div>`).join('');
 }
-function matchesPrioFilters(item, includeCls=true){
-  if (pSets.pg.size && !pSets.pg.has(item.gerencia)) return false;
-  if (pSets.pcreator.size && !pSets.pcreator.has(item.creator)) return false;
-  if (pSets.pa.size && !pSets.pa.has(item.area)) return false;
-  if (pSets.pia.size && !(item.cat_ia||[]).some(c=>pSets.pia.has(c))) return false;
-  if (includeCls && pSets.cls.size) {
-    const cls = classifyScore(calcScore(item));
-    if (!pSets.cls.has(cls)) return false;
-  }
-  if (pSets.ref.size) {
-    const ref = refinamentoStatus(item).toLowerCase();
-    if (!pSets.ref.has(ref)) return false;
-  }
-  const s = getPrioSearch();
-  if (s && !item.nome?.toLowerCase().includes(s) && !item.creator?.toLowerCase().includes(s) && !item.area?.toLowerCase().includes(s) && !item.gerencia?.toLowerCase().includes(s)) return false;
-  return true;
+function openInitiativeModal(id=null){
+  editingId=id;const item=id?initiatives.find(i=>i.id===id):null;
+  document.getElementById('initiative-modal-title').textContent=item?'Editar iniciativa':'Nova iniciativa';
+  document.getElementById('f-creator').value=item?.creator||'';
+  const areaSelect=document.getElementById('f-area');areaSelect.innerHTML=AREAS.map(a=>`<option value="${esc(a)}">${esc(a)}</option>`).join('');areaSelect.value=item?.area||AREAS[0];
+  document.getElementById('f-stage').value=normalizeStage(item?.status||'Não iniciado');
+  document.getElementById('f-q-start').value=item?.q_inicio||'TBD';document.getElementById('f-q-end').value=item?.q_entrega||'TBD';
+  document.getElementById('f-name').value=item?.nome||'';document.getElementById('f-description').value=item?.descricao||'';document.getElementById('f-problem').value=item?.poc||'';document.getElementById('f-benefit').value=item?.beneficio||'';document.getElementById('f-risks').value=item?.riscos||'';
+  document.getElementById('f-impact').value=String(normalizeImpact(item?.gut_g||3));document.getElementById('f-complexity').value=String(normalizeComplexity(item?.complexidade||3));
+  const selected=new Set(item?.cat_ia||[]);document.getElementById('category-options').innerHTML=AI_CATEGORIES.map(c=>`<label class="category-option"><input type="checkbox" value="${esc(c)}" ${selected.has(c)?'checked':''}>${esc(c)}</label>`).join('');
+  document.querySelectorAll('#initiative-modal .error').forEach(el=>el.classList.remove('error'));updateManagerPreview();updatePriorityPreview();document.getElementById('initiative-modal').classList.add('open');document.body.style.overflow='hidden';
 }
-function setPrioFilter(cls){
-  pSets.cls.clear();
-  if (![...document.querySelectorAll('[data-pc].sel')].some(b=>b.dataset.pc===cls)) {
-    pSets.cls.add(cls);
-  }
-  document.querySelectorAll('[data-pc]').forEach(b=>b.classList.toggle('sel', pSets.cls.has(b.dataset.pc)));
-  renderPriorizacao();
+function closeInitiativeModal(){document.getElementById('initiative-modal').classList.remove('open');document.body.style.overflow='';editingId=null}
+function updateManagerPreview(){const area=document.getElementById('f-area').value;document.getElementById('f-manager-preview').textContent=managerForArea(area)||'Gerência não mapeada'}
+function selectedCategories(){return [...document.querySelectorAll('#category-options input:checked')].map(el=>el.value)}
+function updatePriorityPreview(){
+  const draft={gut_g:Number(document.getElementById('f-impact').value),complexidade:Number(document.getElementById('f-complexity').value)};const index=rankScore(draft);const p=priorityFor(draft);document.getElementById('priority-preview-score').textContent=`Índice ${index}`;document.getElementById('priority-preview-badge').innerHTML=pillPriority(p);
 }
-function togglePCls(btn){
-  const val = btn.dataset.pc;
-  if (pSets.cls.has(val)) { pSets.cls.delete(val); btn.classList.remove('sel'); }
-  else { pSets.cls.add(val); btn.classList.add('sel'); }
-  renderPriorizacao();
+function validateInitiativeForm(){
+  const required=['f-creator','f-area','f-stage','f-name','f-description','f-problem'];let ok=true;required.forEach(id=>{const el=document.getElementById(id);const valid=Boolean(String(el.value||'').trim());el.classList.toggle('error',!valid);if(!valid)ok=false});if(!selectedCategories().length){document.getElementById('category-options').style.borderColor='var(--danger)';ok=false}else document.getElementById('category-options').style.borderColor='';return ok;
 }
-function togglePRef(btn){
-  const val = btn.dataset.pr;
-  if (pSets.ref.has(val)) { pSets.ref.delete(val); btn.classList.remove('sel'); }
-  else { pSets.ref.add(val); btn.classList.add('sel'); }
-  renderPriorizacao();
-}
-function clearPrioFilters(){
-  ['pg','pcreator','pa','pia','cls','ref'].forEach(k=>pSets[k].clear());
-  document.querySelectorAll('[data-pc],[data-pr]').forEach(b=>b.classList.remove('sel'));
-  const sp=document.getElementById('sp-prio'); if(sp) sp.value='';
-  ['pg','pcreator','pa','pia'].forEach(updMDDBtn);
-  renderPriorizacao();
-}
-function sortPrio(col){
-  if(prioSortState.col===col) prioSortState.dir *= -1;
-  else { prioSortState.col=col; prioSortState.dir = col==='score' ? -1 : 1; }
-  renderPriorizacao();
-}
-function prioSortMark(col){
-  return prioSortState.col===col ? (prioSortState.dir===1?' ↑':' ↓') : ' ↕';
-}
-function rankWithinGerencia(rows){
-  const byG = {};
-  rows.forEach(r=>{
-    const g = r.gerencia || 'Sem Gerência';
-    if(!byG[g]) byG[g] = [];
-    byG[g].push(r);
-  });
-  Object.values(byG).forEach(list=>{
-    list.sort((a,b)=> (b.score-a.score) || String(a.nome||'').localeCompare(String(b.nome||''),'pt-BR'));
-    list.forEach((item,idx)=> item._gerRank = idx + 1);
-  });
-  return rows;
-}
-function applyPrioSort(rows){
-  const rankedRows = rankWithinGerencia([...rows]);
-  const {col,dir}=prioSortState;
-  return rankedRows.sort((a,b)=>{
-    if(col==='gerencia_rank'){
-      const g = String(a.gerencia||'').localeCompare(String(b.gerencia||''),'pt-BR');
-      if(g) return g;
-      return ((a._gerRank||999)-(b._gerRank||999)) * dir;
-    }
-    if(col==='score') return (a.score-b.score)*dir;
-    if(col==='cls'){
-      const o={'Alta':0,'Média':1,'Baixa':2,'Backlog':3};
-      return ((o[a.cls]??9)-(o[b.cls]??9))*dir;
-    }
-    if(col==='status') return String(a.status||'').localeCompare(String(b.status||''),'pt-BR')*dir;
-    return String(a[col]||'').localeCompare(String(b[col]||''),'pt-BR')*dir;
-  });
-}
-
-function renderPriorizacao() {
-  const allRanked = iniciativas.map(i=>({...i,score:calcScore(i),cls:classifyScore(calcScore(i))}));
-  const countBase = allRanked.filter(i=>matchesPrioFilters(i,false));
-  const counts = { 'Alta':0, 'Média':0, 'Baixa':0, 'Backlog':0 };
-  countBase.forEach(i=>{ counts[i.cls]=(counts[i.cls]||0)+1; });
-  const reads = { 'Alta':'Score 18–25', 'Média':'Score 10–17', 'Baixa':'Score 5–9', 'Backlog':'Score 1–4' };
-  const band_cls = { 'Alta':'crit', 'Média':'imp', 'Baixa':'post', 'Backlog':'dif' };
-  document.getElementById('prio-bands').innerHTML = CLS_LABELS.map(l=>`
-    <div class="pband ${band_cls[l]}" onclick="setPrioFilter('${l}')" style="cursor:pointer;${pSets.cls.has(l)?'box-shadow:0 0 0 2px var(--rosa);transform:translateY(-1px);':''}">
-      <span class="hint">filtrar ↓</span>
-      <div class="pv">${counts[l]||0}</div>
-      <div class="pl">${l}</div>
-      <div class="ps">${reads[l]}</div>
-    </div>`).join('');
-
-  const ranked = applyPrioSort(allRanked.filter(i=>matchesPrioFilters(i,true)));
-  if (!ranked.length) {
-    document.getElementById('prank').innerHTML='<p style="font-size:12px;color:var(--text3);text-align:center;padding:24px">Nenhuma iniciativa encontrada para os filtros aplicados.</p>';
-    return;
-  }
-  document.getElementById('prank').innerHTML = `
-    <div style="border:1px solid var(--border);border-radius:var(--r);overflow:auto;background:#fff;">
-      <div style="display:grid;grid-template-columns:52px minmax(200px,1.2fr) 120px 120px 160px 70px 105px 116px 100px minmax(160px,.8fr) 124px;gap:0;font-size:10px;background:var(--bordo);color:#fff;min-width:1320px;">
-        <div onclick="sortPrio('gerencia_rank')" style="padding:8px;text-align:center;font-weight:600;cursor:pointer;">Prior.${prioSortMark('gerencia_rank')}</div>
-        <div onclick="sortPrio('nome')" style="padding:8px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;cursor:pointer;">Iniciativa${prioSortMark('nome')}</div>
-        <div onclick="sortPrio('creator')" style="padding:8px;font-weight:600;cursor:pointer;">Creator${prioSortMark('creator')}</div>
-        <div onclick="sortPrio('area')" style="padding:8px;font-weight:600;cursor:pointer;">Área${prioSortMark('area')}</div>
-        <div onclick="sortPrio('gerencia')" style="padding:8px;font-weight:600;cursor:pointer;">Gerência${prioSortMark('gerencia')}</div>
-        <div onclick="sortPrio('score')" style="padding:8px;font-weight:600;text-align:center;cursor:pointer;">Score${prioSortMark('score')}</div>
-        <div onclick="sortPrio('status')" style="padding:8px;font-weight:600;cursor:pointer;">Etapa${prioSortMark('status')}</div>
-        <div onclick="sortPrio('cls')" style="padding:8px;font-weight:600;cursor:pointer;">Classificação automática${prioSortMark('cls')}</div>
-        <div style="padding:8px;font-weight:600;">Refinamento</div>
-        <div style="padding:8px;font-weight:600;">Análise para priorização</div>
-        <div style="padding:8px;font-weight:600;text-align:center;">Ações</div>
-      </div>
-      ${ranked.map((item,i)=>{
-        const bg=i%2===0?'#fff':'#fafafa';
-        const resumo = item.beneficio || item.poc || item.descricao || 'Sem resumo informado.';
-        return `<div style="display:grid;grid-template-columns:52px minmax(200px,1.2fr) 120px 120px 160px 70px 105px 116px 100px minmax(160px,.8fr) 124px;gap:0;border-top:1px solid var(--border);background:${bg};font-size:12px;min-width:1320px;align-items:center;">
-          <div style="padding:9px;text-align:center;color:var(--bordo);font-size:11px;font-weight:600;" title="Prioridade dentro da gerência">${item._gerRank||i+1}</div>
-          <div style="padding:9px;font-weight:500;line-height:1.35;">${esc(item.nome)}</div>
-          <div style="padding:9px;font-size:11px;color:var(--text2);">${esc(item.creator||'—')}</div>
-          <div style="padding:9px;font-size:11px;color:var(--text2);">${esc(item.area||'—')}</div>
-          <div style="padding:9px;font-size:11px;color:var(--text2);">${esc(item.gerencia||'—')}</div>
-          <div style="padding:9px;text-align:center;"><span class="score-pill">${item.score}</span></div>
-          <div style="padding:9px;font-size:11px;color:var(--text2);line-height:1.5;">${statusDot(item.status)}</div>
-          <div style="padding:9px;">${clsBadge(item.cls)}</div>
-          <div style="padding:9px;">${refBadge(item)}</div>
-          <div title="${esc(resumo)}" style="padding:9px;font-size:11px;color:var(--text2);line-height:1.45;">${esc(resumo).slice(0,140)}${String(resumo).length>140?'…':''}</div>
-          <div style="padding:9px;"><div class="ract" style="justify-content:center;flex-wrap:nowrap;">
-            <button class="ibtn" onmouseenter="showPreview(${item.id},event)" onmouseleave="hidePreview()" onclick="showPreview(${item.id},event)" title="Visualizar">👁</button>
-            <button class="ibtn" onclick="openModal(${item.id})" title="Editar">✎</button>
-        <button class="ibtn" onclick="openRefModal(${item.id})" title="Refinar iniciativa">📝</button>
-            <button class="ibtn d" onclick="confirmDel(${item.id})" title="Excluir">✕</button>
-          </div></div>
-        </div>`;
-      }).join('')}
-    </div>`;
-}
-
-// ══════════════════════════════════════════════════════════
-//  KANBAN
-// ══════════════════════════════════════════════════════════
-function renderKanban() {
-  const sk = (document.getElementById('sk')?.value||'').toLowerCase();
-  const all = iniciativas.filter(i=>{
-    if (sk && !i.nome?.toLowerCase().includes(sk)) return false;
-    if (kSets.kg.size && !kSets.kg.has(i.gerencia)) return false;
-    if (kSets.ka.size && !kSets.ka.has(i.area)) return false;
-    if (kSets.kcls.size && !kSets.kcls.has(classifyScore(calcScore(i)))) return false;
-    if (kSets.kst.size && !kSets.kst.has(normalizeEtapa(i.status || 'Não iniciado'))) return false;
-    if (kSets.kref.size && !kSets.kref.has(refinamentoStatus(i))) return false;
-    return true;
-  });
-  const cols = {Q1:{label:'Q1',color:Q_COLORS.Q1},Q2:{label:'Q2',color:Q_COLORS.Q2},Q3:{label:'Q3',color:Q_COLORS.Q3},Q4:{label:'Q4',color:Q_COLORS.Q4},TBD:{label:'Não definido',color:Q_COLORS.TBD}};
-  const groups = {Q1:[],Q2:[],Q3:[],Q4:[],TBD:[]};
-  all.forEach(i=>{ (groups[i.q_entrega]||groups.TBD).push(i); });
-  document.getElementById('kanban').innerHTML = Object.entries(cols).map(([qk,cd])=>`
-    <div class="kcol" id="kcol-${qk}">
-      <div class="kch"><h3 style="color:${cd.color}">${cd.label}</h3><span class="kcount">${groups[qk].length}</span></div>
-      <div class="kdz" id="kdz-${qk}" ondragover="event.preventDefault();this.classList.add('da')" ondragleave="this.classList.remove('da')" ondrop="dropCard(event,'${qk}')">
-        ${groups[qk].map(i=>{
-          const cls=classifyScore(calcScore(i));
-          return `<div class="kcard" draggable="true" data-id="${i.id}" ondragstart="dragStart(event)" ondragend="dragEnd(event)" ondblclick="openModal(${i.id})" title="Clique duplo para editar">
-            <div class="kt">${esc(i.nome)}</div>
-            <div class="km">
-              <span style="font-size:10px;color:var(--text3)">${esc(i.creator||'—')}</span>
-              <span style="font-size:10px;color:var(--text3)">·</span>
-              <span style="font-size:10px;color:var(--text3)">${esc(i.area||'—')}</span>
-            </div>
-            <div class="km" style="margin-top:3px">${refBadge(i)} ${clsBadge(cls)}</div>
-          </div>`;
-        }).join('')}
-      </div>
-    </div>`).join('');
-  initTouchDrag();
-}
-
-let dragId=null;
-function dragStart(e){dragId=+e.currentTarget.dataset.id;e.currentTarget.classList.add('dragging');}
-function dragEnd(e){e.currentTarget.classList.remove('dragging');document.querySelectorAll('.kdz').forEach(d=>d.classList.remove('da'));}
-function dropCard(e,newQ){
-  e.preventDefault();document.querySelectorAll('.kdz').forEach(d=>d.classList.remove('da'));
-  if(!dragId)return;
-  const item=iniciativas.find(x=>x.id===dragId);
-  if(item){item.q_entrega=newQ;updateItemDB(item);toast('Quarter atualizado.');}
-  dragId=null;renderKanban();renderChartsVG();renderCarga();
-}
-function initTouchDrag(){
-  let ghost=null,touchId=null;
-  document.querySelectorAll('.kcard').forEach(card=>{
-    card.addEventListener('touchstart',e=>{
-      touchId=+card.dataset.id;const t=e.touches[0];
-      ghost=card.cloneNode(true);ghost.classList.add('touch-drag');
-      ghost.style.width=card.offsetWidth+'px';ghost.style.left=(t.clientX-card.offsetWidth/2)+'px';ghost.style.top=(t.clientY-20)+'px';
-      document.body.appendChild(ghost);card.style.opacity='.35';e.preventDefault();
-    },{passive:false});
-    card.addEventListener('touchmove',e=>{
-      if(!ghost)return;const t=e.touches[0];
-      ghost.style.left=(t.clientX-ghost.offsetWidth/2)+'px';ghost.style.top=(t.clientY-20)+'px';
-      document.querySelectorAll('.kdz').forEach(dz=>{const r=dz.getBoundingClientRect();dz.classList.toggle('da',t.clientX>=r.left&&t.clientX<=r.right&&t.clientY>=r.top&&t.clientY<=r.bottom);});
-      e.preventDefault();
-    },{passive:false});
-    card.addEventListener('touchend',e=>{
-      if(!ghost)return;const t=e.changedTouches[0];let dropped=false;
-      document.querySelectorAll('.kdz').forEach(dz=>{const r=dz.getBoundingClientRect();
-        if(t.clientX>=r.left&&t.clientX<=r.right&&t.clientY>=r.top&&t.clientY<=r.bottom){
-          const newQ=dz.id.replace('kdz-','');const item=iniciativas.find(x=>x.id===touchId);
-          if(item){item.q_entrega=newQ;updateItemDB(item);}dropped=true;
-        }});
-      ghost.remove();ghost=null;card.style.opacity='';
-      document.querySelectorAll('.kdz').forEach(d=>d.classList.remove('da'));
-      if(dropped){renderKanban();renderChartsVG();renderCarga();toast('Quarter atualizado.');}
-      touchId=null;
-    });
-  });
-}
-
-// ══════════════════════════════════════════════════════════
-//  CARGA
-// ══════════════════════════════════════════════════════════
-function renderCarga(){
-  // Volume por Gerência
-  const gc={};
-  iniciativas.forEach(i=>{const g=i.gerencia||'Sem Gerência';gc[g]=(gc[g]||0)+1;});
-  const gSorted=Object.entries(gc).sort((a,b)=>b[1]-a[1]);
-  const maxG=Math.max(1,...gSorted.map(([,v])=>v));
-  const elGer=document.getElementById('ch-carga-ger');
-  if(elGer) elGer.innerHTML=gSorted.map(([g,v])=>`
-    <div class="brow"><div class="blbl" title="${esc(g)}">${esc(g)}</div>
-    <div class="btrk"><div class="bfill" style="width:${Math.round(v/maxG*100)}%;background:var(--bordo)"><span>${v}</span></div></div></div>`).join('')
-    ||'<p style="font-size:12px;color:var(--text3)">Sem dados</p>';
-
-  // Gerência × Complexidade de Implementação
-  const gcMap={};
-  const normComplexidade = (v) => {
-    const n = Number(v);
-    return [1,3,5].includes(n) ? n : 3;
-  };
-  iniciativas.forEach(i=>{
-    const g=i.gerencia||'Sem Gerência';
-    const c=normComplexidade(i.complexidade);
-    if(!gcMap[g])gcMap[g]={1:0,3:0,5:0};
-    gcMap[g][c]=(gcMap[g][c]||0)+1;
-  });
-  const safeSum = (obj) => Object.values(obj).reduce((x,y)=>x+(Number(y)||0),0);
-  const gcEntries=Object.entries(gcMap).sort((a,b)=>safeSum(b[1])-safeSum(a[1]));
-  const maxGC=Math.max(1,...gcEntries.map(([,cv])=>safeSum(cv)));
-  const COMPL_L={1:'Baixa',3:'Média',5:'Alta'};
-  const COMPL_C={1:'#FF7DAF',3:'#662046',5:'#2E101E'};
-  const elCompl=document.getElementById('ch-carga-compl');
-  if(elCompl){
-    elCompl.innerHTML=gcEntries.map(([g,cv])=>{
-      const total=safeSum(cv);
-      const segs=[1,3,5].map(c=>{
-        const val=Number(cv[c])||0;
-        if(!val)return'';
-        const pct=Math.round(val/maxGC*100);
-        return`<div class="sseg" title="${COMPL_L[c]}: ${val}" style="width:${pct}%;background:${COMPL_C[c]};min-width:${val?'4px':'0'}">${pct>8?val:''}</div>`;
-      }).join('');
-      return`<div class="srow"><div class="slbl" title="${esc(g)}">${esc(g)}</div><div class="strk">${segs}</div><div class="stot">${total}</div></div>`;
-    }).join('')||'<p style="font-size:12px;color:var(--text3)">Sem dados</p>';
-    elCompl.insertAdjacentHTML('beforeend',
-      `<div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:10px">${[1,3,5].map(c=>
-        `<span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;color:var(--text2)"><span style="width:10px;height:10px;border-radius:2px;background:${COMPL_C[c]};display:inline-block"></span>${COMPL_L[c]}</span>`
-      ).join('')}</div>`
-    );
-  }
-
-  // Volume por Quarter
-  const qc={Q1:0,Q2:0,Q3:0,Q4:0,TBD:0};
-  iniciativas.forEach(i=>{const q=i.q_entrega||'TBD';qc[q]=(qc[q]||0)+1;});
-  const maxQ=Math.max(1,...Object.values(qc));
-  const elQ=document.getElementById('ch-carga-q');
-  if(elQ) elQ.innerHTML=Object.entries(qc).map(([q,v])=>`
-    <div style="text-align:center;flex:1;min-width:80px;">
-      <div style="font-size:24px;font-weight:300;color:${Q_COLORS[q]}">${v}</div>
-      <div style="font-size:11px;color:var(--text3);margin-top:2px">${q==='TBD'?'Não def.':q}</div>
-      <div style="height:4px;border-radius:4px;background:${Q_COLORS[q]};margin-top:6px;opacity:.7;width:${Math.round(v/maxQ*100)}%;margin-inline:auto;min-width:${v?'4px':'0'}"></div>
-    </div>`).join('');
-}
-
-function toggleFCls(btn) {
-  const val = btn.dataset.fc;
-  if (fSets.cls.has(val)) { fSets.cls.delete(val); btn.classList.remove('sel'); }
-  else { fSets.cls.add(val); btn.classList.add('sel'); }
-  renderIniciativas();
-}
-function toggleFRef(btn) {
-  const val = btn.dataset.fr;
-  if (fSets.ref.has(val)) { fSets.ref.delete(val); btn.classList.remove('sel'); }
-  else { fSets.ref.add(val); btn.classList.add('sel'); }
-  renderIniciativas();
-}
-
-function clearFilters() {
-  ['g','a','ia','cls','ref'].forEach(k=>fSets[k].clear());
-  document.querySelectorAll('[data-fc],[data-fr]').forEach(b=>b.classList.remove('sel'));
-  const sp=document.getElementById('sp'); if(sp)sp.value='';
-  updMDDBtn('g');updMDDBtn('a');updMDDBtn('ia');
-  renderIniciativas();
-}
-
-// MDD (multi-select dropdown) system
-const mddConfigs = {
-  g:  { listId:'mdd-list-g',  btnId:'mdd-btn-g',  set:fSets.g,  items:()=>GERENCIAS, render:renderIniciativas },
-  a:  { listId:'mdd-list-a',  btnId:'mdd-btn-a',  set:fSets.a,  items:()=>AREAS, render:renderIniciativas },
-  ia: { listId:'mdd-list-ia', btnId:'mdd-btn-ia', set:fSets.ia, items:()=>CAT_IA, render:renderIniciativas },
-  kg: { listId:'mdd-list-kg', btnId:'mdd-btn-kg', set:kSets.kg, items:()=>GERENCIAS, render:renderKanban },
-  ka: { listId:'mdd-list-ka', btnId:'mdd-btn-ka', set:kSets.ka, items:()=>AREAS, render:renderKanban },
-  kcls: { listId:'mdd-list-kcls', btnId:'mdd-btn-kcls', set:kSets.kcls, items:()=>CLS_LABELS, render:renderKanban },
-  kst: { listId:'mdd-list-kst', btnId:'mdd-btn-kst', set:kSets.kst, items:()=>STATUS_LIST, render:renderKanban },
-  kref: { listId:'mdd-list-kref', btnId:'mdd-btn-kref', set:kSets.kref, items:()=>['Refinada'], render:renderKanban },
-  pg: { listId:'mdd-list-pg', btnId:'mdd-btn-pg', set:pSets.pg, items:()=>GERENCIAS, render:renderPriorizacao },
-  pcreator: { listId:'mdd-list-pcreator', btnId:'mdd-btn-pcreator', set:pSets.pcreator, items:()=>[...new Set(iniciativas.map(i=>i.creator).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'pt-BR')), render:renderPriorizacao },
-  pa: { listId:'mdd-list-pa', btnId:'mdd-btn-pa', set:pSets.pa, items:()=>AREAS, render:renderPriorizacao },
-  pia: { listId:'mdd-list-pia', btnId:'mdd-btn-pia', set:pSets.pia, items:()=>CAT_IA, render:renderPriorizacao },
-};
-
-function openMDD(key) {
-  Object.keys(mddConfigs).forEach(k=>{ const el=document.getElementById(`mdd-${k}`); if(el&&k!==key) el.classList.remove('open'); });
-  const el=document.getElementById(`mdd-${key}`);
-  if(!el)return;
-  const isOpen=el.classList.contains('open');
-  el.classList.toggle('open',!isOpen);
-  if(!isOpen) rebuildMDD(key);
-}
-function rebuildMDD(key) {
-  const cfg=mddConfigs[key];if(!cfg)return;
-  const list=document.getElementById(cfg.listId);if(!list)return;
-  list.innerHTML=cfg.items().map(item=>`
-    <label class="mdd-item"><input type="checkbox" ${cfg.set.has(item)?'checked':''} onchange="toggleMDDItem('${key}','${item.replace(/'/g,"\\'")}',this.checked)">${esc(item)}</label>`).join('');
-}
-function toggleMDDItem(key,item,checked) {
-  const cfg=mddConfigs[key];if(!cfg)return;
-  checked?cfg.set.add(item):cfg.set.delete(item);
-  updMDDBtn(key);cfg.render();
-}
-function updMDDBtn(key) {
-  const cfg=mddConfigs[key];if(!cfg)return;
-  const btn=document.getElementById(cfg.btnId);if(!btn)return;
-  const s=cfg.set,items=cfg.items();
-  const label={g:'Gerência',a:'Área',ia:'Categoria de IA',kg:'Gerência',ka:'Área',kcls:'Classificação',kst:'Etapa',kref:'Refinamento',pg:'Gerência',pcreator:'Creator',pa:'Área',pia:'Categoria de IA'}[key]||key;
-  if(s.size===0){btn.textContent=label+' ▾';btn.classList.remove('sel');}
-  else if(s.size===1){btn.textContent=[...s][0].slice(0,14)+(([...s][0].length>14)?'…':'')+' ▾';btn.classList.add('sel');}
-  else{btn.textContent=s.size+' selecionados ▾';btn.classList.add('sel');}
-}
-function clearAreaSet(key){const cfg=mddConfigs[key];if(!cfg)return;cfg.set.clear();updMDDBtn(key);rebuildMDD(key);cfg.render();}
-function clearMDD(key){clearAreaSet(key);}
-document.addEventListener('click',e=>{
-  if(!e.target.closest('.mdd-wrap') && !e.target.closest('#ia-chips-wrap')){
-    document.querySelectorAll('.mdd').forEach(d=>d.classList.remove('open'));
-  }
-});
-
-// ══════════════════════════════════════════════════════════
-//  PREVIEW POPUP
-// ══════════════════════════════════════════════════════════
-function showPreview(id, event) {
-  const item = iniciativas.find(x=>x.id===id); if(!item) return;
-  const score = calcScore(item);
-  const cls = classifyScore(score);
-  const pop = document.getElementById('preview-popup');
-  pop.innerHTML = `
-    <h4 style="font-size:13px;font-weight:500;color:var(--bordo);margin-bottom:10px;line-height:1.4">${esc(item.nome)}</h4>
-    <div class="preview-row"><div class="preview-label">Creator</div><div class="preview-val">${esc(item.creator||'—')}</div></div>
-    <div class="preview-row"><div class="preview-label">Gerência</div><div class="preview-val">${esc(item.gerencia||'—')}</div></div>
-    <div class="preview-row"><div class="preview-label">Área</div><div class="preview-val">${esc(item.area||'—')}</div></div>
-    <div class="preview-row"><div class="preview-label">Score</div><div class="preview-val"><span class="score-pill">${score}</span> ${clsBadge(cls)} ${refBadge(item)}</div></div>
-    <div class="preview-row"><div class="preview-label">Tipo de IA</div><div class="preview-val">${iaBadges(item.cat_ia)||'—'}</div></div>
-    ${item.descricao?`<div class="preview-row"><div class="preview-label">Descrição</div><div class="preview-val" style="font-size:11px;line-height:1.5;max-height:80px;overflow:auto">${esc(item.descricao)}</div></div>`:''}
-    ${item.beneficio?`<div class="preview-row"><div class="preview-label">Benefício</div><div class="preview-val" style="font-size:11px;line-height:1.5">${esc(item.beneficio)}</div></div>`:''}
-    ${item.mvp?`<div class="preview-row"><div class="preview-label">MVP</div><div class="preview-val" style="font-size:11px;line-height:1.5">${esc(item.mvp)}</div></div>`:''}`;
-  pop.style.display='block';
-  positionPopup(pop, event);
-}
-function positionPopup(pop, event) {
-  const x=event.clientX,y=event.clientY;
-  const pw=pop.offsetWidth||340,ph=pop.offsetHeight||200;
-  const vw=window.innerWidth,vh=window.innerHeight;
-  let left=x+12,top=y-10;
-  if(left+pw>vw-10)left=x-pw-12;
-  if(top+ph>vh-10)top=vh-ph-10;
-  if(top<10)top=10;
-  pop.style.left=left+'px';pop.style.top=top+'px';
-}
-function hidePreview(){ document.getElementById('preview-popup').style.display='none'; }
-document.addEventListener('click',e=>{ const pop=document.getElementById('preview-popup'); if(pop&&!e.target.closest('.ibtn')&&pop.style.display==='block')pop.style.display='none'; });
-document.addEventListener('mousemove',e=>{ const pop=document.getElementById('preview-popup'); if(pop.style.display==='block')positionPopup(pop,e); });
-
-// ══════════════════════════════════════════════════════════
-//  REFINAMENTO / CANVAS SIMPLES
-// ══════════════════════════════════════════════════════════
-let refineId = null;
-function openRefModal(id){
-  const item = iniciativas.find(x=>x.id===id); if(!item) return;
-  refineId = id;
-  document.getElementById('mo-ref-title').textContent = 'Refinar Iniciativa · ' + (item.nome || '');
-  document.getElementById('r-mvp').value = item.mvp || '';
-  document.getElementById('r-entradas').value = item.entradas || '';
-  document.getElementById('r-saidas').value = item.saidas || '';
-  document.getElementById('r-dependencias').value = item.dependencias || '';
-  document.getElementById('mo-ref').classList.add('open');
-}
-async function saveRefinamento(){
-  if(!refineId) return;
-  if(!validateFields(['r-mvp','r-entradas','r-saidas'])){toast('Preencha MVP, Entradas e Saídas.');return;}
-  const item = iniciativas.find(x=>x.id===refineId); if(!item) return;
-  item.mvp = document.getElementById('r-mvp').value.trim();
-  item.entradas = document.getElementById('r-entradas').value.trim();
-  item.saidas = document.getElementById('r-saidas').value.trim();
-  item.dependencias = document.getElementById('r-dependencias').value.trim();
-  try {
-    await updateItemDB(item);
-    closeMo('mo-ref');
-    renderAll();
-    toast('Refinamento salvo no banco de dados.');
-  } catch(e) {
-    console.error('Erro ao salvar refinamento:', e);
-    toast('Erro ao salvar refinamento no Supabase. Verifique as colunas mvp, entradas, saidas e dependencias.');
-  }
-}
-
-// ══════════════════════════════════════════════════════════
-//  FORM / MODAL
-// ══════════════════════════════════════════════════════════
-function openModal(id) {
-  editId = id || null;
-  document.getElementById('mo-title').textContent = id ? 'Editar Iniciativa' : 'Nova Iniciativa';
-  document.getElementById('btn-del-init').style.display = id ? 'block' : 'none';
-  const btnRef = document.getElementById('btn-refine-init'); if(btnRef) btnRef.style.display = id ? 'inline-block' : 'none';
-  const item = id ? iniciativas.find(x=>x.id===id) : null;
-  _iaSelection = item ? [...(item.cat_ia||[])] : [];
-  buildFormFields(item);
-  document.getElementById('mo').classList.add('open');
-}
-
-function buildFormFields(data) {
-  const d = data || {};
-  const gOpts = GERENCIAS.map(g=>`<option value="${esc(g)}" ${d.gerencia===g?'selected':''}>${esc(g)}</option>`).join('');
-  const aOpts = AREAS.map(a=>`<option value="${esc(a)}" ${d.area===a?'selected':''}>${esc(a)}</option>`).join('');
-  const qOpts = ['Q1','Q2','Q3','Q4','TBD'].map(q=>`<option value="${q}" ${d.q_entrega===q?'selected':''}>${q==='TBD'?'Não definido':q}</option>`).join('');
-  const qIniOpts = ['Q1','Q2','Q3','Q4','TBD'].map(q=>`<option value="${q}" ${d.q_inicio===q?'selected':''}>${q==='TBD'?'Não definido':q}</option>`).join('');
-
-  document.getElementById('form-fields').innerHTML = `
-    <div class="fsec">Identificação</div>
-    <div class="fi"><label>Creator <span class="req">*</span></label><input type="text" id="f-creator" value="${esc(d.creator||'')}"></div>
-    <div class="fi"><label>Gerência <span class="req">*</span></label><select id="f-gerencia">${gOpts}</select></div>
-    <div class="fi"><label>Área <span class="req">*</span></label><select id="f-area" onchange="syncGerenciaFromArea()">${aOpts}</select></div>
-    <div class="fi"><label>Etapa <span class="req">*</span></label><select id="f-status">${STATUS_LIST.map(s=>`<option value="${s}" ${normalizeEtapa(d.status||'Não iniciado')===s?'selected':''}>${s}</option>`).join('')}</select></div>
-    <div class="fi"><label>Q Início</label><select id="f-qi">${qIniOpts}</select></div>
-    <div class="fi"><label>Q Entrega (previsão)</label><select id="f-qe">${qOpts}</select></div>
-    <div class="fi full"><label>Nome da Iniciativa <span class="req">*</span></label><input type="text" id="f-nome" value="${esc(d.nome||'')}"></div>
-
-    <div class="fsec">Tipo de IA
-      <span class="tip-wrap" style="margin-left:6px">
-        <span class="tip-icon">ℹ️</span>
-        <div class="tip-box">Selecione as categorias de IA que melhor descrevem sua iniciativa. Pode selecionar mais de uma.</div>
-      </span>
-      <button type="button" onclick="document.getElementById('mo-ia').classList.add('open')" style="margin-left:8px;font-size:10px;background:none;border:1px solid var(--border2);border-radius:10px;padding:2px 8px;cursor:pointer;color:var(--text3);font-family:var(--font)">O que é isso?</button>
-    </div>
-    <div class="fi full" id="ia-chips-wrap">
-      <label>Categoria de IA <span class="req">*</span></label>
-      <div class="chips-wrap" id="ia-chips" onclick="openIADropdown(event)"></div>
-      <div class="mdd" id="ia-dd" style="position:relative;top:0;left:0;margin-top:4px;">
-        <div class="mdd-list" id="ia-dd-list"></div>
-      </div>
-    </div>
-
-    <div class="fsec">Descrição</div>
-    <div class="fi full"><label>Descrição <span class="req">*</span></label>
-      <textarea id="f-desc" rows="3">${esc(d.descricao||'')}</textarea>
-    </div>
-    <div class="fi full"><label>POC: Problema / Oportunidade <span class="req">*</span></label>
-      <textarea id="f-poc" rows="2">${esc(d.poc||'')}</textarea>
-    </div>
-    <div class="fi full"><label>Benefício Potencial</label>
-      <textarea id="f-benef" rows="2">${esc(d.beneficio||'')}</textarea>
-    </div>
-    <div class="fi full"><label>Riscos Identificados</label>
-      <textarea id="f-riscos" rows="2">${esc(d.riscos||'')}</textarea>
-    </div>
-
-    <div class="fsec">Priorização: Impacto × Facilidade
-      <span class="tip-wrap" style="margin-left:6px">
-        <span class="tip-icon">ℹ️</span>
-        <div class="tip-box">Score = Impacto × Facilidade. A facilidade é calculada automaticamente como 6 - Complexidade. Assim, alto impacto e baixa complexidade gera prioridade alta.</div>
-      </span>
-    </div>
-    <div class="fi">
-      <label>Impacto esperado <span class="req">*</span>
-        <span class="tip-wrap"><span class="tip-icon">ℹ️</span><div class="tip-box">Valor esperado para RH: ganho de eficiência, escala, redução de retrabalho, qualidade da experiência ou apoio à decisão.</div></span>
-      </label>
-      <select id="f-g" onchange="updateScorePreview()">
-        <option value="1" ${d.gut_g===1?'selected':''}>Baixo (1)</option>
-        <option value="3" ${(!d.gut_g||d.gut_g===3)?'selected':''}>Médio (3)</option>
-        <option value="5" ${d.gut_g===5?'selected':''}>Alto (5)</option>
-      </select>
-    </div>
-    <div class="fi">
-      <label>Complexidade de implementação <span class="req">*</span>
-        <span class="tip-wrap"><span class="tip-icon">ℹ️</span><div class="tip-box">Baixa = 1: rápida implementação, ferramentas conhecidas. Média = 3: depende de ajustes/validação. Alta = 5: muitas dependências, dados ou integrações.</div></span>
-      </label>
-      <select id="f-c" onchange="updateScorePreview()">
-        <option value="1" ${d.complexidade===1?'selected':''}>Baixa (1)</option>
-        <option value="3" ${(!d.complexidade||d.complexidade===3)?'selected':''}>Média (3)</option>
-        <option value="5" ${d.complexidade===5?'selected':''}>Alta (5)</option>
-      </select>
-    </div>
-    <div class="fi full">
-      <div class="fsec-note">Régua: Alta = score 18–25 · Média = 10–17 · Baixa = 5–9 · Backlog = 1–4.</div>
-    </div>
-    <div class="cls-preview">
-      <div>
-        <div class="cp-left">Score de Prioridade</div>
-        <div style="font-size:11px;color:var(--text3);margin-top:2px">Impacto × Facilidade</div>
-      </div>
-      <div style="text-align:right">
-        <div class="cp-score" id="f-score-preview">—</div>
-        <div id="f-cls-preview" style="margin-top:4px"></div>
-      </div>
-    </div>`;
-
-  syncGerenciaFromArea();
-  renderIAChips();
-  buildIADropdown();
-  updateScorePreview();
-}
-
-function syncGerenciaFromArea(){
-  const area=document.getElementById('f-area')?.value || '';
-  const ger=document.getElementById('f-gerencia');
-  if(ger && AREA_TO_GERENCIA[area]) ger.value=AREA_TO_GERENCIA[area];
-}
-
-function renderIAChips() {
-  const wrap = document.getElementById('ia-chips');
-  if (!wrap) return;
-  if (!_iaSelection.length) {
-    wrap.innerHTML = `<span class="chips-placeholder">Clique para selecionar…</span>`;
-  } else {
-    wrap.innerHTML = _iaSelection.map(c=>`<span class="chip">${esc(c)}<span class="chip-x" onclick="removeIAChip('${c.replace(/'/g,"\\'")}',event)">✕</span></span>`).join('');
-  }
-}
-function removeIAChip(c, e) {
-  e.stopPropagation();
-  _iaSelection = _iaSelection.filter(x=>x!==c);
-  renderIAChips();
-  buildIADropdown();
-}
-function openIADropdown(e) {
-  if(e) e.stopPropagation();
-  const dd = document.getElementById('ia-dd');
-  if (dd) dd.classList.toggle('open');
-}
-function buildIADropdown() {
-  const list = document.getElementById('ia-dd-list'); if (!list) return;
-  list.innerHTML = CAT_IA.map(c=>`
-    <label class="mdd-item"><input type="checkbox" ${_iaSelection.includes(c)?'checked':''} onchange="toggleIAItem('${c.replace(/'/g,"\\'")}',this.checked)">${esc(c)}</label>`).join('');
-}
-function toggleIAItem(c, checked) {
-  if (checked && !_iaSelection.includes(c)) _iaSelection.push(c);
-  else if (!checked) _iaSelection = _iaSelection.filter(x=>x!==c);
-  renderIAChips();
-}
-document.addEventListener('click',e=>{ const dd=document.getElementById('ia-dd'); if(dd&&!e.target.closest('#ia-chips-wrap'))dd.classList.remove('open'); });
-
-function updateScorePreview() {
-  const impacto=+(document.getElementById('f-g')?.value||3);
-  const complexidade=+(document.getElementById('f-c')?.value||3);
-  const facilidade=6-complexidade;
-  const score=impacto*facilidade;
-  const el=document.getElementById('f-score-preview');
-  const elCls=document.getElementById('f-cls-preview');
-  if(el)el.textContent=score;
-  const cls=classifyScore(score);
-  if(elCls)elCls.innerHTML=clsBadge(cls);
-}
-
-async function saveIniciativa() {
-  const req=['f-creator','f-gerencia','f-area','f-nome','f-desc','f-poc','f-status'];
-  if(!validateFields(req)){toast('Preencha todos os campos obrigatórios.');return;}
-  if(!_iaSelection.length){toast('Selecione ao menos uma Categoria de IA.');return;}
-  const current = editId ? (iniciativas.find(x=>x.id===editId) || {}) : {};
-  const data = {
-    creator: document.getElementById('f-creator').value.trim(),
-    gerencia:  document.getElementById('f-gerencia').value,
-    area:      document.getElementById('f-area').value,
-    status:    document.getElementById('f-status').value,
-    q_inicio:  document.getElementById('f-qi').value,
-    q_entrega: document.getElementById('f-qe').value,
-    nome:      document.getElementById('f-nome').value.trim(),
-    cat_ia:    _iaSelection,
-    descricao: document.getElementById('f-desc').value.trim(),
-    poc:       document.getElementById('f-poc').value.trim(),
-    beneficio: document.getElementById('f-benef').value.trim(),
-    riscos:    document.getElementById('f-riscos').value.trim(),
-    mvp:       current.mvp || '',
-    entradas:  current.entradas || '',
-    saidas:    current.saidas || '',
-    dependencias: current.dependencias || '',
-    gut_g:     +(document.getElementById('f-g').value),
-    gut_u:     1,
-    gut_t:     1,
-    complexidade: +(document.getElementById('f-c').value),
-  };
-  try {
-    if (editId) {
-      await saveItemDB(data, editId);
-      Object.assign(iniciativas.find(x=>x.id===editId), data);
-      toast('Iniciativa atualizada.');
-    } else {
-      const newId = await saveItemDB(data, null);
-      iniciativas.push({id: newId||nextId++, ...data});
-      toast('Iniciativa adicionada!');
-    }
-    closeMo('mo');
-    renderAll();
-  } catch (err) {
-    console.error('Erro ao salvar iniciativa:', err);
-  }
-}
-
-function delFromModal() { confirmDel(editId); closeMo('mo'); }
-
-function confirmDel(id) {
-  const name = iniciativas.find(x=>x.id===id)?.nome||'esta iniciativa';
-  document.getElementById('confirm-msg').textContent=`Tem certeza que deseja excluir "${name}"? Esta ação não pode ser desfeita.`;
-  document.getElementById('confirm-yes').onclick=async()=>{
-    iniciativas=iniciativas.filter(x=>x.id!==id);
-    await deleteItemDB(id);
-    closeConfirm();renderAll();toast('Excluída com sucesso.');
-  };
-  document.getElementById('confirm-overlay').classList.add('open');
-}
-function closeConfirm(){document.getElementById('confirm-overlay').classList.remove('open');}
-
-// ══════════════════════════════════════════════════════════
-//  EXPORT / IMPORT
-// ══════════════════════════════════════════════════════════
-function toggleExportMenu(){const m=document.getElementById('export-menu');m.classList.toggle('open');}
-document.addEventListener('click',e=>{const m=document.getElementById('export-menu');if(m&&!e.target.closest('.export-wrap'))m.classList.remove('open');});
-
-function csvDownload(filename,headers,rows,sep=';'){
-  const cell=v=>{if(v==null)return'';const s=String(v).replace(/\r?\n|\r/g,' ').replace(/\s+/g,' ').trim();return(s.includes(sep)||s.includes('"')||s.includes(','))?'"'+s.replace(/"/g,'""')+'"':s;};
-  const lines=[headers.map(cell).join(sep),...rows.map(r=>r.map(cell).join(sep))];
-  const blob=new Blob(['\uFEFF'+lines.join('\r\n')],{type:'text/csv;charset=utf-8'});
-  const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=filename;document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
-}
-
-function exportCSV(){
-  const headers=['id','creator','gerencia','area','status','q_inicio','q_entrega','nome','cat_ia','descricao','poc','beneficio','riscos','mvp','entradas','saidas','dependencias','impacto','complexidade','score','classificacao'];
-  const rows=iniciativas.map(i=>{
-    const score=calcScore(i);
-    return[i.id,i.creator,i.gerencia,i.area,i.status,i.q_inicio,i.q_entrega,i.nome,(i.cat_ia||[]).join(' | '),i.descricao,i.poc,i.beneficio,i.riscos,i.mvp||'',i.entradas||'',i.saidas||'',i.dependencias||'',impactoLabel(i.gut_g),complexidadeLabel(i.complexidade),score,classifyScore(score)];
-  });
-  csvDownload('creators-iniciativas-'+new Date().toISOString().slice(0,10)+'.csv',headers,rows);
-  toast('Exportado com sucesso.');
-}
-
-function downloadTemplate(){
-  const wb = XLSX.utils.book_new();
-  const headers=['Nome do creator','Área','Etapa','Q início','Q entrega','Nome','Categoria de IA','Descrição','POC','Benefício','Riscos','Impacto','Complexidade','MVP','Entradas','Saídas','Dependências'];
-  const example=[['Ex: João Silva','R&S','Não iniciado','Q2','Q3','Triagem automática de currículos com IA','IA Generativa | Machine Learning','Sistema que usa IA para triagem inicial de currículos.','Alto volume manual de triagem de currículos.','Redução do tempo de triagem.','Qualidade das triagens precisa de calibração.','Alto','Baixa']];
-  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([headers,...example]), 'Importacao');
-  const apoio=[['Área','Gerência'],...Object.entries(AREA_TO_GERENCIA),[],['Campo','Orientação'],['Impacto','Alto = 5 | Médio = 3 | Baixo = 1'],['Complexidade','Baixa = 1 | Média = 3 | Alta = 5'],['Classificação','Alta = score 18–25 | Média = 10–17 | Baixa = 5–9 | Backlog = 1–4'],[],['Categoria de IA','Descrição'],['Agente de IA','Executa ações automaticamente dentro de um processo'],['IA Generativa','Gera ou melhora textos, resumos, respostas e conteúdos'],['Analytics / IA Analítica','Analisa dados para identificar padrões e apoiar decisões'],['Automação','Fluxos baseados em regras, como Power Automate'],['Machine Learning','Modelos preditivos ou classificatórios'],['NLP','Entendimento e processamento de linguagem natural'],['RPA','Automação robótica de tarefas repetitivas']];
-  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(apoio), 'Apoio');
-  XLSX.writeFile(wb, 'template-creators-iniciativas.xlsx');
-  toast('Template Excel baixado!');
-}
-
-
-function parseCSV(text,sep=';'){
-  const rows=[];let r=[],field='',inQ=false,i=0;const n=text.length;
-  while(i<n){const ch=text[i];
-    if(inQ){if(ch==='"'&&text[i+1]==='"'){field+='"';i+=2;}else if(ch==='"'){inQ=false;i++;}else{field+=ch;i++;}}
-    else{if(ch==='"'){inQ=true;i++;}else if(ch===sep){r.push(field.trim());field='';i++;}else if(ch==='\r'&&text[i+1]==='\n'){r.push(field.trim());rows.push(r);r=[];field='';i+=2;}else if(ch==='\n'||ch==='\r'){r.push(field.trim());rows.push(r);r=[];field='';i++;}else{field+=ch;i++;}}
-  }
-  if(field||r.length){r.push(field.trim());rows.push(r);}
-  return rows.filter(r=>r.some(c=>c));
-}
-
-let _importParsed=null;
-function rowsFromWorksheet(ws){
-  return XLSX.utils.sheet_to_json(ws,{header:1,defval:''}).filter(r=>r.some(c=>String(c||'').trim()));
-}
-function processImportRows(allRows,fileName){
-  if(allRows.length<2){toast('Arquivo vazio ou inválido.');return;}
-  const hdrs=allRows[0].map(normalizeHeader);
-  const get=(row,key)=>{const i=hdrs.indexOf(key);return i>=0?(row[i]||'').toString().trim():'';};
-  const nomeIdx=hdrs.indexOf('nome');
-  const dataRows=allRows.slice(1).filter(r=>{const nm=(nomeIdx>=0?r[nomeIdx]:r[0]||'').toString().trim();return nm&&!nm.startsWith('##')&&!nm.toLowerCase().startsWith('ex:');});
-  const toAdd=[],toUpdate=[];
-  for(const row of dataRows){
-    const nome=get(row,'nome');if(!nome)continue;
-    const ex=iniciativas.find(b=>b.nome.trim().toLowerCase()===nome.toLowerCase());
-    ex?toUpdate.push({row,existing:ex}):toAdd.push({row,nome});
-  }
-  _importParsed={hdrs,get,toAdd,toUpdate};
-  const preview=[...toAdd,...toUpdate].slice(0,10).map(item=>{
-    const nm=item.nome||item.existing?.nome;
-    const tag=item.existing?`<span style="font-size:10px;background:#e8f4ee;color:#1E7A4A;padding:1px 7px;border-radius:8px;margin-left:6px;">atualizar</span>`:`<span style="font-size:10px;background:#e8eef8;color:#1a3a6e;padding:1px 7px;border-radius:8px;margin-left:6px;">novo</span>`;
-    return `<div style="padding:6px 0;border-bottom:1px solid #f5f5f5;font-size:12px;display:flex;align-items:center;">${esc(nm)}${tag}</div>`;
-  }).join('');
-  const more=toAdd.length+toUpdate.length-10;
-  document.getElementById('import-modal').innerHTML=`
-    <div style="background:#fff;border-radius:12px;padding:24px;width:500px;max-width:96vw;max-height:88vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,.18);">
-      <h3 style="margin:0 0 4px;font-size:15px;color:var(--bordo);">📂 Prévia da importação</h3>
-      <p style="font-size:12px;color:var(--text3);margin:0 0 16px;">${esc(fileName)}</p>
-      <div style="display:flex;gap:10px;margin-bottom:16px;">
-        <div style="flex:1;background:#e8f4ee;border-radius:8px;padding:10px;text-align:center;"><div style="font-size:22px;font-weight:700;color:#1E7A4A;">${toAdd.length}</div><div style="font-size:11px;color:#1E7A4A;">novos</div></div>
-        <div style="flex:1;background:#fff8e1;border-radius:8px;padding:10px;text-align:center;"><div style="font-size:22px;font-weight:700;color:#C47D00;">${toUpdate.length}</div><div style="font-size:11px;color:#C47D00;">a atualizar</div></div>
-      </div>
-      <div style="border:1px solid #eee;border-radius:8px;padding:8px 12px;max-height:220px;overflow-y:auto;margin-bottom:12px;">${preview}${more>0?`<div style="font-size:11px;color:var(--text3);padding:6px 0;">...e mais ${more}</div>`:''}</div>
-      <div style="background:#fff8e1;border-radius:8px;padding:10px 14px;font-size:12px;color:#7a5000;margin-bottom:16px;">⚠️ Iniciativas com o mesmo nome serão <strong>atualizadas</strong>. A gerência será preenchida automaticamente pela área.</div>
-      <div style="display:flex;gap:10px;justify-content:flex-end;">
-        <button onclick="closeImportModal()" style="padding:8px 18px;border:1px solid #ccc;border-radius:8px;background:#fff;cursor:pointer;font-family:inherit;font-size:13px;">Cancelar</button>
-        <button id="btn-confirm-import" onclick="executeImport()" style="padding:8px 22px;background:var(--magenta);color:#fff;border:none;border-radius:8px;cursor:pointer;font-family:inherit;font-size:13px;font-weight:600;">Confirmar importação</button>
-      </div>
-    </div>`;
-  document.getElementById('import-modal').style.display='flex';
-}
-function importCSV(event){
-  const file=event.target.files[0];if(!file)return;
-  const name=file.name||'';
-  const ext=name.split('.').pop().toLowerCase();
-  if(['xlsx','xls'].includes(ext)){
-    const reader=new FileReader();
-    reader.onload=e=>{
-      const wb=XLSX.read(e.target.result,{type:'array'});
-      const ws=wb.Sheets['Importacao'] || wb.Sheets[wb.SheetNames[0]];
-      processImportRows(rowsFromWorksheet(ws),name);
-    };
-    reader.readAsArrayBuffer(file);
-  } else {
-    const reader=new FileReader();
-    reader.onload=e=>{
-      let text=e.target.result.replace(/^\uFEFF/,'');
-      const sep=text.split('\n')[0].includes(';')?';':',';
-      processImportRows(parseCSV(text,sep),name);
-    };
-    reader.readAsText(file,'utf-8');
-  }
-  event.target.value='';
-}
-
-function closeImportModal(){document.getElementById('import-modal').style.display='none';_importParsed=null;}
-async function executeImport(){
-  if(!_importParsed)return;
-  const{hdrs,get,toAdd,toUpdate}=_importParsed;
-  const btn=document.getElementById('btn-confirm-import');
-  if(btn){btn.textContent='Importando...';btn.disabled=true;}
-  let added=0,updated=0,errors=0;
-  for(const item of[...toUpdate,...toAdd]){
-    try{
-      const row=item.row;
-      const nome=get(row,'nome');
-      const area=get(row,'area');
-      const iaRaw=get(row,'cat_ia');
-      const cat_ia=canonicalCatIA(iaRaw);
-      const data={
-        creator:get(row,'creator'),gerencia:inferGerencia(area,get(row,'gerencia')),area,
-        status:normalizeEtapa(get(row,'status')||'Não iniciado'),
-        q_inicio:get(row,'q_inicio')||'TBD',q_entrega:get(row,'q_entrega')||'TBD',
-        nome,cat_ia,descricao:get(row,'descricao'),poc:get(row,'poc'),
-        beneficio:get(row,'beneficio'),riscos:get(row,'riscos'),
-        mvp:get(row,'mvp'),entradas:get(row,'entradas'),saidas:get(row,'saidas'),dependencias:get(row,'dependencias'),
-        gut_g:normalizeImpactValue(get(row,'gut_g') || get(row,'impacto'),3),gut_u:1,
-        gut_t:1,complexidade:normalizeComplexityValue(get(row,'complexidade')),
-      };
-      if(item.existing){await saveItemDB(data,item.existing.id);Object.assign(item.existing,data);updated++;}
-      else{const nid=await saveItemDB(data,null);iniciativas.push({id:nid||nextId++,...data});added++;}
-    }catch(err){console.error(err);errors++;}
-  }
-  closeImportModal();renderAll();
-  toast(`✅ ${added} adicionados · ${updated} atualizados${errors>0?' · ⚠️ '+errors+' erros':''}`);
-}
-
-// ══════════════════════════════════════════════════════════
-//  TABS
-// ══════════════════════════════════════════════════════════
-function showTab(id,btn){
-  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('active'));
-  document.querySelectorAll('.ntab').forEach(t=>t.classList.remove('active'));
-  document.getElementById('tab-'+id).classList.add('active');
-  btn.classList.add('active');
-  if(id==='visao-geral'){renderMetrics();renderChartsVG();}
-  if(id==='iniciativas')renderIniciativas();
-  if(id==='priorizacao')renderPriorizacao();
-  if(id==='quarters')renderKanban();
-  if(id==='carga')renderCarga();
-}
-
-// ══════════════════════════════════════════════════════════
-//  SUPABASE CRUD
-// ══════════════════════════════════════════════════════════
-async function loadAllData(){
+async function saveInitiative(){
+  if(!validateInitiativeForm()){toast('Preencha os campos obrigatórios.');return}
+  const data={creator:document.getElementById('f-creator').value.trim(),area:document.getElementById('f-area').value,gerencia:managerForArea(document.getElementById('f-area').value),status:document.getElementById('f-stage').value,q_inicio:document.getElementById('f-q-start').value,q_entrega:document.getElementById('f-q-end').value,nome:document.getElementById('f-name').value.trim(),cat_ia:selectedCategories(),descricao:document.getElementById('f-description').value.trim(),poc:document.getElementById('f-problem').value.trim(),beneficio:document.getElementById('f-benefit').value.trim(),riscos:document.getElementById('f-risks').value.trim(),gut_g:Number(document.getElementById('f-impact').value),gut_u:1,gut_t:1,complexidade:Number(document.getElementById('f-complexity').value),updated_at:new Date().toISOString()};
+  const button=document.getElementById('save-button');button.disabled=true;button.textContent='Salvando...';
   try{
-    if(!supa){
-      console.warn('Supabase não configurado. Preencha SUPA_URL e SUPA_KEY.');
-      iniciativas = [];
-      toast('Supabase não configurado. Cole URL e chave pública no HTML.');
-      renderAll();
-      return;
-    }
-    const {data,error}=await supa.from('creators_iniciativas').select('*').order('id');
-    if(error) throw error;
-    iniciativas=(data||[]).map(r=>({
-      id:r.id,creator:r.creator||'',gerencia:r.gerencia||'',area:r.area||'',
-      status:normalizeEtapa(r.status||'Não iniciado'),
-      q_inicio:r.q_inicio||'TBD',q_entrega:r.q_entrega||'TBD',
-      nome:r.nome||'',cat_ia:r.cat_ia||[],descricao:r.descricao||'',
-      poc:r.poc||'',beneficio:r.beneficio||'',riscos:r.riscos||'',
-      mvp:r.mvp||'',entradas:r.entradas||'',saidas:r.saidas||'',dependencias:r.dependencias||'',
-      gut_g:r.gut_g||1,gut_u:r.gut_u||1,gut_t:r.gut_t||1,complexidade:r.complexidade||3,
-    }));
-  }catch(err){
-    console.error('DB load error:',err);
-    iniciativas=[];
-    toast('Erro ao carregar Supabase: '+(err.message||JSON.stringify(err)));
-  }
-  renderAll();
+    if(editingId){await saveItemDB(data,editingId);Object.assign(initiatives.find(i=>i.id===editingId),data);toast('Iniciativa atualizada.')}else{const id=await saveItemDB(data);initiatives.push({id,...data});toast('Iniciativa adicionada.')}
+    closeInitiativeModal();renderAll();
+  }catch(error){console.error(error);toast('Não foi possível salvar a iniciativa.')}finally{button.disabled=false;button.textContent='Salvar iniciativa'}
 }
+function askDelete(id){deletingId=id;const item=initiatives.find(i=>i.id===id);document.getElementById('confirm-text').textContent=`A iniciativa “${item?.nome||''}” será excluída permanentemente.`;document.getElementById('confirm-modal').classList.add('open')}
+function closeConfirm(){document.getElementById('confirm-modal').classList.remove('open');deletingId=null}
+async function confirmDelete(){if(!deletingId)return;const id=deletingId;try{await deleteItemDB(id);initiatives=initiatives.filter(i=>i.id!==id);closeConfirm();renderAll();toast('Iniciativa excluída.')}catch(error){console.error(error);toast('Não foi possível excluir a iniciativa.')}}
 
-function seedExampleData(){
-  // Mantido apenas para referência. A v1.2 não carrega dados locais automaticamente.
-  iniciativas=[];
-  nextId=100;
+function csvCell(value,separator=';'){if(value===null||value===undefined)return'';const text=String(value).replace(/\r?\n/g,' ').trim();return text.includes(separator)||text.includes('"')?`"${text.replace(/"/g,'""')}"`:text}
+function exportCSV(){
+  const headers=['id','Nome do creator','Área','Gerência','Etapa','Q início','Q entrega','Nome','Categoria de IA','Descrição','Problema / oportunidade','Benefício','Riscos','Impacto','Complexidade','Prioridade'];
+  const rows=initiatives.map(i=>[i.id,i.creator,i.area,i.gerencia,normalizeStage(i.status),i.q_inicio,i.q_entrega,i.nome,(i.cat_ia||[]).join(' | '),i.descricao,i.poc,i.beneficio,i.riscos,impactLabel(i.gut_g),complexityLabel(i.complexidade),priorityFor(i)]);
+  const content='\uFEFF'+[headers,...rows].map(row=>row.map(v=>csvCell(v)).join(';')).join('\r\n');const url=URL.createObjectURL(new Blob([content],{type:'text/csv;charset=utf-8'}));const a=document.createElement('a');a.href=url;a.download=`champions-iniciativas-${new Date().toISOString().slice(0,10)}.csv`;document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);toast('Arquivo exportado.');
 }
+function downloadTemplate(){
+  const wb=XLSX.utils.book_new();const headers=['Nome do creator','Área','Etapa','Q início','Q entrega','Nome','Categoria de IA','Descrição','Problema / oportunidade','Benefício','Riscos','Impacto','Complexidade'];const example=['Ex: João Silva','R&S','Não iniciado','Q2','Q3','Triagem inteligente de currículos','IA Generativa | Machine Learning','Descrição resumida da iniciativa.','Problema ou oportunidade que será tratado.','Benefício esperado.','Riscos ou dependências.','Alto','Baixa'];const ws=XLSX.utils.aoa_to_sheet([headers,example]);ws['!cols']=[22,22,18,12,12,32,34,44,44,38,38,14,16].map(wch=>({wch}));XLSX.utils.book_append_sheet(wb,ws,'Importacao');
+  const support=[['Área','Gerência'],...Object.entries(AREA_MANAGER),[],['Campo','Orientação'],['Impacto','Alto = principal prioridade | Médio = prioridade intermediária | Baixo = prioridade baixa'],['Complexidade','Baixa = implementação simples | Média = requer validações/dependências | Alta = muitas dependências, integrações ou dados'],['Prioridade','Impacto alto = Alta | Impacto médio = Média | Impacto baixo = Baixa; impacto baixo + complexidade alta = Backlog'],[],['Categoria de IA','Descrição'],['Agente de IA','Executa decisões ou ações dentro de um processo'],['IA Generativa','Gera textos, respostas, resumos ou conteúdos'],['Analytics / IA Analítica','Analisa dados e identifica padrões'],['Automação','Fluxos baseados em regras'],['Machine Learning','Modelos preditivos ou classificatórios'],['NLP','Entendimento e processamento de linguagem'],['RPA','Automação robótica de tarefas repetitivas']];XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(support),'Apoio');XLSX.writeFile(wb,'template-champions-iniciativas.xlsx');toast('Template Excel baixado.');
+}
+function normalizeHeader(header){
+  const key=normalizeText(header).replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'');const map={nome_do_creator:'creator',creator:'creator',criador:'creator',area:'area',gerencia:'gerencia',status:'status',etapa:'status',q_inicio:'q_inicio',quarter_inicio:'q_inicio',inicio:'q_inicio',q_entrega:'q_entrega',quarter_entrega:'q_entrega',entrega:'q_entrega',nome:'nome',iniciativa:'nome',nome_da_iniciativa:'nome',categoria_de_ia:'cat_ia',categoria_ia:'cat_ia',cat_ia:'cat_ia',tipo_de_ia:'cat_ia',descricao:'descricao',poc:'poc',problema_oportunidade:'poc',problema:'poc',beneficio:'beneficio',beneficio_potencial:'beneficio',riscos:'riscos',riscos_identificados:'riscos',impacto:'gut_g',impacto_esperado:'gut_g',gravidade:'gut_g',gut_g:'gut_g',complexidade:'complexidade',complexidade_de_implementacao:'complexidade',complexidade_de_desenvolvimento:'complexidade'};return map[key]||key;
+}
+function parseCSV(text,separator){
+  const rows=[];let row=[],field='',quoted=false;for(let i=0;i<text.length;i++){const ch=text[i];if(quoted){if(ch==='"'&&text[i+1]==='"'){field+='"';i++}else if(ch==='"')quoted=false;else field+=ch}else if(ch==='"')quoted=true;else if(ch===separator){row.push(field);field=''}else if(ch==='\n'){row.push(field.replace(/\r$/,''));rows.push(row);row=[];field=''}else field+=ch}if(field||row.length){row.push(field);rows.push(row)}return rows.filter(r=>r.some(c=>String(c).trim()))
+}
+function rowsFromWorksheet(ws){return XLSX.utils.sheet_to_json(ws,{header:1,defval:''}).filter(r=>r.some(c=>String(c).trim()))}
+function importFile(event){const file=event.target.files?.[0];if(!file)return;const ext=file.name.split('.').pop().toLowerCase();const reader=new FileReader();reader.onload=e=>{let rows;if(['xlsx','xls'].includes(ext)){const wb=XLSX.read(e.target.result,{type:'array'});const ws=wb.Sheets.Importacao||wb.Sheets[wb.SheetNames[0]];rows=rowsFromWorksheet(ws)}else{const text=String(e.target.result).replace(/^\uFEFF/,'');const sep=text.split(/\r?\n/)[0].includes(';')?';':',';rows=parseCSV(text,sep)}prepareImport(rows,file.name)};if(['xlsx','xls'].includes(ext))reader.readAsArrayBuffer(file);else reader.readAsText(file,'utf-8');event.target.value=''}
+function prepareImport(rows,fileName){
+  if(!rows||rows.length<2){toast('Arquivo vazio ou inválido.');return}const headers=rows[0].map(normalizeHeader);const index=key=>headers.indexOf(key);const get=(row,key)=>{const i=index(key);return i>=0?String(row[i]??'').trim():''};const dataRows=rows.slice(1).filter(r=>get(r,'nome')&&!normalizeText(get(r,'nome')).startsWith('ex:'));const parsed=[];
+  dataRows.forEach(row=>{const name=get(row,'nome');const area=get(row,'area');const data={creator:get(row,'creator'),area,gerencia:managerForArea(area,get(row,'gerencia')),status:normalizeStage(get(row,'status')||'Não iniciado'),q_inicio:get(row,'q_inicio')||'TBD',q_entrega:get(row,'q_entrega')||'TBD',nome:name,cat_ia:normalizeCategories(get(row,'cat_ia')),descricao:get(row,'descricao'),poc:get(row,'poc'),beneficio:get(row,'beneficio'),riscos:get(row,'riscos'),gut_g:normalizeImpact(get(row,'gut_g')),gut_u:1,gut_t:1,complexidade:normalizeComplexity(get(row,'complexidade')),updated_at:new Date().toISOString()};const existing=initiatives.find(i=>normalizeText(i.nome)===normalizeText(name));parsed.push({data,existing})});
+  importPayload=parsed;document.getElementById('import-file-name').textContent=fileName;document.getElementById('import-new-count').textContent=parsed.filter(p=>!p.existing).length;document.getElementById('import-update-count').textContent=parsed.filter(p=>p.existing).length;document.getElementById('import-modal').classList.add('open');closeDetails('data-dropdown');
+}
+function closeImport(){document.getElementById('import-modal').classList.remove('open');importPayload=null}
+async function executeImport(){if(!importPayload)return;const button=document.getElementById('import-confirm-button');button.disabled=true;button.textContent='Importando...';let added=0,updated=0,errors=0;for(const entry of importPayload){try{if(entry.existing){await saveItemDB(entry.data,entry.existing.id);Object.assign(entry.existing,entry.data);updated++}else{const id=await saveItemDB(entry.data);initiatives.push({id,...entry.data});added++}}catch(error){console.error(error);errors++}}button.disabled=false;button.textContent='Confirmar importação';closeImport();renderAll();toast(`${added} adicionadas · ${updated} atualizadas${errors?` · ${errors} erros`:''}`)}
 
-async function saveItemDB(data,id){
-  if(!supa){
-    const msg='Supabase não configurado. Preencha SUPA_URL e SUPA_KEY no HTML.';
-    toast(msg);
-    throw new Error(msg);
-  }
-  const row={
-    creator:data.creator,gerencia:data.gerencia,area:data.area,status:normalizeEtapa(data.status||'Não iniciado'),
-    q_inicio:data.q_inicio,q_entrega:data.q_entrega,nome:data.nome,
-    cat_ia:data.cat_ia,descricao:data.descricao,poc:data.poc,
-    beneficio:data.beneficio,riscos:data.riscos,
-    mvp:data.mvp||'',entradas:data.entradas||'',saidas:data.saidas||'',dependencias:data.dependencias||'',
-    gut_g:data.gut_g,gut_u:data.gut_u,gut_t:data.gut_t,complexidade:data.complexidade,
-    updated_at:new Date().toISOString(),
-  };
-  if(id){
-    const {error}=await supa.from('creators_iniciativas').update(row).eq('id',id);
-    if(error){console.error('DB update error:',error);toast('Erro ao atualizar: '+error.message);throw error;}
-    return id;
-  } else {
-    const {data:ins,error}=await supa.from('creators_iniciativas').insert(row).select('id').single();
-    if(error){console.error('DB insert error:',error);toast('Erro ao salvar: '+error.message);throw error;}
-    return ins?.id;
-  }
+async function loadData(){
+  if(!supa){setDbError('Supabase não configurado. Verifique a URL e a chave pública no HTML.');renderAll();return}
+  try{setDbError('');const {data,error}=await supa.from('creators_iniciativas').select('*').order('id');if(error)throw error;initiatives=(data||[]).map(r=>({id:r.id,creator:r.creator||'',gerencia:r.gerencia||managerForArea(r.area),area:r.area||'',status:normalizeStage(r.status),q_inicio:r.q_inicio||'TBD',q_entrega:r.q_entrega||'TBD',nome:r.nome||'',cat_ia:normalizeCategories(r.cat_ia),descricao:r.descricao||'',poc:r.poc||'',beneficio:r.beneficio||'',riscos:r.riscos||'',gut_g:normalizeImpact(r.gut_g),gut_u:1,gut_t:1,complexidade:normalizeComplexity(r.complexidade),updated_at:r.updated_at||r.created_at||null}));renderAll()}catch(error){console.error(error);setDbError(`Erro ao carregar o banco de dados: ${error.message||'verifique a conexão e as policies do Supabase.'}`);initiatives=[];renderAll()}
 }
-async function deleteItemDB(id){
-  if(!supa){toast('Supabase não configurado.');throw new Error('Supabase não configurado.');}
-  const {error}=await supa.from('creators_iniciativas').delete().eq('id',id);
-  if(error){console.error('DB delete error:',error);toast('Erro ao excluir: '+error.message);throw error;}
+async function saveItemDB(data,id=null){
+  if(!supa)throw new Error('Supabase não configurado');const row={creator:data.creator,gerencia:data.gerencia||managerForArea(data.area),area:data.area,status:normalizeStage(data.status),q_inicio:data.q_inicio||'TBD',q_entrega:data.q_entrega||'TBD',nome:data.nome,cat_ia:data.cat_ia||[],descricao:data.descricao||'',poc:data.poc||'',beneficio:data.beneficio||'',riscos:data.riscos||'',gut_g:normalizeImpact(data.gut_g),gut_u:1,gut_t:1,complexidade:normalizeComplexity(data.complexidade),updated_at:new Date().toISOString()};
+  if(id){const {error}=await supa.from('creators_iniciativas').update(row).eq('id',id);if(error)throw error;return id}const {data:inserted,error}=await supa.from('creators_iniciativas').insert(row).select('id').single();if(error)throw error;return inserted.id;
 }
-async function updateItemDB(item){
-  await saveItemDB(item,item.id);
-}
+async function deleteItemDB(id){if(!supa)throw new Error('Supabase não configurado');const {error}=await supa.from('creators_iniciativas').delete().eq('id',id);if(error)throw error}
 
-// ══════════════════════════════════════════════════════════
-//  RENDER ALL
-// ══════════════════════════════════════════════════════════
-function renderAll(){
-  renderMetrics();
-  renderChartsVG();
-  renderIniciativas();
-  renderPriorizacao();
-  renderKanban();
-  renderCarga();
-  document.getElementById('last-update').textContent='Atualizado em '+new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'});
-}
-
-// ── Init ─────────────────────────────────────────────────
-loadAllData();
+document.addEventListener('click',event=>{document.querySelectorAll('.action-menu[open]').forEach(menu=>{if(!menu.contains(event.target))menu.open=false})});
+document.addEventListener('keydown',event=>{if(event.key==='Escape'){closeInitiativeModal();closeConfirm();closeImport()}});
+populateFilterOptions();loadData();
 </script>
 </body>
 </html>
