@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Programa Champions · Gestão de Iniciativas de IA · v4.2</title>
+<title>Programa Champions · Gestão de Iniciativas de IA · v4.3</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -159,6 +159,8 @@ main{max-width:var(--max);margin:0 auto;padding:30px 22px 72px}
 .more-filter-panel label{font-size:9px;color:var(--muted);display:flex;flex-direction:column;gap:5px;text-transform:uppercase;font-weight:700;letter-spacing:.04em}
 .more-filter-panel .select{min-width:0;width:100%}
 .result-count{font-size:10px;color:var(--muted);white-space:nowrap;margin-left:auto}
+#page-priority .filter-shell .select{min-width:145px}
+#priority-stage{min-width:150px}
 
 /* Table */
 .table-card{overflow:hidden}
@@ -332,7 +334,7 @@ tbody tr:last-child td{border-bottom:0}
     <div class="header-row">
       <div class="brand">
         <div class="brand-mark"><svg class="icon"><use href="#i-ai"/></svg></div>
-        <div><div class="brand-title">Programa Champions</div><div class="brand-subtitle">Gestão de Iniciativas de IA · RH · 2026 · v4.2</div></div>
+        <div><div class="brand-title">Programa Champions</div><div class="brand-subtitle">Gestão de Iniciativas de IA · RH · 2026 · v4.3</div></div>
       </div>
       <div class="header-actions">
         <details class="dropdown" id="data-dropdown">
@@ -416,9 +418,17 @@ tbody tr:last-child td{border-bottom:0}
       <select id="priority-manager" class="select" onchange="renderPriority()"><option value="">Todas as gerências</option></select>
       <select id="priority-creator" class="select" onchange="renderPriority()"><option value="">Todos os creators</option></select>
       <select id="priority-area" class="select" onchange="renderPriority()"><option value="">Todas as áreas</option></select>
+      <select id="priority-stage" class="select" onchange="renderPriority()">
+        <option value="">Etapa · todas</option>
+        <option value="Não iniciado">Não iniciado</option>
+        <option value="Desenvolvimento">Desenvolvimento</option>
+        <option value="Testes">Testes</option>
+        <option value="Concluída">Concluída</option>
+      </select>
+      <button class="btn btn-ghost" type="button" onclick="clearPriorityFilters()">Limpar</button>
       <span id="priority-count" class="result-count"></span>
     </div>
-    <div class="priority-explain">Regra do ranking: impacto alto permanece acima do médio e do baixo. Dentro do mesmo impacto, iniciativas de menor complexidade aparecem primeiro. Para baixo impacto, alta complexidade é direcionada ao backlog.</div>
+    <div class="priority-explain">Regra do ranking: impacto alto permanece acima do médio e do baixo. Dentro do mesmo impacto, iniciativas de menor complexidade aparecem primeiro. Para baixo impacto, alta complexidade é direcionada ao backlog. Use o filtro de <strong>Etapa</strong> para visualizar, por exemplo, apenas as iniciativas <strong>Não iniciadas</strong> e identificar o que deve entrar primeiro na fila.</div>
     <div id="priority-groups" class="priority-groups"></div>
   </section>
 </main>
@@ -690,8 +700,18 @@ function planningDragEnd(event){event.currentTarget.classList.remove('dragging')
 async function planningDrop(event,quarter){event.preventDefault();event.currentTarget.classList.remove('dragover');if(!draggingId)return;const item=initiatives.find(i=>i.id===draggingId);draggingId=null;if(!item||item.q_entrega===quarter)return;const old=item.q_entrega;item.q_entrega=quarter;item.updated_at=new Date().toISOString();renderPlanning();try{await saveItemDB(item,item.id);toast('Quarter atualizado.');renderOverview()}catch(e){item.q_entrega=old;renderPlanning()}}
 
 function priorityMatches(item){
-  const q=normalizeText(document.getElementById('priority-search')?.value);const manager=document.getElementById('priority-manager')?.value||'';const creator=document.getElementById('priority-creator')?.value||'';const area=document.getElementById('priority-area')?.value||'';
-  if(manager&&(item.gerencia||managerForArea(item.area))!==manager)return false;if(creator&&item.creator!==creator)return false;if(area&&item.area!==area)return false;if(activePriority&&priorityFor(item)!==activePriority)return false;if(q&&!normalizeText([item.nome,item.creator,item.area].join(' ')).includes(q))return false;return true;
+  const q=normalizeText(document.getElementById('priority-search')?.value);
+  const manager=document.getElementById('priority-manager')?.value||'';
+  const creator=document.getElementById('priority-creator')?.value||'';
+  const area=document.getElementById('priority-area')?.value||'';
+  const stage=document.getElementById('priority-stage')?.value||'';
+  if(manager&&(item.gerencia||managerForArea(item.area))!==manager)return false;
+  if(creator&&item.creator!==creator)return false;
+  if(area&&item.area!==area)return false;
+  if(stage&&normalizeStage(item.status)!==stage)return false;
+  if(activePriority&&priorityFor(item)!==activePriority)return false;
+  if(q&&!normalizeText([item.nome,item.creator,item.area,item.status].join(' ')).includes(q))return false;
+  return true;
 }
 function renderPriorityCards(baseRows){
   const counts={Alta:0,Média:0,Baixa:0,Backlog:0};baseRows.forEach(i=>counts[priorityFor(i)]++);
@@ -712,6 +732,14 @@ function renderPriorityCards(baseRows){
   }else{
     health.innerHTML='';health.classList.remove('show');
   }
+}
+function clearPriorityFilters(){
+  activePriority='';
+  ['priority-search','priority-manager','priority-creator','priority-area','priority-stage'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el)el.value='';
+  });
+  renderPriority();
 }
 function togglePriorityFilter(value){activePriority=activePriority===value?'':value;renderPriority()}
 function renderPriority(){
