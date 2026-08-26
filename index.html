@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Programa Champions · Gestão de Iniciativas de IA · v4.4</title>
+<title>Programa Champions · Gestão de Iniciativas de IA · v4.8</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -282,6 +282,32 @@ tbody tr:last-child td{border-bottom:0}
 .category-option:has(input:focus-visible){outline:2px solid rgba(142,47,62,.28);outline-offset:2px}
 .category-option input[type="checkbox"]{position:absolute!important;width:1px!important;height:1px!important;overflow:hidden!important;clip:rect(0 0 0 0)!important;clip-path:inset(50%)!important;white-space:nowrap!important;margin:-1px!important;padding:0!important;border:0!important}
 @media(max-width:560px){.category-option{white-space:normal;text-align:center;line-height:1.2}.category-box{gap:7px}}
+.tool-multi{position:relative;width:100%}
+.tool-multi>summary{list-style:none;width:100%;min-height:40px;border:1px solid var(--line-strong);border-radius:8px;background:#fff;padding:5px 9px;display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:11px;cursor:pointer;color:var(--ink)}
+.tool-multi>summary::-webkit-details-marker{display:none}
+.tool-multi[open]>summary{border-color:var(--brand);box-shadow:0 0 0 2px rgba(142,47,62,.08)}
+.tool-summary-wrap{display:flex;align-items:center;gap:5px;flex-wrap:wrap;min-width:0;flex:1}
+.tool-summary-placeholder{color:var(--muted)}
+.tool-selected-chip{display:inline-flex;align-items:center;min-height:24px;padding:3px 8px;border-radius:999px;background:var(--brand-soft);color:var(--brand);font-size:9.5px;font-weight:600;white-space:nowrap}
+.tool-summary-count{font-size:9px;color:var(--muted);white-space:nowrap}
+.tool-menu{position:absolute;left:0;right:0;top:calc(100% + 6px);background:#fff;border:1px solid var(--line);border-radius:10px;box-shadow:0 14px 38px rgba(43,21,28,.16);padding:8px;z-index:90}
+.tool-search{position:relative;margin-bottom:7px}
+.tool-search input{width:100%;height:32px;border:1px solid var(--line);border-radius:7px;padding:0 10px 0 30px;font-size:10.5px}
+.tool-search .icon{position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--subtle);width:13px;height:13px}
+.tool-menu-list{display:grid;grid-template-columns:1fr 1fr;gap:3px;max-height:190px;overflow:auto;padding-right:2px;scrollbar-width:thin}
+.tool-menu-option{display:flex;align-items:center;gap:7px;min-height:32px;padding:6px 8px;border-radius:7px;font-size:10.5px;cursor:pointer;color:var(--ink);border:1px solid transparent}
+.tool-menu-option:hover{background:var(--brand-faint)}
+.tool-menu-option:has(input:checked){background:var(--brand-soft);border-color:#f0cfd6;color:var(--brand);font-weight:600}
+.tool-menu-option input{width:14px!important;height:14px!important;min-width:14px!important;margin:0!important;accent-color:var(--brand)}
+.tool-menu-foot{border-top:1px solid var(--line);margin-top:7px;padding:7px 2px 0;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.tool-suggestion{font-size:9px;color:var(--muted);line-height:1.4;min-width:0}
+.tool-suggestion strong{color:var(--brand)}
+.tool-menu-actions{display:flex;gap:4px;white-space:nowrap}
+.tool-menu-actions button{border:0;background:transparent;color:var(--brand);font-size:9px;font-weight:600;cursor:pointer;padding:4px 5px}
+.comment-slim{min-height:54px!important;max-height:92px}
+.field-hint{font-size:9px;color:var(--subtle);font-weight:400;text-transform:none;letter-spacing:0;margin-left:4px}
+@media(max-width:560px){.tool-menu-list{grid-template-columns:1fr}.tool-menu{right:0}.tool-menu-foot{align-items:flex-start;flex-direction:column}}
+
 .priority-preview{border:1px solid var(--line);border-radius:10px;background:var(--brand-faint);padding:14px;display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center}
 .priority-preview-title{font-size:11px;font-weight:700}
 .priority-preview-text{font-size:10px;color:var(--muted);margin-top:4px;line-height:1.5}
@@ -345,7 +371,7 @@ tbody tr:last-child td{border-bottom:0}
     <div class="header-row">
       <div class="brand">
         <div class="brand-mark"><svg class="icon"><use href="#i-ai"/></svg></div>
-        <div><div class="brand-title">Programa Champions</div><div class="brand-subtitle">Gestão de Iniciativas de IA · RH · 2026 · v4.4</div></div>
+        <div><div class="brand-title">Programa Champions</div><div class="brand-subtitle">Gestão de Iniciativas de IA · RH · 2026 · v4.8</div></div>
       </div>
       <div class="header-actions">
         <details class="dropdown" id="data-dropdown">
@@ -382,7 +408,7 @@ tbody tr:last-child td{border-bottom:0}
     <div class="card card-pad capacity-card"><div class="panel-head"><div><div class="panel-title">Gerência × complexidade de implementação</div><div class="page-subtitle">Distribuição da demanda entre baixa, média e alta complexidade.</div></div></div><div id="capacity-list" class="capacity-list"></div><div class="legend"><span class="legend-item"><span class="legend-swatch" style="background:#ff7daf"></span>Baixa</span><span class="legend-item"><span class="legend-swatch" style="background:#792148"></span>Média</span><span class="legend-item"><span class="legend-swatch" style="background:#2e101e"></span>Alta</span></div></div>
     <div class="overview-grid">
       <div class="card card-pad"><div class="panel-head"><div class="panel-title">Iniciativas por área</div></div><div id="area-bars" class="bar-list"></div></div>
-      <div class="card card-pad"><div class="panel-head"><div class="panel-title">Categorias de IA</div></div><div class="donut-layout"><canvas id="ai-donut" width="150" height="150"></canvas><div id="ai-legend" class="donut-legend"></div></div></div>
+      <div class="card card-pad"><div class="panel-head"><div><div class="panel-title">Ferramentas utilizadas / previstas</div><div class="page-subtitle">Visão consolidada das ferramentas registradas; quando ainda não informado, considera uma sugestão MVP baseada no cadastro da iniciativa.</div></div></div><div class="donut-layout"><canvas id="tool-donut" width="150" height="150"></canvas><div id="tool-legend" class="donut-legend"></div></div></div>
     </div>
   </section>
 
@@ -398,7 +424,7 @@ tbody tr:last-child td{border-bottom:0}
         <div class="more-filter-panel">
           <label>Creator<select id="initiative-creator" class="select" onchange="renderInitiatives()"><option value="">Todos</option></select></label>
           <label>Gerência<select id="initiative-manager" class="select" onchange="renderInitiatives()"><option value="">Todas</option></select></label>
-          <label>Categoria de IA<select id="initiative-category" class="select" onchange="renderInitiatives()"><option value="">Todas</option></select></label>
+          <label>Ferramenta<select id="initiative-tool" class="select" onchange="renderInitiatives()"><option value="">Todas</option></select></label>
           <label>Prioridade<select id="initiative-priority" class="select" onchange="renderInitiatives()"><option value="">Todas</option><option>Alta</option><option>Média</option><option>Baixa</option><option>Backlog</option></select></label>
           <button class="btn" style="grid-column:1/-1" onclick="clearInitiativeFilters()">Limpar filtros</button>
         </div>
@@ -471,6 +497,29 @@ tbody tr:last-child td{border-bottom:0}
         <div class="field full"><label>Benefício potencial</label><textarea id="f-benefit"></textarea></div>
         <div class="field full"><label>Riscos identificados</label><textarea id="f-risks"></textarea></div>
       </div></div>
+      <div class="form-section"><div class="form-section-title">Execução e acompanhamento</div><div class="form-grid">
+        <div class="field full">
+          <label>Ferramentas utilizadas / previstas <span class="field-hint">selecione uma ou mais · sugestão considera categoria, descrição, problema/oportunidade e nome</span></label>
+          <details id="tool-options" class="tool-multi">
+            <summary>
+              <span id="tool-summary-wrap" class="tool-summary-wrap"><span class="tool-summary-placeholder">Selecionar ferramentas</span></span>
+              <span id="tool-summary-count" class="tool-summary-count">0 selecionadas · ⌄</span>
+            </summary>
+            <div class="tool-menu" onclick="event.stopPropagation()">
+              <div class="tool-search">
+                <svg class="icon"><use href="#i-search"/></svg>
+                <input id="tool-search-input" type="search" placeholder="Buscar ferramenta..." oninput="filterToolOptions()">
+              </div>
+              <div id="tool-option-list" class="tool-menu-list"></div>
+              <div class="tool-menu-foot">
+                <div id="tool-suggestion" class="tool-suggestion"></div>
+                <div class="tool-menu-actions"><button type="button" onclick="applySuggestedTools()">Usar sugestão MVP</button><button type="button" onclick="clearSelectedTools()">Limpar</button></div>
+              </div>
+            </div>
+          </details>
+        </div>
+        <div class="field full"><label>Comentários <span class="field-hint">opcional</span></label><textarea id="f-comments" class="comment-slim" placeholder="Registre decisões, testes, dependências ou próximos passos relevantes."></textarea></div>
+      </div></div>
       <div class="form-section"><div class="form-section-title">Priorização</div><div class="form-grid">
         <div class="field"><label>Impacto esperado *</label><select id="f-impact" onchange="updatePriorityPreview()"><option value="1">Baixo</option><option value="3">Médio</option><option value="5">Alto</option></select></div>
         <div class="field"><label>Complexidade de implementação *</label><select id="f-complexity" onchange="updatePriorityPreview()"><option value="1">Baixa</option><option value="3">Média</option><option value="5">Alta</option></select></div>
@@ -513,6 +562,11 @@ const AI_COLORS=['#8e2f3e','#5f1d2d','#bf4b6c','#ef7ea2','#d2a4b2','#7d6170','#e
 const STAGES=['Não iniciado','Desenvolvimento','Testes','Concluída'];
 const QUARTERS=['Q1','Q2','Q3','Q4','TBD'];
 const PRIORITIES=['Alta','Média','Baixa','Backlog'];
+const TOOLS=["ChatGPT", "Claude", "Copilot Studio", "Power Automate", "Power BI", "Excel / Power Query", "SharePoint", "APIs / Integrações", "n8n", "Lovable", "Supabase", "GitHub"];
+const TOOL_COLORS=['#8e2f3e','#5f1d2d','#bf4b6c','#ef7ea2','#d2a4b2','#7d6170','#e5bac7','#a44b5d','#c98697','#63384a','#b35c73','#8a7680'];
+const TOOL_SUGGESTIONS={"Acompanhamento de CCTs para Folha":["Claude","SharePoint"],"Agente de Banco de Horas":["Power BI","Excel / Power Query"],"Agente de CI | Persona Inteligente de Comunicação Interna":["APIs / Integrações","Power Automate"],"Agente de Performance de Comunicação Interna":["Power BI","Excel / Power Query"],"Agente de Políticas RH":["Copilot Studio","SharePoint"],"Analise de Mercado":["Power Automate","Excel / Power Query"],"Analise Salarial":["Claude","SharePoint"],"Análises de Remuneração":["Power Automate"],"Analytics e Eficiência Operacional RH":["Power BI","Excel / Power Query"],"Assistente RH Externo":["Copilot Studio","SharePoint"],"Auditor de beneficios":["Power BI","Excel / Power Query"],"Automação rateio pedidos de compras":["Power Automate","Excel / Power Query"],"BP Insights (People Analytics)":["Power BI","Excel / Power Query"],"Cálculo PLR Gestores":["Power BI","Excel / Power Query"],"Capex - Custo Colaborador":["Power BI","Excel / Power Query"],"Carta de PLR Gestores":["Power BI","Excel / Power Query"],"Carta Ganhadores Acelera":["Power Automate"],"Classificação PCD Automatizada":["Claude","SharePoint"],"Comparativos e benchmarks":["Power BI","Excel / Power Query"],"Descrições de Cargo":["Claude","SharePoint"],"Desenvolvimento de Times Orientado a Dados":["Power BI","Excel / Power Query"],"Emissão Inteligente de Cartas e Documentos":["Power Automate"],"Empréstimo Consignado - Margem Colaborador":["Power BI","Excel / Power Query"],"Estrutura Organizacional":["Power BI","Excel / Power Query"],"Fechamamento Dental (contabil)":["Power BI","Excel / Power Query"],"Formulários de beneficios":["Power Automate","Excel / Power Query"],"Gerador de FAQ":["ChatGPT"],"Gestão de Skills (Skill Based)":["Power BI","Excel / Power Query"],"Inconsistências de Marcação (Ponto Eletrônico)":["Power BI","Excel / Power Query"],"Insights de Pesquisa de Clima":["Power BI","Excel / Power Query"],"Insights de Plataformas RH":["Power BI","Excel / Power Query"],"PMO de Projetos":["Power BI","Excel / Power Query"],"Insights MeuRH":["Copilot Studio","Power Automate"],"Job valuation":["Claude","SharePoint"],"Mapeamento de Talentos Diversos":["Power BI","Excel / Power Query"],"MeuRH - Análise de Comunicados":["Copilot Studio","Power Automate"],"MeuRH - Catálogo Automatizado":["Copilot Studio","SharePoint"],"OTR Succession Copilot (IA para Sucessão e Desenvolvimento de Lideranças)":["Power BI","Excel / Power Query"],"Pacotes de Remuneração":["Power BI","Excel / Power Query"],"PDI Inteligente":["ChatGPT"],"Pesquisa Compliance":["Claude"],"Provisão de PLR":["Power BI","Excel / Power Query"],"Ranking Ciclo de Aumentos":["Power BI","Excel / Power Query"],"Reconhecimento Inteligente":["ChatGPT"],"Recrutamento Inclusivo Inteligente":["Power BI","Excel / Power Query"],"Refinamento de Prompts de apuração de metas":["Power Automate","Excel / Power Query"],"Relatório de Igualdade Salarial":["Power BI","Excel / Power Query"],"Risco de Saída":["Power BI","Excel / Power Query"],"Simulador Cálculo PLR (chatbot)":["Copilot Studio","Power Automate"],"Span of Control":["Power BI","Excel / Power Query"],"Status de rastreamento de beneficios via Chatbot MeuRH":["Copilot Studio","Power Automate"],"Transferências entre Empresas":["Power BI","Excel / Power Query"],"Trilhas de Aprendizagem Inteligentes":["ChatGPT"],"Validação das Metas":["Power BI","Excel / Power Query"],"Validação de Cálculo Folha de Pagamento":["Power BI","Excel / Power Query"],"Validação Metas":["Power BI","Excel / Power Query"]};
+const META_PREFIX='[[CHAMPIONS_META:';
+
 
 let initiatives=[];
 let activeStatus='';
@@ -521,7 +575,7 @@ let priorityStages=new Set();
 let editingId=null;
 let deletingId=null;
 let importPayload=null;
-let aiChart=null;
+let toolChart=null;
 
 function icon(name,cls='icon icon-sm'){return `<svg class="${cls}"><use href="#i-${name}"/></svg>`}
 function esc(value){return String(value??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
@@ -550,6 +604,115 @@ function normalizeComplexity(value){
   if(s.includes('media'))return 3;
   if(s.includes('baixa'))return 1;
   return 3;
+}
+
+function effectiveTools(item){
+  return (item?.ferramentas&&item.ferramentas.length)?item.ferramentas:suggestedToolsFor(item);
+}
+function suggestedToolsFor(item){
+  // Sugestão MVP baseada no conteúdo atual da iniciativa.
+  // Ordem de leitura: Categoria de IA -> Descrição -> Problema/Oportunidade -> Nome.
+  // A recomendação é apenas orientativa e nunca é aplicada automaticamente.
+  const categories=(item?.cat_ia||[]).map(normalizeText);
+  const descricao=normalizeText(item?.descricao||'');
+  const poc=normalizeText(item?.poc||'');
+  const nome=normalizeText(item?.nome||'');
+  const blob=[categories.join(' '),descricao,poc,nome].join(' ');
+
+  const scored={};
+  const add=(tool,score)=>{
+    if(!tool)return;
+    scored[tool]=(scored[tool]||0)+score;
+  };
+
+  // 1) Categoria de IA: sinal mais forte.
+  categories.forEach(cat=>{
+    if(cat.includes('ia generativa')){add('ChatGPT',8);add('Claude',6)}
+    if(cat.includes('agente de ia')){add('Copilot Studio',8);add('Power Automate',4)}
+    if(cat.includes('analytics')||cat.includes('analitica')){add('Power BI',8);add('Excel / Power Query',6)}
+    if(cat.includes('automacao')){add('Power Automate',8);add('n8n',4)}
+    if(cat.includes('machine learning')){add('Power BI',4);add('APIs / Integrações',3)}
+    if(cat.includes('nlp')){add('ChatGPT',7);add('Claude',6)}
+    if(cat.includes('rpa')){add('Power Automate',7);add('n8n',4)}
+  });
+
+  // 2) Descrição e 3) Problema/Oportunidade: sinais funcionais.
+  const text=[descricao,poc].join(' ');
+  if(/chatbot|bot de rh|assistente virtual|autosservico|autoatendimento/.test(text)){
+    add('Copilot Studio',10); add('SharePoint',4);
+  }
+  if(/faq|base de conhecimento|catalogo|politica|politicas|procedimento|documento|documental|cct|convencao|acordo coletivo|rag/.test(text)){
+    add('SharePoint',8); add('Claude',5); add('Copilot Studio',4);
+  }
+  if(/aprova|fluxo|workflow|automat|regra|gatilho|validacao|validar|notificacao|conciliacao|conferencia/.test(text)){
+    add('Power Automate',9); add('n8n',3);
+  }
+  if(/dashboard|painel|indicador|analytics|analise de dados|people analytics|turnover|clima|score|ranking|estrutura|span of control/.test(text)){
+    add('Power BI',9); add('Excel / Power Query',7);
+  }
+  if(/planilha|excel|base de dados|tratamento de dados|consolidacao|cruzamento de dados|calculo|simulacao/.test(text)){
+    add('Excel / Power Query',8); add('Power BI',4);
+  }
+  if(/gerar texto|revisar texto|resumo|resumir|sintese|email|e-mail|comunicado|conteudo|insight|recomendacao|pdi|descricao de cargo|job description/.test(text)){
+    add('ChatGPT',9); add('Claude',5);
+  }
+  if(/contrato|laudo|juridic|compliance|politica|cct|acordo coletivo|documento extenso|analise documental/.test(text)){
+    add('Claude',9); add('SharePoint',4);
+  }
+  if(/api|integracao|integrar|webhook|sistema externo|fornecedor|conector/.test(text)){
+    add('APIs / Integrações',9); add('Power Automate',4); add('n8n',4);
+  }
+  if(/site|pagina|portal|prototipo|mvp web|front-end|frontend|lovable/.test(text)){
+    add('Lovable',7); add('Supabase',4);
+  }
+  if(/banco de dados|persistencia|supabase/.test(text)){
+    add('Supabase',8);
+  }
+  if(/github|repositorio|publicacao|github pages/.test(text)){
+    add('GitHub',7);
+  }
+
+  // 4) Nome: usado apenas como desempate/contexto complementar.
+  if(/meurh|assistente rh/.test(nome)){add('Copilot Studio',3)}
+  if(/painel|insight|analytics/.test(nome)){add('Power BI',3)}
+  if(/email|e-mail|faq|comunicado|reuniao|reuniões/.test(nome)){add('ChatGPT',3)}
+  if(/portfolio|portfólio|champions hub/.test(nome)){add('Supabase',3);add('GitHub',2)}
+
+  // Fallback simples se não houver sinal suficiente.
+  if(!Object.keys(scored).length){
+    if(categories.some(c=>c.includes('ia generativa')||c.includes('nlp'))) add('ChatGPT',5);
+    else if(categories.some(c=>c.includes('automacao')||c.includes('rpa'))) add('Power Automate',5);
+    else if(categories.some(c=>c.includes('analytics')||c.includes('analitica'))) add('Power BI',5);
+    else add('ChatGPT',2);
+  }
+
+  // Retorna somente 1 ferramenta principal + 1 complementar.
+  return Object.entries(scored)
+    .sort((a,b)=>b[1]-a[1] || a[0].localeCompare(b[0]))
+    .slice(0,2)
+    .map(([tool])=>tool);
+}
+function decodeStoredMeta(rawRisks){
+  const raw=String(rawRisks||'');
+  const marker='\n'+META_PREFIX;
+  const idx=raw.lastIndexOf(marker);
+  const idx2=idx>=0?idx:raw.lastIndexOf(META_PREFIX);
+  if(idx2<0)return {riscos:raw,ferramentas:[],comentarios:''};
+  const payload=raw.slice(idx2+META_PREFIX.length).replace(/\]\]$/,'').trim();
+  let meta={};
+  try{meta=JSON.parse(decodeURIComponent(payload))||{}}catch(e){meta={}}
+  return {
+    riscos:raw.slice(0,idx2).trimEnd(),
+    ferramentas:Array.isArray(meta.ferramentas)?meta.ferramentas:[],
+    comentarios:String(meta.comentarios||'')
+  };
+}
+function encodeStoredMeta(riscos,ferramentas,comentarios){
+  const clean=String(riscos||'').trimEnd();
+  const meta={ferramentas:Array.isArray(ferramentas)?ferramentas:[],comentarios:String(comentarios||'').trim()};
+  if(!meta.ferramentas.length&&!meta.comentarios)return clean;
+  const payload=encodeURIComponent(JSON.stringify(meta));
+  return `${clean}${clean?'\n':''}${META_PREFIX}${payload}]]`;
 }
 function normalizeCategories(raw){
   const arr=Array.isArray(raw)?raw:String(raw||'').split('|');
@@ -607,7 +770,7 @@ function applyInitiativePreset(preset){
   if(preset==='high')activePriority='Alta';
   if(preset==='not-started')activeStatus='Não iniciado';
   if(preset==='backlog')activePriority='Backlog';
-  ['initiative-search','initiative-area','initiative-quarter','initiative-creator','initiative-manager','initiative-category','initiative-priority'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=''});
+  ['initiative-search','initiative-area','initiative-quarter','initiative-creator','initiative-manager','initiative-tool','initiative-priority'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=''});
   if(activePriority){const p=document.getElementById('initiative-priority');if(p)p.value=activePriority}
 }
 
@@ -616,7 +779,7 @@ function populateFilterOptions(){
   fillSelect('initiative-area',AREAS,'Área · todas');
   fillSelect('initiative-creator',creators,'Todos');
   fillSelect('initiative-manager',MANAGERS,'Todas');
-  fillSelect('initiative-category',AI_CATEGORIES,'Todas');
+  fillSelect('initiative-tool',TOOLS,'Todas');
   fillSelect('planning-manager',MANAGERS,'Todas as gerências');
   fillSelect('planning-area',AREAS,'Todas as áreas');
   fillSelect('priority-manager',MANAGERS,'Todas as gerências');
@@ -638,7 +801,7 @@ function renderOverview(){
     <div class="card metric-card danger" onclick="goToInitiatives('high')"><div class="metric-top"><span class="metric-icon">${icon('priority')}</span>Prioridade alta</div><div class="metric-value">${high}</div></div>
     <div class="card metric-card warning" onclick="goToInitiatives('not-started')"><div class="metric-top"><span class="metric-icon">${icon('calendar')}</span>Não iniciadas</div><div class="metric-value">${notStarted}</div></div>
     <div class="card metric-card" onclick="goToInitiatives('backlog')"><div class="metric-top"><span class="metric-icon">${icon('list')}</span>No backlog</div><div class="metric-value">${backlog}</div></div>`;
-  renderAttention();renderQuarterBars();renderCapacity();renderAreaBars();renderAIDonut();
+  renderAttention();renderQuarterBars();renderCapacity();renderAreaBars();renderToolDonut();
 }
 function attentionReasons(item){
   if(normalizeStage(item.status)==='Concluída')return [];
@@ -670,12 +833,22 @@ function renderAreaBars(){
   const counts={};initiatives.forEach(i=>{const a=i.area||'Sem área';counts[a]=(counts[a]||0)+1});const entries=Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,8);const max=Math.max(1,...entries.map(([,v])=>v));
   document.getElementById('area-bars').innerHTML=entries.length?entries.map(([a,v])=>`<div class="bar-row"><div class="bar-label" title="${esc(a)}">${esc(a)}</div><div class="bar-track"><div class="bar-fill" style="width:${v/max*100}%"></div></div><div class="bar-value">${v}</div></div>`).join(''):'<div class="empty-state"><strong>Sem dados</strong></div>';
 }
-function renderAIDonut(){
-  const counts={};initiatives.forEach(i=>(i.cat_ia||[]).forEach(c=>counts[c]=(counts[c]||0)+1));let entries=Object.entries(counts).sort((a,b)=>b[1]-a[1]);const others=entries.slice(5).reduce((s,[,v])=>s+v,0);entries=entries.slice(0,5);if(others)entries.push(['Outros',others]);
-  const legend=document.getElementById('ai-legend');const canvas=document.getElementById('ai-donut');if(aiChart)aiChart.destroy();
+function renderToolDonut(){
+  const counts={};
+  initiatives.forEach(i=>{
+    const tools=effectiveTools(i);
+    tools.forEach(t=>counts[t]=(counts[t]||0)+1);
+  });
+  let entries=Object.entries(counts).sort((a,b)=>b[1]-a[1]);
+  const others=entries.slice(5).reduce((s,[,v])=>s+v,0);
+  entries=entries.slice(0,5);
+  if(others)entries.push(['Outros',others]);
+  const legend=document.getElementById('tool-legend');
+  const canvas=document.getElementById('tool-donut');
+  if(toolChart)toolChart.destroy();
   if(!entries.length){legend.innerHTML='<div class="empty-state"><strong>Sem dados</strong></div>';return}
-  aiChart=new Chart(canvas,{type:'doughnut',data:{labels:entries.map(e=>e[0]),datasets:[{data:entries.map(e=>e[1]),backgroundColor:AI_COLORS.slice(0,entries.length),borderWidth:3,borderColor:'#fff'}]},options:{responsive:true,maintainAspectRatio:true,cutout:'64%',plugins:{legend:{display:false}}}});
-  legend.innerHTML=entries.map(([l,v],i)=>`<div class="donut-row"><span class="donut-dot" style="background:${AI_COLORS[i]}"></span><span>${esc(l)}</span><span class="donut-value">${v}</span></div>`).join('');
+  toolChart=new Chart(canvas,{type:'doughnut',data:{labels:entries.map(e=>e[0]),datasets:[{data:entries.map(e=>e[1]),backgroundColor:TOOL_COLORS.slice(0,entries.length),borderWidth:3,borderColor:'#fff'}]},options:{responsive:true,maintainAspectRatio:true,cutout:'64%',plugins:{legend:{display:false}}}});
+  legend.innerHTML=entries.map(([l,v],i)=>`<div class="donut-row"><span class="donut-dot" style="background:${TOOL_COLORS[i]}"></span><span>${esc(l)}</span><span class="donut-value">${v}</span></div>`).join('');
 }
 
 function renderStatusSegments(){
@@ -685,12 +858,12 @@ function renderStatusSegments(){
 }
 function setStatusFilter(value){activeStatus=value;renderInitiatives()}
 function initiativeMatches(item){
-  const q=normalizeText(document.getElementById('initiative-search')?.value);const area=document.getElementById('initiative-area')?.value||'';const quarter=document.getElementById('initiative-quarter')?.value||'';const creator=document.getElementById('initiative-creator')?.value||'';const manager=document.getElementById('initiative-manager')?.value||'';const category=document.getElementById('initiative-category')?.value||'';const priority=document.getElementById('initiative-priority')?.value||activePriority||'';
+  const q=normalizeText(document.getElementById('initiative-search')?.value);const area=document.getElementById('initiative-area')?.value||'';const quarter=document.getElementById('initiative-quarter')?.value||'';const creator=document.getElementById('initiative-creator')?.value||'';const manager=document.getElementById('initiative-manager')?.value||'';const tool=document.getElementById('initiative-tool')?.value||'';const priority=document.getElementById('initiative-priority')?.value||activePriority||'';
   const stage=normalizeStage(item.status);
   if(activeStatus==='active'&&!['Desenvolvimento','Testes'].includes(stage))return false;
   if(activeStatus&&activeStatus!=='active'&&stage!==activeStatus)return false;
-  if(area&&item.area!==area)return false;if(quarter&&(item.q_entrega||'TBD')!==quarter)return false;if(creator&&item.creator!==creator)return false;if(manager&&(item.gerencia||managerForArea(item.area))!==manager)return false;if(category&&!(item.cat_ia||[]).includes(category))return false;if(priority&&priorityFor(item)!==priority)return false;
-  if(q){const hay=normalizeText([item.nome,item.descricao,item.creator,item.area,item.beneficio].join(' '));if(!hay.includes(q))return false}
+  if(area&&item.area!==area)return false;if(quarter&&(item.q_entrega||'TBD')!==quarter)return false;if(creator&&item.creator!==creator)return false;if(manager&&(item.gerencia||managerForArea(item.area))!==manager)return false;if(tool&&!effectiveTools(item).includes(tool))return false;if(priority&&priorityFor(item)!==priority)return false;
+  if(q){const hay=normalizeText([item.nome,item.descricao,item.creator,item.area,item.beneficio,...effectiveTools(item)].join(' '));if(!hay.includes(q))return false}
   return true;
 }
 function renderInitiatives(){
@@ -700,7 +873,7 @@ function renderInitiatives(){
   body.innerHTML=rows.map(item=>`<tr onclick="openInitiativeModal(${item.id})"><td><div class="item-name">${esc(item.nome)}</div><div class="item-sub">${esc((item.cat_ia||[]).slice(0,2).join(' · ')||'Categoria não definida')}</div></td><td>${esc(item.creator||'—')}</td><td>${esc(item.area||'—')}</td><td><span class="quarter-pill">${esc(quarterLabel(item.q_entrega))}</span></td><td>${pillPriority(priorityFor(item))}</td><td>${pillStage(normalizeStage(item.status))}</td><td onclick="event.stopPropagation()">${actionMenu(item.id)}</td></tr>`).join('');
 }
 function actionMenu(id){return `<details class="action-menu"><summary>${icon('more')}</summary><div class="action-popup"><button onclick="openInitiativeModal(${id});this.closest('details').open=false">${icon('edit')}Editar iniciativa</button><button class="danger" onclick="askDelete(${id});this.closest('details').open=false">${icon('trash')}Excluir</button></div></details>`}
-function clearInitiativeFilters(){activeStatus='';activePriority='';['initiative-search','initiative-area','initiative-quarter','initiative-creator','initiative-manager','initiative-category','initiative-priority'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=''});renderInitiatives()}
+function clearInitiativeFilters(){activeStatus='';activePriority='';['initiative-search','initiative-area','initiative-quarter','initiative-creator','initiative-manager','initiative-tool','initiative-priority'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=''});renderInitiatives()}
 
 function planningMatches(item){
   const q=normalizeText(document.getElementById('planning-search')?.value);const manager=document.getElementById('planning-manager')?.value||'';const area=document.getElementById('planning-area')?.value||'';const stage=document.getElementById('planning-stage')?.value||'';
@@ -804,11 +977,50 @@ function openInitiativeModal(id=null){
   document.getElementById('f-name').value=item?.nome||'';document.getElementById('f-description').value=item?.descricao||'';document.getElementById('f-problem').value=item?.poc||'';document.getElementById('f-benefit').value=item?.beneficio||'';document.getElementById('f-risks').value=item?.riscos||'';
   document.getElementById('f-impact').value=String(normalizeImpact(item?.gut_g||3));document.getElementById('f-complexity').value=String(normalizeComplexity(item?.complexidade||3));
   const selected=new Set(item?.cat_ia||[]);document.getElementById('category-options').innerHTML=AI_CATEGORIES.map(c=>`<label class="category-option"><input type="checkbox" value="${esc(c)}" ${selected.has(c)?'checked':''}>${esc(c)}</label>`).join('');
+  const savedTools=new Set(item?.ferramentas||[]);
+  document.getElementById('tool-option-list').innerHTML=TOOLS.map(t=>`<label class="tool-menu-option" data-tool="${esc(normalizeText(t))}"><input type="checkbox" value="${esc(t)}" ${savedTools.has(t)?'checked':''} onchange="updateToolSummary()"><span>${esc(t)}</span></label>`).join('');
+  const toolSearch=document.getElementById('tool-search-input'); if(toolSearch)toolSearch.value='';
+  document.getElementById('f-comments').value=item?.comentarios||'';
+  updateToolSummary();
+  updateToolSuggestion(item||{nome:document.getElementById('f-name').value,descricao:document.getElementById('f-description').value,cat_ia:[...selected]});
   document.querySelectorAll('#initiative-modal .error').forEach(el=>el.classList.remove('error'));updateManagerPreview();updatePriorityPreview();document.getElementById('initiative-modal').classList.add('open');document.body.style.overflow='hidden';
 }
 function closeInitiativeModal(){document.getElementById('initiative-modal').classList.remove('open');document.body.style.overflow='';editingId=null}
 function updateManagerPreview(){const area=document.getElementById('f-area').value;document.getElementById('f-manager-preview').textContent=managerForArea(area)||'Gerência não mapeada'}
 function selectedCategories(){return [...document.querySelectorAll('#category-options input:checked')].map(el=>el.value)}
+function selectedTools(){return [...document.querySelectorAll('#tool-option-list input:checked')].map(el=>el.value)}
+function updateToolSummary(){
+  const values=selectedTools();
+  const wrap=document.getElementById('tool-summary-wrap');
+  const count=document.getElementById('tool-summary-count');
+  if(!wrap||!count)return;
+  wrap.innerHTML=values.length
+    ? values.map(v=>`<span class="tool-selected-chip">${esc(v)}</span>`).join('')
+    : '<span class="tool-summary-placeholder">Selecionar ferramentas</span>';
+  count.textContent=`${values.length} selecionada${values.length===1?'':'s'} · ⌄`;
+}
+function filterToolOptions(){
+  const q=normalizeText(document.getElementById('tool-search-input')?.value||'');
+  document.querySelectorAll('#tool-option-list .tool-menu-option').forEach(el=>{
+    el.style.display=!q||String(el.dataset.tool||'').includes(q)?'flex':'none';
+  });
+}
+function updateToolSuggestion(item){
+  const suggested=suggestedToolsFor(item);
+  const el=document.getElementById('tool-suggestion');
+  if(!el)return;
+  el.innerHTML=suggested.length?`<strong>Sugestão MVP (com base no cadastro):</strong> ${suggested.map(esc).join(' + ')}`:'<strong>Sugestão MVP:</strong> não definida';
+}
+function applySuggestedTools(){
+  const item=editingId?initiatives.find(i=>i.id===editingId):{nome:document.getElementById('f-name').value,descricao:document.getElementById('f-description').value,cat_ia:selectedCategories()};
+  const suggested=new Set(suggestedToolsFor(item));
+  document.querySelectorAll('#tool-option-list input[type="checkbox"]').forEach(el=>el.checked=suggested.has(el.value));
+  updateToolSummary();
+}
+function clearSelectedTools(){
+  document.querySelectorAll('#tool-option-list input[type="checkbox"]').forEach(el=>el.checked=false);
+  updateToolSummary();
+}
 function updatePriorityPreview(){
   const draft={gut_g:Number(document.getElementById('f-impact').value),complexidade:Number(document.getElementById('f-complexity').value)};const index=rankScore(draft);const p=priorityFor(draft);document.getElementById('priority-preview-score').textContent=`Índice ${index}`;document.getElementById('priority-preview-badge').innerHTML=pillPriority(p);
 }
@@ -817,7 +1029,7 @@ function validateInitiativeForm(){
 }
 async function saveInitiative(){
   if(!validateInitiativeForm()){toast('Preencha os campos obrigatórios.');return}
-  const data={creator:document.getElementById('f-creator').value.trim(),area:document.getElementById('f-area').value,gerencia:managerForArea(document.getElementById('f-area').value),status:document.getElementById('f-stage').value,q_inicio:document.getElementById('f-q-start').value,q_entrega:document.getElementById('f-q-end').value,nome:document.getElementById('f-name').value.trim(),cat_ia:selectedCategories(),descricao:document.getElementById('f-description').value.trim(),poc:document.getElementById('f-problem').value.trim(),beneficio:document.getElementById('f-benefit').value.trim(),riscos:document.getElementById('f-risks').value.trim(),gut_g:Number(document.getElementById('f-impact').value),gut_u:1,gut_t:1,complexidade:Number(document.getElementById('f-complexity').value),updated_at:new Date().toISOString()};
+  const data={creator:document.getElementById('f-creator').value.trim(),area:document.getElementById('f-area').value,gerencia:managerForArea(document.getElementById('f-area').value),status:document.getElementById('f-stage').value,q_inicio:document.getElementById('f-q-start').value,q_entrega:document.getElementById('f-q-end').value,nome:document.getElementById('f-name').value.trim(),cat_ia:selectedCategories(),descricao:document.getElementById('f-description').value.trim(),poc:document.getElementById('f-problem').value.trim(),beneficio:document.getElementById('f-benefit').value.trim(),riscos:document.getElementById('f-risks').value.trim(),ferramentas:selectedTools(),comentarios:document.getElementById('f-comments').value.trim(),gut_g:Number(document.getElementById('f-impact').value),gut_u:1,gut_t:1,complexidade:Number(document.getElementById('f-complexity').value),updated_at:new Date().toISOString()};
   const button=document.getElementById('save-button');button.disabled=true;button.textContent='Salvando...';
   try{
     if(editingId){await saveItemDB(data,editingId);Object.assign(initiatives.find(i=>i.id===editingId),data);toast('Iniciativa atualizada.')}else{const id=await saveItemDB(data);initiatives.push({id,...data});toast('Iniciativa adicionada.')}
@@ -830,16 +1042,16 @@ async function confirmDelete(){if(!deletingId)return;const id=deletingId;try{awa
 
 function csvCell(value,separator=';'){if(value===null||value===undefined)return'';const text=String(value).replace(/\r?\n/g,' ').trim();return text.includes(separator)||text.includes('"')?`"${text.replace(/"/g,'""')}"`:text}
 function exportCSV(){
-  const headers=['id','Nome do creator','Área','Gerência','Etapa','Q início','Q entrega','Nome','Categoria de IA','Descrição','Problema / oportunidade','Benefício','Riscos','Impacto','Complexidade','Prioridade'];
-  const rows=initiatives.map(i=>[i.id,i.creator,i.area,i.gerencia,normalizeStage(i.status),i.q_inicio,i.q_entrega,i.nome,(i.cat_ia||[]).join(' | '),i.descricao,i.poc,i.beneficio,i.riscos,impactLabel(i.gut_g),complexityLabel(i.complexidade),priorityFor(i)]);
+  const headers=['id','Nome do creator','Área','Gerência','Etapa','Q início','Q entrega','Nome','Categoria de IA','Ferramentas','Descrição','Problema / oportunidade','Benefício','Riscos','Comentários','Impacto','Complexidade','Prioridade'];
+  const rows=initiatives.map(i=>[i.id,i.creator,i.area,i.gerencia,normalizeStage(i.status),i.q_inicio,i.q_entrega,i.nome,(i.cat_ia||[]).join(' | '),effectiveTools(i).join(' | '),i.descricao,i.poc,i.beneficio,i.riscos,i.comentarios||'',impactLabel(i.gut_g),complexityLabel(i.complexidade),priorityFor(i)]);
   const content='\uFEFF'+[headers,...rows].map(row=>row.map(v=>csvCell(v)).join(';')).join('\r\n');const url=URL.createObjectURL(new Blob([content],{type:'text/csv;charset=utf-8'}));const a=document.createElement('a');a.href=url;a.download=`champions-iniciativas-${new Date().toISOString().slice(0,10)}.csv`;document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);toast('Arquivo exportado.');
 }
 function downloadTemplate(){
-  const wb=XLSX.utils.book_new();const headers=['Nome do creator','Área','Etapa','Q início','Q entrega','Nome','Categoria de IA','Descrição','Problema / oportunidade','Benefício','Riscos','Impacto','Complexidade'];const example=['Ex: João Silva','R&S','Não iniciado','Q2','Q3','Triagem inteligente de currículos','IA Generativa | Machine Learning','Descrição resumida da iniciativa.','Problema ou oportunidade que será tratado.','Benefício esperado.','Riscos ou dependências.','Alto','Baixa'];const ws=XLSX.utils.aoa_to_sheet([headers,example]);ws['!cols']=[22,22,18,12,12,32,34,44,44,38,38,14,16].map(wch=>({wch}));XLSX.utils.book_append_sheet(wb,ws,'Importacao');
-  const support=[['Área','Gerência'],...Object.entries(AREA_MANAGER),[],['Campo','Orientação'],['Impacto','Alto = principal prioridade | Médio = prioridade intermediária | Baixo = prioridade baixa'],['Complexidade','Baixa = implementação simples | Média = requer validações/dependências | Alta = muitas dependências, integrações ou dados'],['Prioridade','Impacto alto = Alta | Impacto médio = Média | Impacto baixo = Baixa; impacto baixo + complexidade alta = Backlog'],[],['Categoria de IA','Descrição'],['Agente de IA','Executa decisões ou ações dentro de um processo'],['IA Generativa','Gera textos, respostas, resumos ou conteúdos'],['Analytics / IA Analítica','Analisa dados e identifica padrões'],['Automação','Fluxos baseados em regras'],['Machine Learning','Modelos preditivos ou classificatórios'],['NLP','Entendimento e processamento de linguagem'],['RPA','Automação robótica de tarefas repetitivas']];XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(support),'Apoio');XLSX.writeFile(wb,'template-champions-iniciativas.xlsx');toast('Template Excel baixado.');
+  const wb=XLSX.utils.book_new();const headers=['Nome do creator','Área','Etapa','Q início','Q entrega','Nome','Categoria de IA','Ferramentas','Descrição','Problema / oportunidade','Benefício','Riscos','Comentários','Impacto','Complexidade'];const example=['Ex: João Silva','R&S','Não iniciado','Q2','Q3','Triagem inteligente de currículos','IA Generativa | Machine Learning','ChatGPT | Power Automate','Descrição resumida da iniciativa.','Problema ou oportunidade que será tratado.','Benefício esperado.','Riscos ou dependências.','Comentários opcionais sobre testes ou próximos passos.','Alto','Baixa'];const ws=XLSX.utils.aoa_to_sheet([headers,example]);ws['!cols']=[22,22,18,12,12,32,34,30,44,44,38,38,40,14,16].map(wch=>({wch}));XLSX.utils.book_append_sheet(wb,ws,'Importacao');
+  const support=[['Área','Gerência'],...Object.entries(AREA_MANAGER),[],['Campo','Orientação'],['Impacto','Alto = principal prioridade | Médio = prioridade intermediária | Baixo = prioridade baixa'],['Complexidade','Baixa = implementação simples | Média = requer validações/dependências | Alta = muitas dependências, integrações ou dados'],['Prioridade','Impacto alto = Alta | Impacto médio = Média | Impacto baixo = Baixa; impacto baixo + complexidade alta = Backlog'],[],['Ferramentas','Selecione uma ou mais opções conforme o desenvolvimento'],['Opções de ferramentas','ChatGPT | Claude | Copilot Studio | Power Automate | Power BI | Excel / Power Query | SharePoint | APIs / Integrações | n8n | Lovable | Supabase | GitHub'],[],['Categoria de IA','Descrição'],['Agente de IA','Executa decisões ou ações dentro de um processo'],['IA Generativa','Gera textos, respostas, resumos ou conteúdos'],['Analytics / IA Analítica','Analisa dados e identifica padrões'],['Automação','Fluxos baseados em regras'],['Machine Learning','Modelos preditivos ou classificatórios'],['NLP','Entendimento e processamento de linguagem'],['RPA','Automação robótica de tarefas repetitivas']];XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(support),'Apoio');XLSX.writeFile(wb,'template-champions-iniciativas.xlsx');toast('Template Excel baixado.');
 }
 function normalizeHeader(header){
-  const key=normalizeText(header).replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'');const map={nome_do_creator:'creator',creator:'creator',criador:'creator',area:'area',gerencia:'gerencia',status:'status',etapa:'status',q_inicio:'q_inicio',quarter_inicio:'q_inicio',inicio:'q_inicio',q_entrega:'q_entrega',quarter_entrega:'q_entrega',entrega:'q_entrega',nome:'nome',iniciativa:'nome',nome_da_iniciativa:'nome',categoria_de_ia:'cat_ia',categoria_ia:'cat_ia',cat_ia:'cat_ia',tipo_de_ia:'cat_ia',descricao:'descricao',poc:'poc',problema_oportunidade:'poc',problema:'poc',beneficio:'beneficio',beneficio_potencial:'beneficio',riscos:'riscos',riscos_identificados:'riscos',impacto:'gut_g',impacto_esperado:'gut_g',gravidade:'gut_g',gut_g:'gut_g',complexidade:'complexidade',complexidade_de_implementacao:'complexidade',complexidade_de_desenvolvimento:'complexidade'};return map[key]||key;
+  const key=normalizeText(header).replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'');const map={nome_do_creator:'creator',creator:'creator',criador:'creator',area:'area',gerencia:'gerencia',status:'status',etapa:'status',q_inicio:'q_inicio',quarter_inicio:'q_inicio',inicio:'q_inicio',q_entrega:'q_entrega',quarter_entrega:'q_entrega',entrega:'q_entrega',nome:'nome',iniciativa:'nome',nome_da_iniciativa:'nome',categoria_de_ia:'cat_ia',categoria_ia:'cat_ia',cat_ia:'cat_ia',tipo_de_ia:'cat_ia',ferramentas:'ferramentas',ferramentas_utilizadas:'ferramentas',ferramentas_previstas:'ferramentas',comentarios:'comentarios',comentario:'comentarios',descricao:'descricao',poc:'poc',problema_oportunidade:'poc',problema:'poc',beneficio:'beneficio',beneficio_potencial:'beneficio',riscos:'riscos',riscos_identificados:'riscos',impacto:'gut_g',impacto_esperado:'gut_g',gravidade:'gut_g',gut_g:'gut_g',complexidade:'complexidade',complexidade_de_implementacao:'complexidade',complexidade_de_desenvolvimento:'complexidade'};return map[key]||key;
 }
 function parseCSV(text,separator){
   const rows=[];let row=[],field='',quoted=false;for(let i=0;i<text.length;i++){const ch=text[i];if(quoted){if(ch==='"'&&text[i+1]==='"'){field+='"';i++}else if(ch==='"')quoted=false;else field+=ch}else if(ch==='"')quoted=true;else if(ch===separator){row.push(field);field=''}else if(ch==='\n'){row.push(field.replace(/\r$/,''));rows.push(row);row=[];field=''}else field+=ch}if(field||row.length){row.push(field);rows.push(row)}return rows.filter(r=>r.some(c=>String(c).trim()))
@@ -848,7 +1060,7 @@ function rowsFromWorksheet(ws){return XLSX.utils.sheet_to_json(ws,{header:1,defv
 function importFile(event){const file=event.target.files?.[0];if(!file)return;const ext=file.name.split('.').pop().toLowerCase();const reader=new FileReader();reader.onload=e=>{let rows;if(['xlsx','xls'].includes(ext)){const wb=XLSX.read(e.target.result,{type:'array'});const ws=wb.Sheets.Importacao||wb.Sheets[wb.SheetNames[0]];rows=rowsFromWorksheet(ws)}else{const text=String(e.target.result).replace(/^\uFEFF/,'');const sep=text.split(/\r?\n/)[0].includes(';')?';':',';rows=parseCSV(text,sep)}prepareImport(rows,file.name)};if(['xlsx','xls'].includes(ext))reader.readAsArrayBuffer(file);else reader.readAsText(file,'utf-8');event.target.value=''}
 function prepareImport(rows,fileName){
   if(!rows||rows.length<2){toast('Arquivo vazio ou inválido.');return}const headers=rows[0].map(normalizeHeader);const index=key=>headers.indexOf(key);const get=(row,key)=>{const i=index(key);return i>=0?String(row[i]??'').trim():''};const dataRows=rows.slice(1).filter(r=>get(r,'nome')&&!normalizeText(get(r,'nome')).startsWith('ex:'));const parsed=[];
-  dataRows.forEach(row=>{const name=get(row,'nome');const area=get(row,'area');const data={creator:get(row,'creator'),area,gerencia:managerForArea(area,get(row,'gerencia')),status:normalizeStage(get(row,'status')||'Não iniciado'),q_inicio:get(row,'q_inicio')||'TBD',q_entrega:get(row,'q_entrega')||'TBD',nome:name,cat_ia:normalizeCategories(get(row,'cat_ia')),descricao:get(row,'descricao'),poc:get(row,'poc'),beneficio:get(row,'beneficio'),riscos:get(row,'riscos'),gut_g:normalizeImpact(get(row,'gut_g')),gut_u:1,gut_t:1,complexidade:normalizeComplexity(get(row,'complexidade')),updated_at:new Date().toISOString()};const existing=initiatives.find(i=>normalizeText(i.nome)===normalizeText(name));parsed.push({data,existing})});
+  dataRows.forEach(row=>{const name=get(row,'nome');const area=get(row,'area');const data={creator:get(row,'creator'),area,gerencia:managerForArea(area,get(row,'gerencia')),status:normalizeStage(get(row,'status')||'Não iniciado'),q_inicio:get(row,'q_inicio')||'TBD',q_entrega:get(row,'q_entrega')||'TBD',nome:name,cat_ia:normalizeCategories(get(row,'cat_ia')),ferramentas:String(get(row,'ferramentas')||'').split('|').map(v=>v.trim()).filter(Boolean),comentarios:get(row,'comentarios'),descricao:get(row,'descricao'),poc:get(row,'poc'),beneficio:get(row,'beneficio'),riscos:get(row,'riscos'),gut_g:normalizeImpact(get(row,'gut_g')),gut_u:1,gut_t:1,complexidade:normalizeComplexity(get(row,'complexidade')),updated_at:new Date().toISOString()};const existing=initiatives.find(i=>normalizeText(i.nome)===normalizeText(name));parsed.push({data,existing})});
   importPayload=parsed;document.getElementById('import-file-name').textContent=fileName;document.getElementById('import-new-count').textContent=parsed.filter(p=>!p.existing).length;document.getElementById('import-update-count').textContent=parsed.filter(p=>p.existing).length;document.getElementById('import-modal').classList.add('open');closeDetails('data-dropdown');
 }
 function closeImport(){document.getElementById('import-modal').classList.remove('open');importPayload=null}
@@ -856,11 +1068,33 @@ async function executeImport(){if(!importPayload)return;const button=document.ge
 
 async function loadData(){
   if(!supa){setDbError('Supabase não configurado. Verifique a URL e a chave pública no HTML.');renderAll();return}
-  try{setDbError('');const {data,error}=await supa.from('creators_iniciativas').select('*').order('id');if(error)throw error;initiatives=(data||[]).map(r=>({id:r.id,creator:r.creator||'',gerencia:r.gerencia||managerForArea(r.area),area:r.area||'',status:normalizeStage(r.status),q_inicio:r.q_inicio||'TBD',q_entrega:r.q_entrega||'TBD',nome:r.nome||'',cat_ia:normalizeCategories(r.cat_ia),descricao:r.descricao||'',poc:r.poc||'',beneficio:r.beneficio||'',riscos:r.riscos||'',gut_g:normalizeImpact(r.gut_g),gut_u:1,gut_t:1,complexidade:normalizeComplexity(r.complexidade),updated_at:r.updated_at||r.created_at||null}));renderAll()}catch(error){console.error(error);setDbError(`Erro ao carregar o banco de dados: ${error.message||'verifique a conexão e as policies do Supabase.'}`);initiatives=[];renderAll()}
+  try{setDbError('');const {data,error}=await supa.from('creators_iniciativas').select('*').order('id');if(error)throw error;initiatives=(data||[]).map(r=>{const meta=decodeStoredMeta(r.riscos);return {id:r.id,creator:r.creator||'',gerencia:r.gerencia||managerForArea(r.area),area:r.area||'',status:normalizeStage(r.status),q_inicio:r.q_inicio||'TBD',q_entrega:r.q_entrega||'TBD',nome:r.nome||'',cat_ia:normalizeCategories(r.cat_ia),ferramentas:Array.isArray(r.ferramentas)?r.ferramentas:meta.ferramentas,comentarios:r.comentarios??meta.comentarios,descricao:r.descricao||'',poc:r.poc||'',beneficio:r.beneficio||'',riscos:meta.riscos,gut_g:normalizeImpact(r.gut_g),gut_u:1,gut_t:1,complexidade:normalizeComplexity(r.complexidade),updated_at:r.updated_at||r.created_at||null}});renderAll()}catch(error){console.error(error);setDbError(`Erro ao carregar o banco de dados: ${error.message||'verifique a conexão e as policies do Supabase.'}`);initiatives=[];renderAll()}
 }
 async function saveItemDB(data,id=null){
-  if(!supa)throw new Error('Supabase não configurado');const row={creator:data.creator,gerencia:data.gerencia||managerForArea(data.area),area:data.area,status:normalizeStage(data.status),q_inicio:data.q_inicio||'TBD',q_entrega:data.q_entrega||'TBD',nome:data.nome,cat_ia:data.cat_ia||[],descricao:data.descricao||'',poc:data.poc||'',beneficio:data.beneficio||'',riscos:data.riscos||'',gut_g:normalizeImpact(data.gut_g),gut_u:1,gut_t:1,complexidade:normalizeComplexity(data.complexidade),updated_at:new Date().toISOString()};
-  if(id){const {error}=await supa.from('creators_iniciativas').update(row).eq('id',id);if(error)throw error;return id}const {data:inserted,error}=await supa.from('creators_iniciativas').insert(row).select('id').single();if(error)throw error;return inserted.id;
+  if(!supa)throw new Error('Supabase não configurado');
+  const base={creator:data.creator,gerencia:data.gerencia||managerForArea(data.area),area:data.area,status:normalizeStage(data.status),q_inicio:data.q_inicio||'TBD',q_entrega:data.q_entrega||'TBD',nome:data.nome,cat_ia:data.cat_ia||[],descricao:data.descricao||'',poc:data.poc||'',beneficio:data.beneficio||'',riscos:data.riscos||'',gut_g:normalizeImpact(data.gut_g),gut_u:1,gut_t:1,complexidade:normalizeComplexity(data.complexidade),updated_at:new Date().toISOString()};
+  const modern={...base,ferramentas:data.ferramentas||[],comentarios:data.comentarios||''};
+  const legacy={...base,riscos:encodeStoredMeta(base.riscos,data.ferramentas||[],data.comentarios||'')};
+  const persist=async row=>{
+    if(id){
+      const {error}=await supa.from('creators_iniciativas').update(row).eq('id',id);
+      if(error)throw error;
+      return id;
+    }
+    const {data:inserted,error}=await supa.from('creators_iniciativas').insert(row).select('id').single();
+    if(error)throw error;
+    return inserted.id;
+  };
+  try{
+    return await persist(modern);
+  }catch(error){
+    const msg=String(error?.message||error||'').toLowerCase();
+    if(msg.includes('ferramentas')||msg.includes('comentarios')||msg.includes('column')){
+      console.warn('Colunas novas ainda não existem; usando persistência compatível no campo riscos.');
+      return await persist(legacy);
+    }
+    throw error;
+  }
 }
 async function deleteItemDB(id){if(!supa)throw new Error('Supabase não configurado');const {error}=await supa.from('creators_iniciativas').delete().eq('id',id);if(error)throw error}
 
@@ -868,6 +1102,8 @@ document.addEventListener('click',event=>{
   document.querySelectorAll('.action-menu[open]').forEach(menu=>{if(!menu.contains(event.target))menu.open=false});
   const stageFilter=document.getElementById('priority-stage-filter');
   if(stageFilter?.open&&!stageFilter.contains(event.target))stageFilter.open=false;
+  const toolFilter=document.getElementById('tool-options');
+  if(toolFilter?.open&&!toolFilter.contains(event.target))toolFilter.open=false;
 });
 document.addEventListener('keydown',event=>{if(event.key==='Escape'){closeInitiativeModal();closeConfirm();closeImport()}});
 populateFilterOptions();loadData();
